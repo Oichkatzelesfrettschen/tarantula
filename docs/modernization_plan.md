@@ -1,0 +1,36 @@
+# Modernization Plan
+
+This document outlines initial steps toward analyzing and updating the 4.4BSD-Lite2
+codebase. It does not constitute a complete refactor, but provides guidance for
+future work.
+
+## Phase 1: Codebase Analysis
+- Generate cross-reference databases using `cscope` and `ctags`.
+- Use `tools/analyze_codebase.py` to count source files by extension.
+- Document architectural assumptions found in headers and assembly files.
+
+## Phase 2: Infrastructure Updates
+- Configure modern compilers (e.g., GCC or Clang) with `-std=c2x`.
+- Maintain compatibility with existing BSD makefiles while introducing
+  modern build options.
+- Integrate static analysis tools such as `clang-tidy`.
+
+## Phase 3: Userland Modernization
+- Update core libraries (`libc`, `libm`) to use ANSI C prototypes.
+- Replace unsafe string functions with bounded equivalents.
+- Introduce incremental tests for updated utilities.
+
+## Phase 4: Kernel Abstraction
+- Define a hardware abstraction layer to encapsulate architecture-specific
+  operations.
+- Begin refactoring scheduler and memory management code to use the HAL.
+
+## Phase 5: Device Driver Migration
+- Categorize drivers by interface type and update them to use the HAL.
+
+## Phase 6: Integration and Validation
+- Establish continuous integration builds for i686 and x86_64 targets.
+- Track regression tests and performance benchmarks.
+
+This plan is a starting point and will require significant effort to achieve a
+fully modernized system.
