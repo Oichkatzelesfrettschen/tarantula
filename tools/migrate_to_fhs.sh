@@ -31,16 +31,15 @@ if ! in_chroot && [ "$FORCE" -ne 1 ]; then
 fi
 
 # Ensure target directories exist
+
+# Handle common directories in a loop so the script can be rerun
 mkdir -p usr/bin usr/sbin usr/lib usr/libexec
 
-rsync -a bin/ usr/bin/
-rsync -a sbin/ usr/sbin/
-rsync -a lib/ usr/lib/
-rsync -a libexec/ usr/libexec/
-
-ln -snf usr/bin bin
-ln -snf usr/sbin sbin
-ln -snf usr/lib lib
-ln -snf usr/libexec libexec
+for d in bin sbin lib libexec; do
+    if [ -d "$d" ]; then
+        rsync -a "$d/" "usr/$d/"
+        ln -snf "usr/$d" "$d"
+    fi
+done
 
 echo "FHS migration complete."

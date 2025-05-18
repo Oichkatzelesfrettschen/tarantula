@@ -62,4 +62,11 @@ when modernizing historic BSD trees.
 
 Following these steps alongside the broader plan in `reorg_plan.md` helps turn
 the BSD distribution into a structure that is familiar to modern systems.
+## Remaining Manual Symlinks
+Some directories are not handled by `migrate_to_fhs.sh` and must be linked manually:
+- `sys` - kernel sources remain at the repository root
+- `Domestic` - U.S. cryptography sources
+- `Foreign` - externally maintained utilities
+Record additional directories here as they are discovered.
+
 

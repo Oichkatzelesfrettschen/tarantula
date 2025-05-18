@@ -16,6 +16,7 @@ For a summary of directory mappings during the reorganization see
 - Configure modern compilers (e.g., GCC or Clang) with `-std=c2x`.
 - Maintain compatibility with existing BSD makefiles while introducing
   modern build options.
+- Prototype CMake build files using **CMake 3.16+** to evaluate a cross-platform build system.
 - Integrate static analysis tools such as `clang-tidy`.
 
 ## Phase 3: Userland Modernization
