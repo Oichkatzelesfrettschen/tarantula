@@ -1,3 +1,9 @@
+
+all:
+	@echo "No tests yet"
+clean:
+	@true
+
 CC = gcc
 CFLAGS = -Wall -O2
 
@@ -14,3 +20,4 @@ clean:
 	rm -rf /tmp/pathtrans_test*
 
 .PHONY: all run clean
+

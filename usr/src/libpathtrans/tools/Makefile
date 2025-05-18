@@ -1,3 +1,9 @@
+
+all:
+	@echo "No tools yet"
+clean:
+	@true
+
 CC = gcc
 CFLAGS = -Wall -O2
 
@@ -10,3 +16,4 @@ clean:
 	rm -f pathtrans_db
 
 .PHONY: all clean
+
