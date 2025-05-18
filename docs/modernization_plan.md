@@ -30,6 +30,8 @@ future work.
 
 ## Phase 6: Integration and Validation
 - Establish continuous integration builds for i686 and x86_64 targets.
+  The GitHub workflow now compiles each architecture with GCC and Clang using
+  `-m32` or `-m64` flags.
 - Track regression tests and performance benchmarks.
 
 This plan is a starting point and will require significant effort to achieve a
