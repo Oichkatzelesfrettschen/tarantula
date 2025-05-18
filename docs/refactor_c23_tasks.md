@@ -86,4 +86,9 @@ This roadmap is intentionally high level. Full conversion of the 4.4BSD-Lite2 tr
   both GCC and Clang using the C23 standard flag.
 - New script `tools/build_collect_warnings.sh` builds the tree and captures
   compiler warnings for later cleanup.
+- CI now builds for both `x86_64` and `i686` using `-m64` and `-m32` flags.
+- `tools/build_collect_warnings.sh` accepts an `ARCH` variable to set these
+  flags when collecting warnings.
+- Library makefiles respect `CFLAGS_EXTRA` so cross-architecture builds no longer
+  override default flags.
 

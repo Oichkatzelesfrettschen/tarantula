@@ -1,6 +1,6 @@
 # Building the 4.4BSD-Lite2 kernel
 
-This short guide explains how to compile the historic 4.4BSD-Lite2 kernel on an i386 host. The steps mirror the classic workflow using `config` and `make`.
+This short guide explains how to compile the historic 4.4BSD-Lite2 kernel on an i386 host. The steps mirror the classic workflow using `config` and `make`. The same procedure works on modern x86_64 systems when passing the appropriate compiler flags.
 
 1. **Build the `config` utility**
    ```sh
@@ -21,7 +21,9 @@ This short guide explains how to compile the historic 4.4BSD-Lite2 kernel on an 
    ```sh
    cd ../compile/GENERIC.i386
    make depend
-   make
+   # Use CFLAGS_EXTRA to select the architecture
+   # e.g. CFLAGS_EXTRA=-m32 for i686 or -m64 for x86_64
+   make CFLAGS_EXTRA=-m32   # or -m64
    ```
    If successful, the resulting kernel binary (usually `vmunix`) appears in this directory.
 

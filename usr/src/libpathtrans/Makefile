@@ -1,6 +1,10 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -fPIC -O2 -D_GNU_SOURCE
 LDFLAGS = -shared -ldl -lpthread
+
+# Allow callers to pass additional flags, e.g. -m32 or -m64
+CFLAGS += $(CFLAGS_EXTRA)
+LDFLAGS += $(LDFLAGS_EXTRA)
 INCLUDES = -Iinclude
 
 SRC_DIR = src
@@ -26,10 +30,12 @@ $(LIB): $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $^
 
 tools: $(LIB)
-	$(MAKE) -C $(TOOL_DIR)
+	$(MAKE) -C $(TOOL_DIR) \
+                CFLAGS_EXTRA="$(CFLAGS_EXTRA)" LDFLAGS_EXTRA="$(LDFLAGS_EXTRA)"
 
 tests: $(LIB)
-	$(MAKE) -C $(TEST_DIR)
+	$(MAKE) -C $(TEST_DIR) \
+                CFLAGS_EXTRA="$(CFLAGS_EXTRA)" LDFLAGS_EXTRA="$(LDFLAGS_EXTRA)"
 
 clean:
 	rm -rf $(BUILD_DIR) $(LIB)

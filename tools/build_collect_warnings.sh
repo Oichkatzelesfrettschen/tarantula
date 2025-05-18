@@ -1,6 +1,18 @@
 #!/bin/sh
-# Build userland with optional CSTD flag and store warnings.
+# Build userland with optional CSTD and ARCH flags and store warnings.
 set -e
 LOGDIR="build_logs"
 mkdir -p "$LOGDIR"
-make -C usr/src CC="${CC:-cc}" CSTD="${CSTD:--std=c2x}" 2>&1 | tee "$LOGDIR/build.log"
+ARCH_FLAGS=""
+case "${ARCH}" in
+    i686)
+        ARCH_FLAGS="-m32"
+        ;;
+    x86_64)
+        ARCH_FLAGS="-m64"
+        ;;
+esac
+
+make -C usr/src CC="${CC:-cc}" CSTD="${CSTD:--std=c2x}" \
+    CFLAGS_EXTRA="${CFLAGS_EXTRA} ${ARCH_FLAGS}" \
+    2>&1 | tee "$LOGDIR/build_${ARCH:-native}.log"

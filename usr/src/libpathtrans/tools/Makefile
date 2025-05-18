@@ -1,16 +1,16 @@
 
-all:
-	@echo "No tools yet"
-clean:
-	@true
-
 CC = gcc
 CFLAGS = -Wall -O2
+LDFLAGS =
+
+# Allow extra flags from parent makefiles
+CFLAGS += $(CFLAGS_EXTRA)
+LDFLAGS += $(LDFLAGS_EXTRA)
 
 all: pathtrans_db
 
 pathtrans_db: pathtrans_db.c
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 clean:
 	rm -f pathtrans_db
