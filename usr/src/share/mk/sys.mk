@@ -13,12 +13,15 @@ RANLIB		?=	ranlib
 AS		?=	as
 AFLAGS		?=
 
-CC		?=	gcc
+CC              ?=      gcc
+
+# Optional C standard flag (e.g., -std=c2x for C23)
+CSTD            ?=
 
 .if ${MACHINE} == "sparc"
-CFLAGS		?=	-O4
+CFLAGS          ?=      -O4 ${CSTD}
 .else
-CFLAGS		?=	-O2
+CFLAGS          ?=      -O2 ${CSTD}
 .endif
 
 CPP		?=	cpp
