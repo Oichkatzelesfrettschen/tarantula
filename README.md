@@ -52,3 +52,8 @@ Downloaded from: ftp://alge.anart.no/pub/BSD/4.4BSD-Lite/4.4BSD-Lite2.tar.gz
 ### Others
 * A New Hashing Package for UNIX: https://github.com/sergev/4.4BSD-Lite2/blob/master/usr/src/lib/libc/db/doc/hash.usenix.pdf?raw=true
 * LIBTP: Portable, Modular Transactions for UNIX: https://github.com/sergev/4.4BSD-Lite2/blob/master/usr/src/lib/libc/db/doc/libtp.usenix.pdf?raw=true
+
+## Tools
+
+The `tools` directory contains helper scripts. `generate_dependency_graph.py` scans the source tree to build a DOT file of include dependencies and syscall implementations. Run `python3 tools/generate_dependency_graph.py` to produce `dependency_graph.dot` (use `--include-calls` to add a simple call graph).
+
