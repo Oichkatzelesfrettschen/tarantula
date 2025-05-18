@@ -2,11 +2,12 @@
 # Idempotent FHS migration helper
 # Copies legacy top-level directories into /usr and rewrites symlinks.
 # Refuses to run outside a chroot unless --force is given.
+# A dry-run mode prints the actions without performing them.
 
 set -e
 
 usage() {
-    echo "Usage: $0 [--force]" >&2
+    echo "Usage: $0 [--force] [--dry-run]" >&2
     exit 1
 }
 
@@ -19,28 +20,54 @@ in_chroot() {
 }
 
 FORCE=0
-if [ "$1" = "--force" ]; then
-    FORCE=1
-elif [ -n "$1" ]; then
-    usage
-fi
+DRYRUN=0
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --force)
+            FORCE=1
+            ;;
+        --dry-run)
+            DRYRUN=1
+            ;;
+        *)
+            usage
+            ;;
+    esac
+    shift
+done
+
+run_cmd() {
+    if [ "$DRYRUN" -eq 1 ]; then
+        echo "$*"
+    else
+        eval "$*"
+    fi
+}
+
+move_and_link() {
+    src="$1"
+    dst="$2"
+
+    [ -e "$src" ] || return 0
+
+    run_cmd "mkdir -p $(dirname "$dst")"
+    run_cmd "rsync -a \"$src/\" \"$dst/\""
+    run_cmd "rm -rf \"$src\""
+    run_cmd "ln -snf \"$dst\" \"$src\""
+}
 
 if ! in_chroot && [ "$FORCE" -ne 1 ]; then
     echo "Error: not running inside a chroot. Use --force to override." >&2
     exit 1
 fi
 
+
 # Ensure target directories exist
-mkdir -p usr/bin usr/sbin usr/lib usr/libexec
+run_cmd mkdir -p usr/bin usr/sbin usr/lib usr/libexec
 
-rsync -a bin/ usr/bin/
-rsync -a sbin/ usr/sbin/
-rsync -a lib/ usr/lib/
-rsync -a libexec/ usr/libexec/
-
-ln -snf usr/bin bin
-ln -snf usr/sbin sbin
-ln -snf usr/lib lib
-ln -snf usr/libexec libexec
+move_and_link bin usr/bin
+move_and_link sbin usr/sbin
+move_and_link lib usr/lib
+move_and_link libexec usr/libexec
 
 echo "FHS migration complete."
