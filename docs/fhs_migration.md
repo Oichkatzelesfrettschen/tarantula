@@ -18,8 +18,11 @@ Pass `--force` to override this safety check.
 sudo tools/migrate_to_fhs.sh --force
 ```
 
-After running the script you will find `bin`, `sbin`, `lib` and `libexec`
-symlinked to their counterparts in `/usr`.
+The script now accepts a `--dry-run` flag for previewing changes. When run
+without that flag it copies each legacy directory into `/usr`, removes the
+original and replaces it with a symlink to the new path. After completion you
+will find `bin`, `sbin`, `lib` and `libexec` symlinked to their counterparts in
+`/usr`.
 
 # FHS Migration Guide
 
@@ -52,13 +55,21 @@ when modernizing historic BSD trees.
 
 ## Migration steps
 
-1. Create the target directories following the FHS layout.
-2. Move files from their historical paths while preserving ownership and
-   permissions.
-3. Provide compatibility symlinks from the old locations to the new ones during
-   the transition period.
-4. Update makefiles and scripts to use the new paths.
-5. Document each mapping for future developers.
+1. Run `tools/create_inventory.py` to snapshot the current tree. The generated
+   `docs/file_inventory.txt` serves as a record of the pre-migration layout.
+2. Prepare a chroot environment (or pass `--force`) and execute
+   `tools/migrate_to_fhs.sh --dry-run` to review the planned actions.
+3. Execute `tools/migrate_to_fhs.sh` without `--dry-run` to copy directories
+   under `/usr` and replace the originals with symlinks.
+4. Verify the new symlinks by running `ls -l` on `bin`, `sbin` and related
+   directories.
+5. Update makefiles and scripts to reference the new paths. `grep -r "/bin"`
+   can help locate hard-coded locations.
+6. Once the build succeeds with the new layout, remove any compatibility links
+   that are no longer needed.
+7. Re-run `tools/create_inventory.py` so that `docs/file_inventory.txt` reflects
+   the updated structure and commit the results alongside documentation notes.
+8. Keep a log of each mapping for future developers.
 
 Following these steps alongside the broader plan in `reorg_plan.md` helps turn
 the BSD distribution into a structure that is familiar to modern systems.

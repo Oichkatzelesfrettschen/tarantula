@@ -17,4 +17,6 @@ This document outlines tasks for flattening the 4.4BSD-Lite2 source tree and mod
 3. Incrementally refactor C sources to ANSI prototypes and replace legacy headers.
 4. Compile each subsystem with modern compilers and run tests.
 5. Document all changes and keep references to original paths for traceability.
+6. Convert the historic directory layout using `tools/migrate_to_fhs.sh` and
+   maintain compatibility symlinks during the transition.
 
