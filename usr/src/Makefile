@@ -1,16 +1,11 @@
-#	@(#)Makefile	8.1 (Berkeley) 6/19/93
+# Makefile for building additional components with GNU make
 
-SUBDIR=	bin contrib games include kerberosIV lib libexec old sbin \
-	share usr.bin usr.sbin
+SUBDIRS := libpathtrans
 
-afterinstall:
-	(cd share/man && make makedb)
+all:
+	@for d in $(SUBDIRS); do $(MAKE) -C $$d; done
 
-build:
-	(cd include && make install)
-	make cleandir
-	(cd lib && make depend && make && make install)
-	(cd kerberosIV && make depend  && make && make install)
-	make depend && make && make install
-	
-.include <bsd.subdir.mk>
+clean:
+	@for d in $(SUBDIRS); do $(MAKE) -C $$d clean; done
+
+.PHONY: all clean $(SUBDIRS)
