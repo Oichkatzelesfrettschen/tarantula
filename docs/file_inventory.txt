@@ -136,10 +136,13 @@ dev/MAKEDEV.hpux
 dev/MAKEDEV.local
 docs/AGENTS.md
 docs/building_kernel.md
+docs/ci_workflows.md
+docs/fhs_migration.md
 docs/file_inventory.txt
 docs/file_tree.txt
 docs/modernization_plan.md
 docs/refactor_c23_tasks.md
+docs/reorg_continuation_tasks.md
 docs/reorg_plan.md
 etc/AGENTS.md
 etc/aliases
@@ -209,6 +212,7 @@ tools/create_inventory.py
 tools/generate_cscope.sh
 tools/generate_ctags.sh
 tools/generate_dependency_graph.py
+tools/migrate_to_fhs.sh
 usr/AGENTS.md
 usr/X11
 usr/bin/X11
@@ -14190,6 +14194,8 @@ usr/src/libpathtrans/src/pathtrans.c
 usr/src/libpathtrans/tests/.gitkeep
 usr/src/libpathtrans/tests/Makefile
 usr/src/libpathtrans/tests/run_tests.sh
+usr/src/libpathtrans/tests/test_disable_env.c
+usr/src/libpathtrans/tests/test_path_database.c
 usr/src/libpathtrans/tests/test_translation.c
 usr/src/libpathtrans/tools/.gitkeep
 usr/src/libpathtrans/tools/Makefile

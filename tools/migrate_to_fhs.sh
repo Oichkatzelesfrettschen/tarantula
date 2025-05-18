@@ -63,11 +63,25 @@ fi
 
 
 # Ensure target directories exist
+
+# Handle common directories in a loop so the script can be rerun
+mkdir -p usr/bin usr/sbin usr/lib usr/libexec
+
+for d in bin sbin lib libexec; do
+    if [ -d "$d" ]; then
+        rsync -a "$d/" "usr/$d/"
+        ln -snf "usr/$d" "$d"
+    fi
+done
+
+
+# Ensure target directories exist
 run_cmd mkdir -p usr/bin usr/sbin usr/lib usr/libexec
 
 move_and_link bin usr/bin
 move_and_link sbin usr/sbin
 move_and_link lib usr/lib
 move_and_link libexec usr/libexec
+
 
 echo "FHS migration complete."
