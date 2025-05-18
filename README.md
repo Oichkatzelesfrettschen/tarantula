@@ -4,6 +4,7 @@ The story: https://en.wikipedia.org/wiki/History_of_the_Berkeley_Software_Distri
 
 Downloaded from: ftp://alge.anart.no/pub/BSD/4.4BSD-Lite/4.4BSD-Lite2.tar.gz
 
+For kernel build instructions see [docs/building_kernel.md](docs/building_kernel.md).
 # Documentation
 
 ### User's Supplementary Documents
