@@ -1,6 +1,11 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -fPIC -O2 -D_GNU_SOURCE
-LDFLAGS = -shared -ldl -lpthread
+CC ?= gcc
+# Default compilation flags; callers may append architecture options
+# Base flags; caller may append via CFLAGS_EXTRA
+CFLAGS ?= -Wall -Wextra -fPIC -O2 -D_GNU_SOURCE
+CFLAGS += $(CFLAGS_EXTRA)
+# Allow the linker flags to be overridden so `-m32`/`-m64` can be passed
+LDFLAGS ?=
+LDFLAGS += -shared -ldl -lpthread
 INCLUDES = -Iinclude
 
 SRC_DIR = src
@@ -23,7 +28,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(LIB): $(OBJS)
-	$(CC) $(LDFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
 tools: $(LIB)
 	$(MAKE) -C $(TOOL_DIR)
