@@ -118,6 +118,15 @@
 #ifndef __dead
 #define	__dead
 #define	__pure
+/*
+ * Provide a fallback for the C11 `_Static_assert` keyword so headers can
+ * use compile-time checks even when compiled with older C dialects.
+ */
+#ifndef _Static_assert
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ < 201112L
+#define _Static_assert(expr, msg) typedef char __static_assert_t[(expr) ? 1 : -1]
+#endif
+#endif
 #endif
 
 #endif /* !_CDEFS_H_ */

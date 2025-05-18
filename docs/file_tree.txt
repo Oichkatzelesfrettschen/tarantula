@@ -1,0 +1,29 @@
+.
+.git
+  branches
+  hooks
+  info
+  logs
+  objects
+  refs
+Domestic
+  src
+Foreign
+  src
+dev
+docs
+etc
+  kerberosIV
+  mtree
+  namedb
+root
+tools
+usr
+  bin
+  lib
+  share
+  src
+  ucb
+var
+  log
+  run
