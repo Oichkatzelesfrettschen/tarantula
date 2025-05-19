@@ -1,6 +1,7 @@
 #!/bin/sh
 # Post-FHS source tree reorganization
-# Moves kernel and userland sources into consolidated directories.
+# Moves historical kernel and userland sources into consolidated directories
+# while preserving their old paths via symlinks.
 # Usage: organize_sources.sh [--force] [--dry-run]
 
 set -e
@@ -46,6 +47,9 @@ move_and_link() {
     src="$1"
     dst="$2"
     [ -e "$src" ] || return 0
+    if [ -L "$src" ] && [ "$(readlink "$src")" = "$dst" ]; then
+        return 0
+    fi
 
     run_cmd "mkdir -p \"$(dirname "$dst")\""
     run_cmd "rsync -a \"$src/\" \"$dst/\""
