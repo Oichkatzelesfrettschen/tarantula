@@ -7,6 +7,8 @@ This repository contains the 4.4BSD-Lite2 sources as released by the University 
 - `bin/`, `sbin/`, `usr.bin/`, `usr.sbin/` – user and system utilities
 - `lib/`, `libexec/`, `games/`, `share/` – libraries, daemons, games and shared data
 - `sys/` – kernel sources
+- `src-kernel/` – microkernel stubs and low-level hooks
+- `src-uland/` – user-level libraries and servers replacing kernel subsystems
 - `etc/`, `dev/`, `root/` – system configuration, device files and root account files
 - `usr/` – userland programs and manual pages
 - `var/` – runtime data
