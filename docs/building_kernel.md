@@ -9,7 +9,6 @@ export YACC=$(pwd)/yacc
 ```
 Then proceed with the steps below.
 
-
 1. **Build the `config` utility**
    ```sh
    cd usr/src/usr.sbin/config

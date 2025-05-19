@@ -36,9 +36,8 @@ For a summary of directory mappings during the reorganization see
 - Establish continuous integration builds for i686 and x86_64 targets.
   The GitHub workflow now compiles each architecture with GCC and Clang using
   `-m32` or `-m64` flags.
+
 - Update library makefiles to honor `CFLAGS`/`LDFLAGS` so both architectures
   link properly.
 - Track regression tests and performance benchmarks.
 
-This plan is a starting point and will require significant effort to achieve a
-fully modernized system.
