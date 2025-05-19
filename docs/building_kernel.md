@@ -1,6 +1,13 @@
 # Building the 4.4BSD-Lite2 kernel
 
 This short guide explains how to compile the historic 4.4BSD-Lite2 kernel on an i386 host. The steps mirror the classic workflow using `config` and `make`. The same procedure works on modern x86_64 systems when passing the appropriate compiler flags.
+If your host lacks `yacc` or `bison`, build the repository's bundled version first:
+```sh
+cd usr/src/usr.bin/yacc
+make clean && make
+export YACC=$(pwd)/yacc
+```
+Then proceed with the steps below.
 
 1. **Build the `config` utility**
    ```sh
@@ -27,3 +34,23 @@ This short guide explains how to compile the historic 4.4BSD-Lite2 kernel on an 
    If successful, the resulting kernel binary (usually `vmunix`) appears in this directory.
 
 If `build.sh` complains about failing to change into the compile directory, ensure that the `config` step ran successfully and that the `../compile/GENERIC.i386` directory exists.
+
+## Building modular components
+
+The microkernel plan extracts portions of `sys/kern` and `sys/dev` into user-space servers or loadable modules.  After building the core kernel you will compile each subsystem separately:
+
+1. Build the core kernel with unwanted drivers disabled.
+2. For a user-space server:
+   ```sh
+   cd servers/<subsystem>
+   make clean && make
+   ```
+   Install the resulting binary under `/usr/libexec` and configure the boot scripts to start it after the kernel loads.
+3. For a loadable module:
+   ```sh
+   cd modules/<subsystem>
+   make clean && make
+   sudo kldload <subsystem>.ko
+   ```
+
+These steps keep the historical sources intact while allowing new components to evolve outside the monolithic tree.

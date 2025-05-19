@@ -4,6 +4,9 @@ This document outlines initial steps toward analyzing and updating the 4.4BSD-Li
 codebase. It does not constitute a complete refactor, but provides guidance for
 future work.
 
+For a summary of directory mappings during the reorganization see
+[fhs_migration.md](fhs_migration.md).
+
 ## Phase 1: Codebase Analysis
 - Generate cross-reference databases using `cscope` and `ctags`.
 - Use `tools/analyze_codebase.py` to count source files by extension.
@@ -13,6 +16,7 @@ future work.
 - Configure modern compilers (e.g., GCC or Clang) with `-std=c2x`.
 - Maintain compatibility with existing BSD makefiles while introducing
   modern build options.
+- Prototype CMake build files using **CMake 3.16+** to evaluate a cross-platform build system.
 - Integrate static analysis tools such as `clang-tidy`.
 
 ## Phase 3: Userland Modernization
@@ -32,7 +36,8 @@ future work.
 - Establish continuous integration builds for i686 and x86_64 targets.
   The GitHub workflow now compiles each architecture with GCC and Clang using
   `-m32` or `-m64` flags.
+
+- Update library makefiles to honor `CFLAGS`/`LDFLAGS` so both architectures
+  link properly.
 - Track regression tests and performance benchmarks.
 
-This plan is a starting point and will require significant effort to achieve a
-fully modernized system.

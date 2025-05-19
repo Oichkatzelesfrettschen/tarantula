@@ -89,4 +89,6 @@ This roadmap is intentionally high level. Full conversion of the 4.4BSD-Lite2 tr
 - CI now builds for both `x86_64` and `i686` using `-m64` and `-m32` flags.
 - `tools/build_collect_warnings.sh` accepts an `ARCH` variable to set these
   flags when collecting warnings.
+- `usr/src/libpathtrans` now respects `CFLAGS` and `LDFLAGS` so cross-
+  architecture builds link correctly.
 
