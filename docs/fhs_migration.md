@@ -61,21 +61,25 @@ when modernizing historic BSD trees.
    `tools/migrate_to_fhs.sh --dry-run` to review the planned actions.
 3. Execute `tools/migrate_to_fhs.sh` without `--dry-run` to copy directories
    under `/usr` and replace the originals with symlinks.
-4. Verify the new symlinks by running `ls -l` on `bin`, `sbin` and related
+4. Run `tools/organize_sources.sh` to relocate the source tree. This moves
+   the kernel into `src-kernel`, user programs into `src-uland`, headers into
+   `src-headers` and library objects into `src-lib`.
+5. Verify the new symlinks by running `ls -l` on `bin`, `sbin` and related
    directories.
-5. Update makefiles and scripts to reference the new paths. `grep -r "/bin"`
+6. Update makefiles and scripts to reference the new paths. `grep -r "/bin"`
    can help locate hard-coded locations.
-6. Once the build succeeds with the new layout, remove any compatibility links
+7. Once the build succeeds with the new layout, remove any compatibility links
    that are no longer needed.
-7. Re-run `tools/create_inventory.py` so that `docs/file_inventory.txt` reflects
+8. Re-run `tools/create_inventory.py` so that `docs/file_inventory.txt` reflects
    the updated structure and commit the results alongside documentation notes.
-8. Keep a log of each mapping for future developers.
+9. Keep a log of each mapping for future developers.
 
 Following these steps alongside the broader plan in `reorg_plan.md` helps turn
 the BSD distribution into a structure that is familiar to modern systems.
 ## Remaining Manual Symlinks
-Some directories are not handled by `migrate_to_fhs.sh` and must be linked manually:
-- `sys` - kernel sources remain at the repository root
+Some directories are not handled by `migrate_to_fhs.sh` and must be linked manually.
+After running `tools/organize_sources.sh` the kernel sources live in `src-kernel`.
+Directories that still require manual handling include:
 - `Domestic` - U.S. cryptography sources
 - `Foreign` - externally maintained utilities
 Record additional directories here as they are discovered.
