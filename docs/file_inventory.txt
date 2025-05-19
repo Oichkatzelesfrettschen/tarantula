@@ -140,6 +140,7 @@ docs/ci_workflows.md
 docs/fhs_migration.md
 docs/file_inventory.txt
 docs/file_tree.txt
+docs/microkernel_plan.md
 docs/modernization_plan.md
 docs/refactor_c23_tasks.md
 docs/reorg_continuation_tasks.md

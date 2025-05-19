@@ -35,3 +35,23 @@ Then proceed with the steps below.
    If successful, the resulting kernel binary (usually `vmunix`) appears in this directory.
 
 If `build.sh` complains about failing to change into the compile directory, ensure that the `config` step ran successfully and that the `../compile/GENERIC.i386` directory exists.
+
+## Building modular components
+
+The microkernel plan extracts portions of `sys/kern` and `sys/dev` into user-space servers or loadable modules.  After building the core kernel you will compile each subsystem separately:
+
+1. Build the core kernel with unwanted drivers disabled.
+2. For a user-space server:
+   ```sh
+   cd servers/<subsystem>
+   make clean && make
+   ```
+   Install the resulting binary under `/usr/libexec` and configure the boot scripts to start it after the kernel loads.
+3. For a loadable module:
+   ```sh
+   cd modules/<subsystem>
+   make clean && make
+   sudo kldload <subsystem>.ko
+   ```
+
+These steps keep the historical sources intact while allowing new components to evolve outside the monolithic tree.
