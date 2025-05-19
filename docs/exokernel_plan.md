@@ -21,6 +21,9 @@ The layout introduced in the microkernel plan remains with slight changes:
 - `src-uland/` – user-level libraries and servers that implement traditional OS functionality.
 - `include/` – headers shared between the exokernel and user components.
 
+The specific subsystems being moved are listed in
+[exokernel_subsystems.md](exokernel_subsystems.md).
+
 Steps from `tools/migrate_to_fhs.sh` still place these directories under `/usr` during migration. See [fhs_migration.md](fhs_migration.md) for details.
 
 ## Refactor Steps
