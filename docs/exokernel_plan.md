@@ -20,11 +20,8 @@ The layout introduced in the microkernel plan remains with slight changes:
 - `src-kernel/` – exokernel core providing only protection and low-level resource handling.
 - `src-uland/` – user-level libraries and servers that implement traditional OS functionality.
 - `include/` – headers shared between the exokernel and user components.
-
-The helper script `tools/organize_sources.sh` reorganizes the historic tree by
-moving `sys/` into `src-kernel/` and `usr/src/` into `src-uland/`. Symlinks are
-left behind so that build scripts referring to the old locations continue to
-work.
+- The specific subsystems being moved are listed in
+[exokernel_subsystems.md](exokernel_subsystems.md).
 
 Steps from `tools/migrate_to_fhs.sh` still place these directories under `/usr` during migration. See [fhs_migration.md](fhs_migration.md) for details.
 
