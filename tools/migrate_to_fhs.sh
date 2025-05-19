@@ -65,7 +65,6 @@ fi
 # Ensure target directories exist
 
 # Handle common directories in a loop so the script can be rerun
-mkdir -p usr/bin usr/sbin usr/lib usr/libexec
 
 for d in bin sbin lib libexec; do
     if [ -d "$d" ]; then
