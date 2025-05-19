@@ -12,7 +12,7 @@ jobs:
       - name: Install GCC
         run: sudo apt-get update && sudo apt-get install -y build-essential gcc-multilib
       - name: Build with GCC C23 x86_64
-        run: make -C usr/src CC=gcc CSTD=-std=c2x CFLAGS_EXTRA='-m64'
+        run: make -C usr/src CC=gcc CSTD=-std=c2x CFLAGS='-m64'
 
   gcc-i686:
     runs-on: ubuntu-latest
@@ -21,7 +21,7 @@ jobs:
       - name: Install GCC
         run: sudo apt-get update && sudo apt-get install -y build-essential gcc-multilib
       - name: Build with GCC C23 i686
-        run: make -C usr/src CC=gcc CSTD=-std=c2x CFLAGS_EXTRA='-m32'
+        run: make -C usr/src CC=gcc CSTD=-std=c2x CFLAGS='-m32'
 
   clang-amd64:
     runs-on: ubuntu-latest
@@ -30,7 +30,7 @@ jobs:
       - name: Install Clang
         run: sudo apt-get update && sudo apt-get install -y clang make gcc-multilib
       - name: Build with Clang C23 x86_64
-        run: make -C usr/src CC=clang CSTD=-std=c2x CFLAGS_EXTRA='-m64'
+        run: make -C usr/src CC=clang CSTD=-std=c2x CFLAGS='-m64'
 
   clang-i686:
     runs-on: ubuntu-latest
@@ -39,4 +39,4 @@ jobs:
       - name: Install Clang
         run: sudo apt-get update && sudo apt-get install -y clang make gcc-multilib
       - name: Build with Clang C23 i686
-        run: make -C usr/src CC=clang CSTD=-std=c2x CFLAGS_EXTRA='-m32'
+        run: make -C usr/src CC=clang CSTD=-std=c2x CFLAGS='-m32'

@@ -1,6 +1,6 @@
 # GitHub CI Workflows
 
-This document describes recommended workflows for integrating CodeQL security scanning and Reviewdog-based linting.
+This document describes recommended workflows for integrating CodeQL security scanning and Reviewdog-based linting. Sample workflow files can be found in `.github/workflows/codeql-analysis.yml` and `.github/workflows/reviewdog.yml`.
 
 ## CodeQL with Bundled Query Packs
 
@@ -108,7 +108,8 @@ jobs:
         sudo apt-get update -y
         sudo apt-get install -y shellcheck
     - name: Run ${{ matrix.linter.id }} & feed Reviewdog
-      uses: reviewdog/reviewdog@main
+      uses: reviewdog/reviewdog@v0.20.3
+      uses: reviewdog/reviewdog@master
       with:
         name: ${{ matrix.linter.id }}
         reporter: github-pr-check
