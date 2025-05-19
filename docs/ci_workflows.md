@@ -109,6 +109,7 @@ jobs:
         sudo apt-get install -y shellcheck
     - name: Run ${{ matrix.linter.id }} & feed Reviewdog
       uses: reviewdog/reviewdog@v0.20.3
+      uses: reviewdog/reviewdog@master
       with:
         name: ${{ matrix.linter.id }}
         reporter: github-pr-check

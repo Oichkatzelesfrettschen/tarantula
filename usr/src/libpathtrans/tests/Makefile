@@ -1,23 +1,25 @@
-
-all:
-	@echo "No tests yet"
-clean:
-	@true
-
 CC = gcc
 CFLAGS = -Wall -O2
+LDLIBS = -L.. -Wl,-rpath=.. -lpathtrans -pthread -ldl
 
-all: test_translation
+TARGETS = test_translation test_path_database test_disable_env
 
-run: all run_tests.sh
+all: $(TARGETS)
+
+run: all
 	./run_tests.sh
 
 test_translation: test_translation.c
 	$(CC) $(CFLAGS) -o $@ $^
 
+test_path_database: test_path_database.c
+	$(CC) $(CFLAGS) -I../include $^ $(LDLIBS) -o $@
+
+test_disable_env: test_disable_env.c
+	$(CC) $(CFLAGS) -o $@ $^
+
 clean:
-	rm -f test_translation
+	rm -f $(TARGETS)
 	rm -rf /tmp/pathtrans_test*
 
 .PHONY: all run clean
-

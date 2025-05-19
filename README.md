@@ -6,7 +6,8 @@ Downloaded from: ftp://alge.anart.no/pub/BSD/4.4BSD-Lite/4.4BSD-Lite2.tar.gz
 
 For kernel build instructions see [docs/building_kernel.md](docs/building_kernel.md).
 For GitHub CI examples see [docs/ci_workflows.md](docs/ci_workflows.md).
-# Documentation
+For FHS migration steps see [docs/fhs_migration.md](docs/fhs_migration.md).
+For exokernel tasks see [docs/exokernel_plan.md](docs/exokernel_plan.md).
 
 ### User's Supplementary Documents
 * An Introduction to the C shell: https://github.com/sergev/4.4BSD-Lite2/blob/master/usr/share/doc/usd/04.csh.pdf?raw=true
