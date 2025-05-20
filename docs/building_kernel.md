@@ -54,3 +54,23 @@ The microkernel plan extracts portions of `sys/kern` and `sys/dev` into user-spa
    ```
 
 These steps keep the historical sources intact while allowing new components to evolve outside the monolithic tree.
+
+## Building the Exokernel Variant
+
+The exokernel layout relocates sources using `tools/organize_sources.sh`. After running the script the kernel sources live in `src-kernel/` and user-level code moves to `src-uland/`. The script finishes with the message `Source tree organization complete.`.
+
+1. **Compile the exokernel**
+   ```sh
+   cd src-kernel
+   make clean && make
+   ```
+   Use the same environment variables as the classic build. If `YACC` was exported earlier, export it again before invoking `make`. Append `CFLAGS=-m32` or `CFLAGS=-m64` for your architecture as needed.
+
+2. **Build user-space managers**
+   ```sh
+   cd src-uland/managers/<name>
+   make clean && make
+   ```
+   Install each manager under `/usr/libexec` or another appropriate directory.
+
+No additional make targets are defined yet; simply run `make` in each directory to compile the components.
