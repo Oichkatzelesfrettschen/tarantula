@@ -38,7 +38,7 @@ Steps from `tools/migrate_to_fhs.sh` still place these directories under `/usr` 
    - Continue following the FHS migration guide to ensure files end up under `/usr/src-kernel` and `/usr/src-uland`.
 5. **Testing**
    - Compile the exokernel following the steps in [building_kernel.md](building_kernel.md).
-   - Boot with minimal services to validate that user-level managers can start and allocate resources correctly.
+   - Boot with minimal services to validate that user-level managers can start and allocate resources correctly. See [exokernel_testing.md](exokernel_testing.md) for a detailed walkthrough.
 
 ## Mapping FHS Tasks
 
