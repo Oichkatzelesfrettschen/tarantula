@@ -6,7 +6,7 @@ This reference records where each kernel component from the microkernel plan wil
 |-----------|------------------|-----------------|----------------|
 | Console driver | `sys/dev/cons*` | `src-uland/servers/` | no new name defined |
 | File server | `sys/kern/vfs*` | `src-uland/servers/` | no new name defined |
-| Process manager | `sys/kern/kern_proc.c` | `src-uland/servers/` | no new name defined |
+| Process manager | `sys/kern/kern_proc.c` | `src-uland/servers/proc_manager/` | no new name defined |
 | Scheduler | `sys/kern/kern_sched.c` | `src-uland/servers/` | no new name defined |
 | Virtual memory manager | `sys/vm/` | `src-uland/servers/` | no new name defined |
 | Device drivers | `sys/dev/*` | `src-uland/servers/` | drivers compiled as separate tasks |
