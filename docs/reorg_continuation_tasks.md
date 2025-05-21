@@ -5,15 +5,15 @@ This document outlines tasks for agents to continue migrating the 4.4BSD-Lite2 t
 
 ## Short-Term Goals
 
-- [ ] **Finalize FHS Mapping**
+- [x] **Finalize FHS Mapping**
   - [x] Document any remaining directories that require manual symlink creation
-  - [ ] Verify that all top-level directories are mapped to their FHS equivalents
+  - [x] Verify that all top-level directories are mapped to their FHS equivalents
 - [ ] **Update Build Scripts**
   - [ ] Adjust makefiles under `usr/src` to reference the new paths created during the migration
   - [x] Ensure `tools/migrate_to_fhs.sh` updates symlinks when rerun
-- [ ] **Inventory Remaining Legacy Files**
+- [x] **Inventory Remaining Legacy Files**
   - [x] Use `tools/create_inventory.py` to produce an updated file list
-  - [ ] Mark files that are deprecated or replaced in the modern layout
+  - [x] Mark files that are deprecated or replaced in the modern layout
 ## Mid-Term Goals
 
 1. **Library Consolidation**

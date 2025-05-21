@@ -84,4 +84,26 @@ Directories that still require manual handling include:
 - `Foreign` - externally maintained utilities
 Record additional directories here as they are discovered.
 
+## Top-level Directory Mapping
+
+The table below summarizes how each directory at the root of this repository
+corresponds to a location in the FHS layout after running the migration tools.
+
+| Directory       | FHS Location       | Notes |
+|-----------------|--------------------|-------|
+| `dev/`          | `/dev`             | Device nodes and `MAKEDEV` scripts |
+| `etc/`          | `/etc`             | System configuration samples |
+| `root/`         | `/root`            | Superuser home directory |
+| `usr/`          | `/usr`             | Userland utilities and libraries |
+| `var/`          | `/var`             | Runtime state such as logs |
+| `sys/`          | `/usr/src/sys`     | Historical kernel sources |
+| `src-kernel/`   | `/usr/src-kernel`  | Microkernel or exokernel sources |
+| `src-uland/`    | `/usr/src-uland`   | User-space services and libraries |
+| `include/`      | `/usr/include`     | Headers collected by `src-headers` |
+| `docs/`         | `/usr/share/doc`   | Build and modernization notes |
+| `tools/`        | `/usr/share/tools` | Helper scripts used during the build |
+| `Domestic/`     | `/usr/src-domestic`| Manual symlink required |
+| `Foreign/`      | `/usr/src-foreign` | Manual symlink required |
+
+
 
