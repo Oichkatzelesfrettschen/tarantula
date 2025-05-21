@@ -1,12 +1,17 @@
 SRCS = $(wildcard *.c)
 OBJS = $(SRCS:.c=.o)
-LIB = libvm.a
-CC?=cc
-AR?=ar
-CFLAGS?=-O2
+LIB  = libvm.a
+
+CC ?= cc
+AR ?= ar
+CFLAGS ?= -O2
 
 all: $(LIB)
-	$(LIB): $(OBJS)
+
+$(LIB): $(OBJS)
 	$(AR) rcs $@ $(OBJS)
-	clean:
+
+clean:
 	rm -f $(OBJS) $(LIB)
+
+.PHONY: all clean
