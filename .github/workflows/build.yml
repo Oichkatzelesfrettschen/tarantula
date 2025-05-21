@@ -19,6 +19,12 @@ jobs:
           path: docs/file_inventory.txt
       - name: Build with GCC C23 x86_64
         run: make -C usr/src CC=gcc CSTD=-std=c2x CFLAGS='-m64'
+      - name: Build kernel stubs
+        run: make -C src-kernel CC=gcc CFLAGS='-m64'
+      - name: Build userland libraries
+        run: |
+          make -C src-uland/libkern_sched CC=gcc CFLAGS='-m64'
+          make -C src-uland/libvm CC=gcc CFLAGS='-m64'
 
   gcc-i686:
     runs-on: ubuntu-latest
@@ -34,6 +40,12 @@ jobs:
           path: docs/file_inventory.txt
       - name: Build with GCC C23 i686
         run: make -C usr/src CC=gcc CSTD=-std=c2x CFLAGS='-m32'
+      - name: Build kernel stubs
+        run: make -C src-kernel CC=gcc CFLAGS='-m32'
+      - name: Build userland libraries
+        run: |
+          make -C src-uland/libkern_sched CC=gcc CFLAGS='-m32'
+          make -C src-uland/libvm CC=gcc CFLAGS='-m32'
 
   clang-amd64:
     runs-on: ubuntu-latest
@@ -49,6 +61,12 @@ jobs:
           path: docs/file_inventory.txt
       - name: Build with Clang C23 x86_64
         run: make -C usr/src CC=clang CSTD=-std=c2x CFLAGS='-m64'
+      - name: Build kernel stubs
+        run: make -C src-kernel CC=clang CFLAGS='-m64'
+      - name: Build userland libraries
+        run: |
+          make -C src-uland/libkern_sched CC=clang CFLAGS='-m64'
+          make -C src-uland/libvm CC=clang CFLAGS='-m64'
 
   clang-i686:
     runs-on: ubuntu-latest
@@ -64,3 +82,9 @@ jobs:
           path: docs/file_inventory.txt
       - name: Build with Clang C23 i686
         run: make -C usr/src CC=clang CSTD=-std=c2x CFLAGS='-m32'
+      - name: Build kernel stubs
+        run: make -C src-kernel CC=clang CFLAGS='-m32'
+      - name: Build userland libraries
+        run: |
+          make -C src-uland/libkern_sched CC=clang CFLAGS='-m32'
+          make -C src-uland/libvm CC=clang CFLAGS='-m32'
