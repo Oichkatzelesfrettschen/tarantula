@@ -4,6 +4,8 @@ This document sketches out an incremental approach for isolating select subsyste
 
 ## Overview
 This plan transitions the monolithic BSD kernel into a minimal microkernel and moves device drivers and system servers into user space. Steps reference the FHS migration guide and the roles listed in reorg_plan.md.
+For background on MINIX 3 features influencing this roadmap, see [minix3_concepts.md](minix3_concepts.md).
+
 
 ## Candidate subsystems
 
