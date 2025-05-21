@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "../include/exokernel.h"
 /* Stubs delegating to user-space VM library */
 extern int uland_vm_fault(void *addr);
 int
