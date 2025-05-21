@@ -55,7 +55,10 @@ The microkernel plan extracts portions of `sys/kern` and `sys/dev` into user-spa
    make clean && make
    sudo kldload <subsystem>.ko
    ```
+4. List the module in `/etc/loader.conf` if it should load automatically at boot.
+5. Start user-space servers via init scripts (e.g., `/etc/rc.local`).
 
+The original kernel sources remain under `sys` for historical reference. Place rewritten modules and user-space servers in the new directories so the archived files stay untouched.
 These steps keep the historical sources intact while allowing new components to evolve outside the monolithic tree.
 
 ## Building the Exokernel Variant
