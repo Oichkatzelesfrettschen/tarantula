@@ -1,13 +1,16 @@
 SRCS = $(wildcard vfs_*.c)
 OBJS = $(SRCS:.c=.o)
 PROG = fs_server
-CC?=cc
-CFLAGS?=-O2
+
+CC ?= cc
+CFLAGS ?= -O2
 
 all: $(PROG)
 
-	$(PROG): $(OBJS)
+$(PROG): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $@
 
-	clean:
+clean:
 	rm -f $(OBJS) $(PROG)
+
+.PHONY: all clean
