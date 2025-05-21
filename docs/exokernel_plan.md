@@ -19,7 +19,9 @@ The layout introduced in the microkernel plan remains with slight changes:
 
 - `src-kernel/` – exokernel core providing only protection and low-level resource handling.
 - `src-uland/` – user-level libraries and servers that implement traditional OS functionality.
-- `include/` – headers shared between the exokernel and user components.
+- `include/` – headers shared between the exokernel and user components. The
+  `exokernel.h` header declares stub entry points `kern_sched_init`,
+  `kern_open` and `kern_vm_fault`.
 - The specific subsystems being moved are listed in
 [exokernel_subsystems.md](exokernel_subsystems.md).
 

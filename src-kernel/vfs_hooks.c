@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "../include/exokernel.h"
 /* Stubs delegating to user-space file server */
 extern int fs_open(const char *path, int flags);
 int
