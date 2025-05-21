@@ -3,7 +3,9 @@ import re
 import argparse
 
 # Default locations within this repository
-DEFAULT_BASE = ['usr/src']
+# By default we scan the traditional tree along with the modern kernel and
+# userland directories.
+DEFAULT_BASE = ['usr/src', 'src-kernel', 'src-uland']
 DEFAULT_MASTER = 'usr/src/sys/kern/syscalls.master'
 
 INCLUDE_QUOTE_RE = re.compile(r'#include\s+"([^"]+)"')
@@ -125,9 +127,21 @@ def map_function_calls(files, func_defs):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Generate a dependency graph')
-    parser.add_argument('--base', action='append', default=list(DEFAULT_BASE),
-                        help='Base directories to scan (may be repeated)')
+    parser = argparse.ArgumentParser(
+        description=(
+            'Generate a dependency graph. By default the script scans '
+            'usr/src, src-kernel, and src-uland.'
+        )
+    )
+    parser.add_argument(
+        '--base',
+        action='append',
+        default=list(DEFAULT_BASE),
+        help=(
+            'Base directories to scan (may be repeated; defaults to '
+            'usr/src, src-kernel, and src-uland)'
+        ),
+    )
     parser.add_argument('--master', default=DEFAULT_MASTER,
                         help='Path to syscalls.master')
     parser.add_argument('--include-calls', action='store_true',
