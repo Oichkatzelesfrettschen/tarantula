@@ -1,7 +1,10 @@
 # Building the 4.4BSD-Lite2 kernel
 
 This short guide explains how to compile the historic 4.4BSD-Lite2 kernel on an i386 host. The steps mirror the classic workflow using `config` and `make`. The same procedure works on modern x86_64 systems when passing the appropriate compiler flags.
-If your host lacks `yacc` or `bison`, build the repository's bundled version first:
+
+Before building, run the repository's `setup.sh` script as root to install all required toolchains and utilities. The script installs **byacc** so the build can proceed even if your system lacks `yacc`.
+
+If your host still lacks `yacc` or `bison`, build the repository's bundled version first:
 ```sh
 cd usr/src/usr.bin/yacc
 make clean && make
