@@ -61,9 +61,11 @@ when modernizing historic BSD trees.
    `tools/migrate_to_fhs.sh --dry-run` to review the planned actions.
 3. Execute `tools/migrate_to_fhs.sh` without `--dry-run` to copy directories
    under `/usr` and replace the originals with symlinks.
-4. Run `tools/post_fhs_cleanup.sh --dry-run` to preview how the source tree
-   will be reorganized.
-5. Execute `tools/post_fhs_cleanup.sh` (add `--force` when outside the chroot)
+4. Run `tools/migrate_to_src_layout.sh --dry-run` to preview how the source tree
+   will be reorganized. The script performs the same moves as
+   `tools/organize_sources.sh` and supersedes the old
+   `tools/post_fhs_cleanup.sh` helper.
+5. Execute `tools/migrate_to_src_layout.sh` (add `--force` when outside the chroot)
    to relocate the sources. The script moves the kernel into `src-kernel`, user
    programs into `src-uland`, headers into `src-headers` and library objects
    into `src-lib`.
@@ -81,7 +83,7 @@ Following these steps alongside the broader plan in `reorg_plan.md` helps turn
 the BSD distribution into a structure that is familiar to modern systems.
 ## Remaining Manual Symlinks
 Some directories are not handled by `migrate_to_fhs.sh` and must be linked manually.
-After running `tools/post_fhs_cleanup.sh` the kernel sources live in `src-kernel`.
+After running `tools/migrate_to_src_layout.sh` the kernel sources live in `src-kernel`.
 Directories that still require manual handling include:
 - `Domestic` - U.S. cryptography sources
 - `Foreign` - externally maintained utilities
