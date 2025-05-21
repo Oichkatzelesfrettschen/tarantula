@@ -27,6 +27,7 @@ Steps from `tools/migrate_to_fhs.sh` still place these directories under `/usr` 
 
 1. **Inventory**
    - Use `tools/create_inventory.py` as described in [building_kernel.md](building_kernel.md) to capture the current tree.
+   - The CI workflow runs `make inventory` and uploads `docs/file_inventory.txt` so each branch records its file list.
 2. **Kernel Minimization**
    - Strip existing kernel files to a bare allocator, context switch code and interrupt handlers.
    - Provide system calls for safe access to hardware resources (CPU time slices, memory pages, I/O ports).
@@ -36,6 +37,7 @@ Steps from `tools/migrate_to_fhs.sh` still place these directories under `/usr` 
 4. **Build System Updates**
    - Update makefiles so the exokernel and user managers build separately but link during installation.
    - Continue following the FHS migration guide to ensure files end up under `/usr/src-kernel` and `/usr/src-uland`.
+   - Use `tools/find_or_build_yacc.sh` to ensure a working `yacc` is available during the build.
 5. **Testing**
    - Compile the exokernel following the steps in [building_kernel.md](building_kernel.md).
    - Boot with minimal services to validate that user-level managers can start and allocate resources correctly.

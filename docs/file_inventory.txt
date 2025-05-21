@@ -127,6 +127,7 @@ Foreign/src/telnetd/state.c
 Foreign/src/telnetd/telnetd.c
 Foreign/src/telnetd/termstat.c
 Foreign/src/telnetd/utility.c
+Makefile
 README.md
 SOURCE_TREE_OVERVIEW.md
 dependency_graph.dot
@@ -137,6 +138,7 @@ dev/MAKEDEV.local
 docs/AGENTS.md
 docs/building_kernel.md
 docs/ci_workflows.md
+docs/exokernel_plan.md
 docs/fhs_migration.md
 docs/file_inventory.txt
 docs/file_tree.txt
@@ -210,10 +212,12 @@ tools/AGENTS.md
 tools/analyze_codebase.py
 tools/build_collect_warnings.sh
 tools/create_inventory.py
+tools/find_or_build_yacc.sh
 tools/generate_cscope.sh
 tools/generate_ctags.sh
 tools/generate_dependency_graph.py
 tools/migrate_to_fhs.sh
+tools/organize_sources.sh
 usr/AGENTS.md
 usr/X11
 usr/bin/X11
@@ -19779,6 +19783,7 @@ usr/src/usr.bin/xstr/tags
 usr/src/usr.bin/xstr/xstr.1
 usr/src/usr.bin/xstr/xstr.c
 usr/src/usr.bin/yacc/ACKNOWLEDGEMENTS
+usr/src/usr.bin/yacc/CMakeLists.txt
 usr/src/usr.bin/yacc/Makefile
 usr/src/usr.bin/yacc/NEW_FEATURES
 usr/src/usr.bin/yacc/NOTES

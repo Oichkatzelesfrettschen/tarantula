@@ -1,6 +1,11 @@
 # Simplified GNU makefile for the config utility
 PROG = config
 CFLAGS += -I. -I$(CURDIR)
+
+# Allow overriding yacc and lex implementations
+YACC ?= yacc
+LEX ?= lex
+
 SRCS = config.c main.c lang.c mkioconf.c mkmakefile.c mkglue.c mkheaders.c \
        mkswapconf.c
 LDADD = -ll
@@ -12,6 +17,14 @@ all: $(PROG)
 
 $(PROG): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LDADD) -o $@
+
+config.c y.tab.h: config.y
+	$(YACC) -d $<
+	mv y.tab.c config.c
+
+lang.c: lang.l
+	$(LEX) $<
+	mv lex.yy.c lang.c
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
