@@ -15,12 +15,12 @@ The following components under `sys/kern` and `sys/dev` are early candidates for
 - **Scheduler** – refactor `sys/kern/kern_sched.c` to operate as a pluggable scheduling module.
 - **Virtual memory manager** – split the VM subsystem (currently under `sys/vm`) for use as a memory service.
 - **Device drivers** – SCSI and network adapters from `sys/dev` compiled as independent driver tasks.
+- **Networking stack** – transition `sys/net` protocols and network drivers into a separate network server.
 
 These subsystems will initially build as normal kernel objects.  As the microkernel takes shape they can be compiled into user-space servers or loadable modules.
 
 ## Maintaining historical files
-
-To keep provenance, the original sources remain under `sys/kern` and `sys/dev`.  New implementations should live in separate directories (for example `servers/` or `modules/`) with comments referencing the original file paths.  This allows archival copies to stay untouched while new code evolves.
+To keep provenance, the original sources remain under `sys/kern` and `sys/dev`. When a subsystem is extracted copy the files to a new location (`src-kernel/` for kernel code or `servers/`/`drivers/` for user components). Leave the originals intact or rename them with a `.orig` suffix and insert a brief comment pointing to the replacement. This preserves the historical tree for reference.
 
 
 # Microkernel Refactor Plan
