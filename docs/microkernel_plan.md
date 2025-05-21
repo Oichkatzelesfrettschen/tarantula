@@ -1,7 +1,9 @@
-
 # Microkernel Extraction Plan
 
 This document sketches out an incremental approach for isolating select subsystems from the monolithic 4.4BSD-Lite2 kernel.  The goal is to experiment with a microkernel design while preserving the historical sources.
+
+## Overview
+This plan transitions the monolithic BSD kernel into a minimal microkernel and moves device drivers and system servers into user space. Steps reference the FHS migration guide and the roles listed in reorg_plan.md.
 
 ## Candidate subsystems
 
