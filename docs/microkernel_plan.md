@@ -81,3 +81,19 @@ The migration steps listed in [fhs_migration.md](fhs_migration.md) apply to the 
 
 Following this plan will separate kernel responsibilities into a microkernel while reusing the FHS migration workflow and the role-based tasks from `reorg_plan.md`.
 
+## Organizing Sources Under `src-*`
+
+After completing the FHS migration steps (running `migrate_to_fhs.sh` and
+`post_fhs_cleanup.sh` as described in [fhs_migration.md](fhs_migration.md)), the
+repository can be reorganized so that code lives under the `src-*` directories.
+Use `tools/organize_sources.sh` to perform this move. Preview the changes with:
+
+```sh
+tools/organize_sources.sh --dry-run
+```
+
+When executed without `--dry-run`, the script relocates `sys/` into
+`src-kernel/` and `usr/src/` into `src-uland/`, leaving symlinks at the original
+paths. Running it after the migration scripts ensures the microkernel build
+operates on the consolidated layout referenced throughout this plan.
+
