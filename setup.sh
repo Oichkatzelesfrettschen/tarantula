@@ -29,8 +29,10 @@ apt_pin_install(){
 for arch in i386 armel armhf arm64 riscv64 powerpc ppc64el ia64; do
   dpkg --add-architecture "$arch"
 done
-
 apt-get update -y >/dev/null 2>&1 || echo "apt-get update failed" >> "$FAIL_LOG"
+# guarantee bmake and bison are present
+apt_pin_install bmake
+apt_pin_install bison
 
 # core build tools, formatters, analysis, science libs
 for pkg in \
@@ -177,21 +179,18 @@ unzip -d /usr/local /tmp/protoc.zip
 rm /tmp/protoc.zip
 
 
-# gmake alias
-# provide a yacc wrapper via bison when needed
-if ! command -v yacc >/dev/null 2>&1; then
-  if command -v bison >/dev/null 2>&1; then
-    ln -s "$(command -v bison)" /usr/local/bin/yacc
-  elif [ -f "$(dirname "$0")/usr/src/usr.bin/yacc/Makefile" ]; then
-    (cd "$(dirname "$0")/usr/src/usr.bin/yacc" && \
-      { command -v bmake >/dev/null 2>&1 && bmake clean && bmake; } || \
-      { command -v gmake >/dev/null 2>&1 && gmake clean && gmake; } || \
-      { make clean && make; })
-    install -m755 "$(dirname "$0")/usr/src/usr.bin/yacc/yacc" /usr/local/bin/yacc
-  fi
+# ensure yacc points to bison and gmake invokes bmake
+if command -v bison >/dev/null 2>&1; then
+  ln -sf "$(command -v bison)" /usr/local/bin/yacc
 fi
 
-command -v gmake >/dev/null 2>&1 || ln -s "$(command -v make)" /usr/local/bin/gmake
+command -v gmake >/dev/null 2>&1 || {
+  if command -v bmake >/dev/null 2>&1; then
+    ln -s "$(command -v bmake)" /usr/local/bin/gmake
+  else
+    ln -s "$(command -v make)" /usr/local/bin/gmake
+  fi
+}
 
 # clean up
 apt-get clean
