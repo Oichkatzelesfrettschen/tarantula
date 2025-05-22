@@ -47,7 +47,8 @@ done
 
 pip3 install --no-cache-dir \
   tensorflow-cpu jax jaxlib \
-  tensorflow-model-optimization mlflow onnxruntime-tools
+  tensorflow-model-optimization mlflow onnxruntime-tools \
+  meson ninja cmake
 
 # QEMU emulation for foreign binaries
 for pkg in \
