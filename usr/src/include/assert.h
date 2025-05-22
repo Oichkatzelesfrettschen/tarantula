@@ -38,6 +38,9 @@
  *	@(#)assert.h	8.2 (Berkeley) 1/21/94
  */
 
+#ifndef _ASSERT_H_
+#define _ASSERT_H_
+
 /*
  * Unlike other ANSI header files, <assert.h> may usefully be included
  * multiple times, with and without NDEBUG defined.
@@ -63,3 +66,4 @@
 __BEGIN_DECLS
 void __assert __P((const char *, int, const char *));
 __END_DECLS
+#endif /* !_ASSERT_H_ */

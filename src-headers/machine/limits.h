@@ -33,6 +33,9 @@
  *	@(#)limits.h	8.4 (Berkeley) 4/28/95
  */
 
+#ifndef _MACHINE_LIMITS_H_
+#define _MACHINE_LIMITS_H_
+
 #define	CHAR_BIT	8		/* number of bits in a char */
 #define	MB_LEN_MAX	6		/* Allow 31 bit UTF2 */
 
@@ -83,3 +86,4 @@
 
 #endif /* !_POSIX_SOURCE */
 #endif /* !_ANSI_SOURCE */
+#endif /* !_MACHINE_LIMITS_H_ */

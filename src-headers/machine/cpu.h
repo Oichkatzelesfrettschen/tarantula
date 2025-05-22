@@ -36,6 +36,9 @@
  *	@(#)cpu.h	8.5 (Berkeley) 5/17/95
  */
 
+#ifndef _MACHINE_CPU_H_
+#define _MACHINE_CPU_H_
+
 /*
  * Definitions unique to i386 cpu support.
  */
@@ -113,3 +116,4 @@ int	want_resched;		/* resched() was called */
 	{ 0, 0 }, \
 	{ "console_device", CTLTYPE_STRUCT }, \
 }
+#endif /* !_MACHINE_CPU_H_ */

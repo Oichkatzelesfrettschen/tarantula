@@ -36,6 +36,9 @@
  *	@(#)trap.h	8.1 (Berkeley) 6/11/93
  */
 
+#ifndef _MACHINE_TRAP_H_
+#define _MACHINE_TRAP_H_
+
 /*
  * Trap type values
  * also known in trap.c for name strings
@@ -94,3 +97,4 @@
 
 /* Trap's coming from user mode */
 #define	T_USER	0x100
+#endif /* !_MACHINE_TRAP_H_ */

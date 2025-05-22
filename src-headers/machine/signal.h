@@ -33,6 +33,9 @@
  *	@(#)signal.h	8.2 (Berkeley) 5/3/95
  */
 
+#ifndef _MACHINE_SIGNAL_H_
+#define _MACHINE_SIGNAL_H_
+
 /*
  * Machine-dependent signal definitions
  */
@@ -59,3 +62,4 @@ struct	sigcontext {
 	int	sc_ps;		/* psl to restore */
 };
 #endif
+#endif /* !_MACHINE_SIGNAL_H_ */

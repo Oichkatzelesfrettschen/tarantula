@@ -33,6 +33,9 @@
  *	@(#)proc.h	8.1 (Berkeley) 6/11/93
  */
 
+#ifndef _MACHINE_PROC_H_
+#define _MACHINE_PROC_H_
+
 /*
  * Machine-dependent part of the proc structure for hp300.
  */
@@ -43,3 +46,4 @@ struct mdproc {
 
 /* md_flags */
 #define	MDP_AST		0x0001	/* async trap pending */
+#endif /* !_MACHINE_PROC_H_ */
