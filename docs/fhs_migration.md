@@ -67,8 +67,8 @@ when modernizing historic BSD trees.
    `tools/post_fhs_cleanup.sh` helper.
 5. Execute `tools/migrate_to_src_layout.sh` (add `--force` when outside the chroot)
    to relocate the sources. The script moves the kernel into `src-kernel`, user
-   programs into `src-uland`, headers into `src-headers` and library objects
-   into `src-lib`.
+   programs into `src-uland`, headers into `src-headers` and collects archive
+   libraries into `src-lib`.
 6. Verify the new symlinks by running `ls -l` on `bin`, `sbin` and related
    directories.
 7. Update makefiles and scripts to reference the new paths. `grep -r "/bin"`
@@ -104,6 +104,7 @@ corresponds to a location in the FHS layout after running the migration tools.
 | `sys/`          | `/usr/src/sys`     | Historical kernel sources |
 | `src-kernel/`   | `/usr/src-kernel`  | Microkernel or exokernel sources |
 | `src-uland/`    | `/usr/src-uland`   | User-space services and libraries |
+| `src-lib/`      | `/usr/src-lib`     | Archive libraries collected during migration |
 | `include/`      | `/usr/include`     | Headers collected by `src-headers` |
 | `docs/`         | `/usr/share/doc`   | Build and modernization notes |
 | `tools/`        | `/usr/share/tools` | Helper scripts used during the build |
