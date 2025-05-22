@@ -134,6 +134,16 @@ unzip -d /usr/local /tmp/protoc.zip
 rm /tmp/protoc.zip
 
 # gmake alias
+# ensure yacc exists
+if ! command -v yacc >/dev/null 2>&1; then
+  if command -v byacc >/dev/null 2>&1; then
+    ln -s "$(command -v byacc)" /usr/local/bin/yacc
+  elif [ -f "$(dirname "$0")/usr/src/usr.bin/yacc/Makefile" ]; then
+    (cd "$(dirname "$0")/usr/src/usr.bin/yacc" && make clean && make)
+    install -m755 "$(dirname "$0")/usr/src/usr.bin/yacc/yacc" /usr/local/bin/yacc
+  fi
+fi
+
 command -v gmake >/dev/null 2>&1 || ln -s "$(command -v make)" /usr/local/bin/gmake
 
 # clean up
