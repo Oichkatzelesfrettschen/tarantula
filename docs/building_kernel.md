@@ -61,6 +61,30 @@ The microkernel plan extracts portions of `sys/kern` and `sys/dev` into user-spa
 The original kernel sources remain under `sys` for historical reference. Place rewritten modules and user-space servers in the new directories so the archived files stay untouched.
 These steps keep the historical sources intact while allowing new components to evolve outside the monolithic tree.
 
+## Building the Microkernel Variant
+
+When following the microkernel plan, the minimal kernel resides in
+`src-kernel/` and user-space services live under `src-uland/`.  Build them
+separately but with the same tools used for the classic kernel:
+
+1. **Compile the microkernel core**
+   ```sh
+   cd src-kernel
+   make clean && make
+   ```
+   Use the standard environment variables and append `CFLAGS=-m32` or
+   `CFLAGS=-m64` as appropriate.
+
+2. **Build user-space servers and drivers**
+   ```sh
+   cd src-uland/servers/<name>
+   make clean && make
+   ```
+   Driver tasks live in `src-uland/drivers/`.  Install each binary under
+   `/usr/libexec` and configure startup scripts to launch it early in the boot
+   sequence.  See [microkernel_plan.md](microkernel_plan.md) for a description of
+   the messaging interfaces used between these components and the microkernel.
+
 ## Building the Exokernel Variant
 
 The exokernel layout relocates sources using `tools/organize_sources.sh`. After running the script the kernel sources live in `src-kernel/` and user-level code moves to `src-uland/`. The script finishes with the message `Source tree organization complete.`.

@@ -1,6 +1,6 @@
 # Exokernel Migration Plan
 
-This document outlines how to evolve the 4.4BSD-Lite2 sources toward an exokernel architecture. It complements the microkernel tasks by focusing on exposing hardware resources directly to user programs while the kernel acts only as a secure multiplexer.
+This document outlines how to evolve the 4.4BSD-Lite2 sources toward an exokernel architecture. It complements the microkernel tasks by focusing on exposing hardware resources directly to user programs while the kernel acts only as a secure multiplexer. See [microkernel_plan.md](microkernel_plan.md) for the related microkernel roadmap.
 
 ## Microkernel vs. Exokernel
 
