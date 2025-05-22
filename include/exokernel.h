@@ -3,8 +3,10 @@
 
 /* Interface exported by the exokernel stubs. */
 
-void   kern_sched_init(void);
-int    kern_open(const char *path, int flags);
-int    kern_vm_fault(void *addr);
+#include <stdbool.h>
+
+void kern_sched_init(void);
+int kern_open(const char *path, int flags);
+bool kern_vm_fault(void *addr);
 
 #endif /* EXOKERNEL_H */

@@ -1,6 +1,8 @@
 # GitHub CI Workflows
 
 This document describes recommended workflows for integrating CodeQL security scanning and Reviewdog-based linting. Sample workflow files can be found in `.github/workflows/codeql-analysis.yml` and `.github/workflows/reviewdog.yml`.
+For local linting before pushing, enable the `pre-commit` hooks described in
+[precommit.md](precommit.md).
 
 ## CodeQL with Bundled Query Packs
 

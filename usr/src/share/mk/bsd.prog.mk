@@ -12,6 +12,7 @@
 CFLAGS+=${COPTS}
 
 STRIP?=	-s
+CLANG_TIDY?=	clang-tidy
 
 BINGRP?=	bin
 BINOWN?=	bin
@@ -151,7 +152,14 @@ realinstall: beforeinstall
 .if !target(lint)
 lint: ${SRCS} _PROGSUBDIR
 .if defined(PROG)
-	@${LINT} ${LINTFLAGS} ${CFLAGS} ${.ALLSRC} | more 2>&1
+@${LINT} ${LINTFLAGS} ${CFLAGS} ${.ALLSRC} | more 2>&1
+.endif
+.endif
+
+.if !target(tidy)
+tidy: ${SRCS} _PROGSUBDIR
+.if defined(PROG)
+@${CLANG_TIDY} ${.ALLSRC:M*.c} -- ${CFLAGS}
 .endif
 .endif
 
