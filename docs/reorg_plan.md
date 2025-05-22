@@ -22,4 +22,6 @@ This document outlines tasks for flattening the 4.4BSD-Lite2 source tree and mod
 7. Reorganize kernel and userland sources with
    `tools/migrate_to_src_layout.sh` (or the older `tools/organize_sources.sh`)
    to move them into `src-kernel`, `src-uland`, `src-headers` and `src-lib`.
+   The `src-lib` directory stores archive libraries separated from the rest of
+   the tree.
 
