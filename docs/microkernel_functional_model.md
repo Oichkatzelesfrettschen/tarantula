@@ -11,7 +11,8 @@ system safely.  These include:
 
 - **Thread scheduling hooks** – the kernel delegates policy decisions to the
   user-space scheduler library.  It starts execution in `kern_sched_init()`
-  and performs context switches on request.
+  which initializes the global IPC queue before any messages are sent and
+  then performs context switches on request.
 - **Virtual memory hooks** – page faults call `kern_vm_fault()` which forwards
   to a user-space memory manager for allocation and paging decisions.
 - **System call gate** – simple wrappers like `kern_open()` pass file
