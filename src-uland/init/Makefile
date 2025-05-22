@@ -4,6 +4,7 @@ PROG = init
 
 CC ?= cc
 CFLAGS ?= -O2
+CLANG_TIDY ?= ../../tools/run_clang_tidy.sh
 
 all: $(PROG)
 
@@ -16,4 +17,7 @@ $(PROG): $(OBJS)
 clean:
 	rm -f $(OBJS) $(PROG)
 
-.PHONY: all clean
+.PHONY: all clean tidy
+
+tidy:
+	$(CLANG_TIDY) $(SRCS) -- $(CC) $(CPPFLAGS) $(CFLAGS)

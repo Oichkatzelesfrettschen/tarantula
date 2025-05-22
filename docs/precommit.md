@@ -14,3 +14,13 @@ The hooks rely on the configuration files `.clang-format` and
 `.clang-tidy` at the repository root.  A helper script
 `tools/run_clang_tidy.sh` selects the appropriate language standard
 (C23 or C++17) when invoking `clang-tidy`.
+
+Each `src-uland` makefile defines a helper `tidy` target that runs
+`clang-tidy` on that component's sources:
+
+```sh
+cd src-uland/libvm
+make tidy
+```
+
+The command above uses the same options as the pre-commit hook.
