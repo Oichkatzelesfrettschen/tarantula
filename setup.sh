@@ -65,7 +65,7 @@ apt_pin_install bison || install_with_pip bison
 # core build tools, formatters, analysis, science libs
 for pkg in \
   build-essential gcc g++ clang lld llvm \
-  clang-format clang-tidy uncrustify astyle editorconfig pre-commit \
+  clang-format clang-tidy uncrustify astyle editorconfig pre-commit shellcheck \
   make bmake ninja-build cmake meson \
   autoconf automake libtool m4 gawk flex bison \
   pkg-config file ca-certificates curl git unzip \

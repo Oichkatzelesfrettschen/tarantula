@@ -11,3 +11,8 @@ repos:
         entry: tools/run_clang_tidy.sh
         language: system
         files: \.(c|cpp|h|hpp)$
+      - id: shellcheck
+        name: shellcheck
+        entry: shellcheck
+        language: system
+        files: \.sh$
