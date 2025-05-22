@@ -2,12 +2,12 @@
 
 This repository provides a `.pre-commit-config.yaml` with hooks for
 `clang-format` and `clang-tidy`. Running `setup.sh` installs the
-`pre-commit` tool along with `clang-tidy`. Activate the hooks to
-automatically format code and run static analysis before each commit:
+`pre-commit` tool via both `apt` and `pip` and automatically sets up
+the git hooks. After executing the script no manual steps are needed,
+but you can re-install the hooks any time:
 
 ```sh
-pip install pre-commit
-pre-commit install
+pre-commit install --install-hooks
 ```
 
 The hooks rely on the configuration files `.clang-format` and

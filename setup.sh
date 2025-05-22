@@ -48,7 +48,14 @@ done
 pip3 install --no-cache-dir \
   tensorflow-cpu jax jaxlib \
   tensorflow-model-optimization mlflow onnxruntime-tools \
-  meson ninja cmake
+  meson ninja cmake pre-commit
+
+# set up pre-commit hooks if available
+if command -v pre-commit >/dev/null 2>&1; then
+  (cd "$(dirname "$0")" && pre-commit install --install-hooks)
+else
+  echo "pre-commit not found after installation" >&2
+fi
 
 # QEMU emulation for foreign binaries
 for pkg in \
@@ -97,6 +104,10 @@ for pkg in \
   apt_pin_install "$pkg"
 done
 
+if ! command -v swift >/dev/null 2>&1; then
+  echo "Swift not found after installation" >&2
+fi
+
 # GUI & desktop-dev frameworks
 for pkg in \
   libqt5-dev qtcreator libqt6-dev \
@@ -140,7 +151,10 @@ if ! command -v yacc >/dev/null 2>&1; then
   if command -v byacc >/dev/null 2>&1; then
     ln -s "$(command -v byacc)" /usr/local/bin/yacc
   elif [ -f "$(dirname "$0")/usr/src/usr.bin/yacc/Makefile" ]; then
-    (cd "$(dirname "$0")/usr/src/usr.bin/yacc" && make clean && make)
+    (cd "$(dirname "$0")/usr/src/usr.bin/yacc" && \
+      { command -v bmake >/dev/null 2>&1 && bmake clean && bmake; } || \
+      { command -v gmake >/dev/null 2>&1 && gmake clean && gmake; } || \
+      { make clean && make; })
     install -m755 "$(dirname "$0")/usr/src/usr.bin/yacc/yacc" /usr/local/bin/yacc
   fi
 fi
