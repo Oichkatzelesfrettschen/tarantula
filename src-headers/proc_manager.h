@@ -17,4 +17,7 @@ void pgdelete(struct pgrp *pgrp);
 void fixjobc(struct proc *p, struct pgrp *pgrp, int entering);
 void pgrpdump(void);
 
+int pm_fork(void);
+int pm_exec(const char *path, char *const argv[]);
+
 #endif /* PROC_MANAGER_H */
