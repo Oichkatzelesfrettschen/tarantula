@@ -2,7 +2,7 @@
 
 This short guide explains how to compile the historic 4.4BSD-Lite2 kernel on an i386 host. The steps mirror the classic workflow using `config` and `make`. The same procedure works on modern x86_64 systems when passing the appropriate compiler flags.
 
-Before building, run the repository's `setup.sh` script as root to install all required toolchains and utilities. The script installs **byacc**, creates a `yacc` alias and, if no system `yacc` exists, attempts to build the bundled implementation under `usr/src/usr.bin/yacc`.
+Before building, run the repository's `setup.sh` script as root to install all required toolchains and utilities. The script installs **byacc**, creates a `yacc` alias and, if no system `yacc` exists, attempts to build the bundled implementation under `usr/src/usr.bin/yacc`. Any packages that fail to install are recorded in `/tmp/setup_failures.log`, and Python packages are attempted again via `pip` as a fallback.
 
 If your host still lacks `yacc` or `bison`, build the repository's bundled version manually:
 ```sh
