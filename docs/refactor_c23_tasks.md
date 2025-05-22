@@ -91,4 +91,6 @@ This roadmap is intentionally high level. Full conversion of the 4.4BSD-Lite2 tr
   flags when collecting warnings.
 - `usr/src/libpathtrans` now respects `CFLAGS` and `LDFLAGS` so cross-
   architecture builds link correctly.
+- Added a `CSTD` variable to all makefiles under `src-uland/` and
+  appended it to `CFLAGS` so these components build with C23 by default.
 
