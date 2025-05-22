@@ -40,3 +40,20 @@ This guide explains how to start the exokernel with only the essential user-leve
 3. Check the console or log messages from the managers to confirm that each request reached the corresponding manager and was granted.
 
 If these steps complete without errors the basic resource allocation APIs are functioning under the minimal boot environment.
+
+## Kernel Stub Self-Test
+
+A small program under `tests/` exercises the exokernel stubs without booting the
+full system. Build and run it after compiling `libkern_stubs.a`:
+
+```sh
+cd src-kernel && make
+cd ../tests && make clean all
+./test_kern
+```
+
+Successful output prints `all ok` and verifies that:
+
+- `kern_open()` delegates to `fs_open()` and opens `README.md`.
+- `kern_vm_fault()` returns `true` using the mock VM handler.
+- `kern_fork()` creates a child process which exits normally.
