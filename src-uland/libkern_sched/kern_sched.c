@@ -660,13 +660,25 @@ setrunnable(p)
  */
 void
 resetpriority(p)
-	register struct proc *p;
+        register struct proc *p;
 {
 	register unsigned int newpriority;
 
 	newpriority = PUSER + p->p_estcpu / 4 + 2 * p->p_nice;
 	newpriority = min(newpriority, MAXPRI);
 	p->p_usrpri = newpriority;
-	if (newpriority < curpriority)
-		need_resched();
+        if (newpriority < curpriority)
+                need_resched();
+}
+
+/*
+ * Entry point called by the exokernel during startup.  Initialize
+ * scheduler state and start the periodic timer callbacks.
+ */
+void
+uland_sched_init(void)
+{
+        rqinit();
+        roundrobin(NULL);
+        schedcpu(NULL);
 }
