@@ -13,5 +13,9 @@ pre-commit install --install-hooks
 The hooks rely on the configuration files `.clang-format` and
 `.clang-tidy` at the repository root.  A helper script
 `tools/run_clang_tidy.sh` selects the appropriate language standard
-(C23 or C++17) when invoking `clang-tidy`.
-Shell scripts (`*.sh`) are linted with `shellcheck`.
+(C23 or C++23) when invoking `clang-tidy`.
+
+Shell scripts (`*.sh`) are linted with `
+A `.gitignore` file at the repository root prevents common build artifacts
+from being committed. Patterns include `*/obj/`, `*.o`, `*.a`, `*.log` and the
+`compile/` directory.
