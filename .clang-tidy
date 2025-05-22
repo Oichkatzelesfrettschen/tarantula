@@ -1,3 +1,5 @@
 Checks: '-*,clang-analyzer-*,modernize-*'
 WarningsAsErrors: ''
 FormatStyle: file
+# clang-tidy is invoked via tools/run_clang_tidy.sh which passes
+# -std=c23 for C sources and -std=c++17 for C++ sources.

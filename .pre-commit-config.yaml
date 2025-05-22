@@ -5,9 +5,9 @@ repos:
         name: clang-format
         entry: clang-format -i
         language: system
-        files: \.(c|h)$
+        files: \.(c|cpp|h|hpp)$
       - id: clang-tidy
         name: clang-tidy
-        entry: clang-tidy
+        entry: tools/run_clang_tidy.sh
         language: system
-        files: \.(c|h)$
+        files: \.(c|cpp|h|hpp)$

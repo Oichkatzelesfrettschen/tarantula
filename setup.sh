@@ -24,7 +24,7 @@ apt-get update -y
 # core build tools, formatters, analysis, science libs
 for pkg in \
   build-essential gcc g++ clang lld llvm \
-  clang-format uncrustify astyle editorconfig pre-commit \
+  clang-format clang-tidy uncrustify astyle editorconfig pre-commit \
   make bmake ninja-build cmake meson \
   autoconf automake libtool m4 gawk flex bison byacc \
   pkg-config file ca-certificates curl git unzip \
