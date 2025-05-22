@@ -70,6 +70,7 @@ for pkg in \
   autoconf automake libtool m4 gawk flex bison \
   pkg-config file ca-certificates curl git unzip \
   libopenblas-dev liblapack-dev libeigen3-dev \
+  libbsd0 libbsd-dev \
   strace ltrace linux-perf systemtap systemtap-sdt-dev crash \
   valgrind kcachegrind trace-cmd kernelshark \
   libasan6 libubsan1 likwid hwloc; do
@@ -213,6 +214,11 @@ command -v gmake >/dev/null 2>&1 || {
     ln -s "$(command -v make)" /usr/local/bin/gmake
   fi
 }
+
+# verify bmake was installed successfully
+if ! command -v bmake >/dev/null 2>&1; then
+  echo "bmake not found after installation" >&2
+fi
 
 # clean up
 apt-get clean
