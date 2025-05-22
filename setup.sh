@@ -37,7 +37,7 @@ for pkg in \
   build-essential gcc g++ clang lld llvm \
   clang-format clang-tidy uncrustify astyle editorconfig pre-commit \
   make bmake ninja-build cmake meson \
-  autoconf automake libtool m4 gawk flex bison byacc \
+  autoconf automake libtool m4 gawk flex bison \
   pkg-config file ca-certificates curl git unzip \
   libopenblas-dev liblapack-dev libeigen3-dev \
   strace ltrace linux-perf systemtap systemtap-sdt-dev crash \
@@ -176,11 +176,12 @@ curl -fsSL "https://raw.githubusercontent.com/protocolbuffers/protobuf/v${PROTO_
 unzip -d /usr/local /tmp/protoc.zip
 rm /tmp/protoc.zip
 
+
 # gmake alias
-# ensure yacc exists
+# provide a yacc wrapper via bison when needed
 if ! command -v yacc >/dev/null 2>&1; then
-  if command -v byacc >/dev/null 2>&1; then
-    ln -s "$(command -v byacc)" /usr/local/bin/yacc
+  if command -v bison >/dev/null 2>&1; then
+    ln -s "$(command -v bison)" /usr/local/bin/yacc
   elif [ -f "$(dirname "$0")/usr/src/usr.bin/yacc/Makefile" ]; then
     (cd "$(dirname "$0")/usr/src/usr.bin/yacc" && \
       { command -v bmake >/dev/null 2>&1 && bmake clean && bmake; } || \

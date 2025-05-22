@@ -49,7 +49,7 @@ RFLAGS		?=
 
 SHELL		?=	sh
 
-YACC		?=	yacc
+YACC		?=	bison -y
 YFLAGS		?=	-d
 
 .c:
