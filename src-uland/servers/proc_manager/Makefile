@@ -1,4 +1,4 @@
-OBJS = kern_proc.o
+OBJS = kern_proc.o pm_entry.o
 PROG = proc_manager
 CC ?= cc
 CFLAGS ?= -O2
