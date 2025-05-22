@@ -47,8 +47,8 @@ A small program under `tests/` exercises the exokernel stubs without booting the
 full system. Build and run it after compiling `libkern_stubs.a`:
 
 ```sh
-cd src-kernel && make
-cd ../tests && make clean all
+cd src-kernel && bmake
+cd ../tests && bmake clean all
 ./test_kern
 ```
 

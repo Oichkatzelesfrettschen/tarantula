@@ -1,26 +1,19 @@
 # Building the 4.4BSD-Lite2 kernel
 
-This short guide explains how to compile the historic 4.4BSD-Lite2 kernel on an i386 host. The steps mirror the classic workflow using `config` and `make`. The same procedure works on modern x86_64 systems when passing the appropriate compiler flags.
+This short guide explains how to compile the historic 4.4BSD-Lite2 kernel on an i386 host. The steps mirror the classic workflow using `config` and `bmake`. The same procedure works on modern x86_64 systems when passing the appropriate compiler flags.
 
 Before building, run the repository's `setup.sh` script as root to install all
-required toolchains and utilities.  The script installs **bison** and creates a
-`yacc` alias that points to it for compatibility.  Any packages that fail to
+required toolchains and utilities.  The script installs **bison** and **bmake**.  Any packages that fail to
 install are recorded in `/tmp/setup_failures.log`, and Python packages are
 attempted again via `pip` as a fallback.
 
-If your host still lacks `bison`, build the repository's bundled version
-manually:
-```sh
-cd usr/src/usr.bin/yacc
-make clean && make
-export YACC="$(pwd)/yacc -y"
-```
+If `bison` is missing, install it and export `YACC="bison -y"` before building.
 Then proceed with the steps below.
 
 1. **Build the `config` utility**
    ```sh
    cd usr/src/usr.sbin/config
-   make clean && make
+   bmake clean && bmake
    ```
    This produces a `config` binary used to generate kernel build directories.
 
@@ -35,9 +28,9 @@ Then proceed with the steps below.
 3. **Build the kernel**
    ```sh
    cd ../compile/GENERIC.i386
-   make depend
+   bmake depend
    # Append CFLAGS=-m32 for i686 or CFLAGS=-m64 for x86_64
-   make
+   bmake
    ```
    If successful, the resulting kernel binary (usually `vmunix`) appears in this directory.
 
@@ -51,13 +44,13 @@ The microkernel plan extracts portions of `sys/kern` and `sys/dev` into user-spa
 2. For a user-space server:
    ```sh
    cd servers/<subsystem>
-   make clean && make
+   bmake clean && bmake
    ```
    Install the resulting binary under `/usr/libexec` and configure the boot scripts to start it after the kernel loads.
 3. For a loadable module:
    ```sh
    cd modules/<subsystem>
-   make clean && make
+   bmake clean && bmake
    sudo kldload <subsystem>.ko
    ```
 4. List the module in `/etc/loader.conf` if it should load automatically at boot.
@@ -75,7 +68,7 @@ separately but with the same tools used for the classic kernel:
 1. **Compile the microkernel core**
    ```sh
    cd src-kernel
-   make clean && make
+   bmake clean && bmake
    ```
    Use the standard environment variables and append `CFLAGS=-m32` or
    `CFLAGS=-m64` as appropriate.
@@ -83,7 +76,7 @@ separately but with the same tools used for the classic kernel:
 2. **Build user-space servers and drivers**
    ```sh
    cd src-uland/servers/<name>
-   make clean && make
+   bmake clean && bmake
    ```
    Driver tasks live in `src-uland/drivers/`.  Install each binary under
    `/usr/libexec` and configure startup scripts to launch it early in the boot
@@ -97,15 +90,15 @@ The exokernel layout relocates sources using `tools/organize_sources.sh`. After 
 1. **Compile the exokernel**
    ```sh
    cd src-kernel
-   make clean && make
+   bmake clean && bmake
    ```
-   Use the same environment variables as the classic build. If `YACC` was exported earlier, export it again before invoking `make`. Append `CFLAGS=-m32` or `CFLAGS=-m64` for your architecture as needed.
+   Use the same environment variables as the classic build. If `YACC` was exported earlier, export it again before invoking `bmake`. Append `CFLAGS=-m32` or `CFLAGS=-m64` for your architecture as needed.
 
 2. **Build user-space managers**
    ```sh
    cd src-uland/managers/<name>
-   make clean && make
+   bmake clean && bmake
    ```
    Install each manager under `/usr/libexec` or another appropriate directory.
 
-No additional make targets are defined yet; simply run `make` in each directory to compile the components.
+No additional bmake targets are defined yet; simply run `bmake` in each directory to compile the components.
