@@ -57,3 +57,24 @@ parameters, packages the request and relies on a user-space server to
 perform the real work.  This separation keeps the kernel small and easier
 to reason about.
 
+
+### IPC Usage Example
+
+The ring-buffer API exposes three helper functions:
+
+```c
+struct ipc_queue q;
+ipc_queue_init(&q);
+
+struct ipc_message m = { .type = IPC_MSG_OPEN,
+                         .a = (uintptr_t)"/etc/passwd",
+                         .b = O_RDONLY };
+ipc_queue_send(&q, &m);
+if (ipc_queue_recv(&q, &m)) {
+    int fd = (int)m.a;
+    /* use fd */
+}
+```
+
+Kernel hooks such as `kern_open()` push a request message to the queue and wait
+for a corresponding reply from the user-space server.
