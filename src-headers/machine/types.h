@@ -61,5 +61,6 @@ typedef	int			  int32_t;
 typedef	unsigned int		u_int32_t;
 typedef	long long		  int64_t;
 typedef	unsigned long long	u_int64_t;
+typedef long register_t; /* minimal register type for user servers */
 
 #endif	/* _MACHTYPES_H_ */

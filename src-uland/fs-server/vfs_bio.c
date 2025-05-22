@@ -48,6 +48,8 @@
 #include <sys/trace.h>
 #include <sys/malloc.h>
 #include <sys/resourcevar.h>
+#include <sys/time.h>
+#include <sys/errno.h>
 
 /*
  * Definitions for the buffer hash lists.
