@@ -79,3 +79,10 @@ if (ipc_queue_recv(&q, &m)) {
 
 Kernel hooks such as `kern_open()` push a request message to the queue and wait
 for a corresponding reply from the user-space server.
+
+The queue implementation originally offered only non-blocking `ipc_queue_send()`
+and `ipc_queue_recv()` calls.  To simplify users of the API a lightweight
+spinlock now protects the ring buffer and two blocking helpers were added:
+`ipc_queue_send_blocking()` and `ipc_queue_recv_blocking()`.  These functions
+busy-wait until the operation completes.  User-space wrappers `ipc_send()` and
+`ipc_recv()` invoke the blocking variants to guarantee delivery.
