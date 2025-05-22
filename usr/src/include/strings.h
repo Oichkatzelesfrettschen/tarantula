@@ -33,4 +33,8 @@
  *	@(#)strings.h	8.1 (Berkeley) 6/2/93
  */
 
+#ifndef _STRINGS_H_
+#define _STRINGS_H_
+
 #include <string.h>
+#endif /* !_STRINGS_H_ */

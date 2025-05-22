@@ -38,6 +38,9 @@
  *	@(#)systm.h	8.7 (Berkeley) 3/29/95
  */
 
+#ifndef _SYS_SYSTM_H_
+#define _SYS_SYSTM_H_
+
 /*
  * The `securelevel' variable controls the security level of the system.
  * It can only be decreased by process 1 (/sbin/init).
@@ -168,3 +171,4 @@ void	stopprofclock __P((struct proc *));
 void	setstatclockrate __P((int hzrate));
 
 #include <libkern/libkern.h>
+#endif /* !_SYS_SYSTM_H_ */

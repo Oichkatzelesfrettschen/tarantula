@@ -33,4 +33,8 @@
  *	@(#)memory.h	8.1 (Berkeley) 6/2/93
  */
 
+#ifndef _MEMORY_H_
+#define _MEMORY_H_
+
 #include <string.h>
+#endif /* !_MEMORY_H_ */
