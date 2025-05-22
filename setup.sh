@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -u -o pipefail
 export DEBIAN_FRONTEND=noninteractive
+
+# collect failures rather than exiting on the first error
+APT_FAILED=()
+PIP_FAILED=()
+FAIL_LOG=/tmp/setup_failures.log
+rm -f "$FAIL_LOG"
 
 # helper to pin to the repo’s exact version if it exists
 apt_pin_install(){
@@ -8,9 +14,14 @@ apt_pin_install(){
   ver=$(apt-cache show "$pkg" 2>/dev/null \
         | awk '/^Version:/{print $2; exit}')
   if [ -n "$ver" ]; then
-    apt-get install -y "${pkg}=${ver}"
+    apt-get install -y "${pkg}=${ver}" >/dev/null 2>&1
   else
-    apt-get install -y "$pkg"
+    apt-get install -y "$pkg" >/dev/null 2>&1
+  fi
+  if [ $? -ne 0 ]; then
+    echo "apt failed: $pkg" >> "$FAIL_LOG"
+    APT_FAILED+=("$pkg")
+    return 1
   fi
 }
 
@@ -19,7 +30,7 @@ for arch in i386 armel armhf arm64 riscv64 powerpc ppc64el ia64; do
   dpkg --add-architecture "$arch"
 done
 
-apt-get update -y
+apt-get update -y >/dev/null 2>&1 || echo "apt-get update failed" >> "$FAIL_LOG"
 
 # core build tools, formatters, analysis, science libs
 for pkg in \
@@ -45,16 +56,36 @@ for pkg in \
   apt_pin_install "$pkg"
 done
 
-pip3 install --no-cache-dir \
+# attempt pip fallback for any failed apt python packages
+for pkg in "${APT_FAILED[@]}"; do
+  if [[ "$pkg" == python3-* ]]; then
+    pip_pkg=${pkg#python3-}
+    python3 -m pip install --no-cache-dir "$pip_pkg" >/dev/null 2>&1 || {
+      echo "pip fallback failed: $pip_pkg" >> "$FAIL_LOG";
+      PIP_FAILED+=("$pip_pkg")
+    }
+  fi
+done
+
+for pip_pkg in \
   tensorflow-cpu jax jaxlib \
   tensorflow-model-optimization mlflow onnxruntime-tools \
-  meson ninja cmake pre-commit
+  meson ninja cmake pre-commit; do
+  python3 -m pip install --no-cache-dir "$pip_pkg" >/dev/null 2>&1 || {
+    echo "pip failed: $pip_pkg" >> "$FAIL_LOG";
+    PIP_FAILED+=("$pip_pkg")
+  }
+done
 
 # set up pre-commit hooks if available
 if command -v pre-commit >/dev/null 2>&1; then
-  (cd "$(dirname "$0")" && pre-commit install --install-hooks)
+  (cd "$(dirname "$0")" && pre-commit install --install-hooks) || {
+    echo "pre-commit install failed" >> "$FAIL_LOG";
+    PIP_FAILED+=("pre-commit")
+  }
 else
-  echo "pre-commit not found after installation" >&2
+  echo "pre-commit not found after installation" >> "$FAIL_LOG"
+  PIP_FAILED+=("pre-commit")
 fi
 
 # QEMU emulation for foreign binaries
@@ -164,5 +195,11 @@ command -v gmake >/dev/null 2>&1 || ln -s "$(command -v make)" /usr/local/bin/gm
 # clean up
 apt-get clean
 rm -rf /var/lib/apt/lists/*
+
+if [ -s "$FAIL_LOG" ]; then
+  echo "Some packages failed to install. See $FAIL_LOG for details." >&2
+  echo "APT failures: ${APT_FAILED[*]}" >&2
+  echo "PIP failures: ${PIP_FAILED[*]}" >&2
+fi
 
 exit 0
