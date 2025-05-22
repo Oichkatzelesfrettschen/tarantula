@@ -4,6 +4,8 @@ PROG = init
 
 CC ?= cc
 CFLAGS ?= -O2
+CSTD ?= -std=c2x
+CFLAGS += $(CSTD)
 
 all: $(PROG)
 
