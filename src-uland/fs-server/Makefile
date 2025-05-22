@@ -1,4 +1,4 @@
-SRCS = $(wildcard vfs_*.c)
+SRCS = fs_open.c $(wildcard vfs_*.c)
 OBJS = $(SRCS:.c=.o)
 PROG = fs_server
 
