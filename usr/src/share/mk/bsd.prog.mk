@@ -12,7 +12,7 @@
 CFLAGS+=${COPTS}
 
 STRIP?=	-s
-CLANG_TIDY?=	clang-tidy
+CLANG_TIDY?=	${.CURDIR:H:H}/tools/run_clang_tidy.sh
 
 BINGRP?=	bin
 BINOWN?=	bin
@@ -157,9 +157,11 @@ lint: ${SRCS} _PROGSUBDIR
 .endif
 
 .if !target(tidy)
-tidy: ${SRCS} _PROGSUBDIR
-.if defined(PROG)
-@${CLANG_TIDY} ${.ALLSRC:M*.c} -- ${CFLAGS}
+	tidy: ${SRCS} _PROGSUBDIR
+	.if defined(PROG)
+	@for src in ${.ALLSRC:M*.c}; do \
+	${CLANG_TIDY} $$src -- ${CFLAGS}; \
+	done
 .endif
 .endif
 
