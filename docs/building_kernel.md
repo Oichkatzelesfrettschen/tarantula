@@ -3,9 +3,9 @@
 This short guide explains how to compile the historic 4.4BSD-Lite2 kernel on an i386 host. The steps mirror the classic workflow using `config` and `bmake`. The same procedure works on modern x86_64 systems when passing the appropriate compiler flags.
 
 Before building, run the repository's `setup.sh` script as root to install all
-required toolchains and utilities.  The script installs **bison** and **bmake**.  Any packages that fail to
-install are recorded in `/tmp/setup_failures.log`, and Python packages are
-attempted again via `pip` as a fallback.
+required toolchains and utilities.  The script installs **bison** and **bmake**.  All results are logged in
+`/tmp/setup.log`.  Packages that fail via `apt` are automatically retried with
+`pip` when possible.
 
 If `bison` is missing, install it and export `YACC="bison -y"` before building.
 Then proceed with the steps below.
