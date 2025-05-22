@@ -11,7 +11,7 @@ LIBOWN?=	bin
 LIBMODE?=	444
 
 STRIP?=	-s
-CLANG_TIDY?=	clang-tidy
+CLANG_TIDY?=	${.CURDIR:H:H}/tools/run_clang_tidy.sh
 
 BINGRP?=	bin
 BINOWN?=	bin
@@ -149,8 +149,10 @@ lint:
 .endif
 
 .if !target(tidy)
-tidy:
-@${CLANG_TIDY} ${SRCS:M*.c} -- ${CFLAGS}
+	tidy:
+	@for src in ${SRCS:M*.c}; do \
+	${CLANG_TIDY} $$src -- ${CFLAGS}; \
+	done
 .endif
 
 .if !target(tags)

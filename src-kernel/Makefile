@@ -4,7 +4,7 @@ LIB = libkern_stubs.a
 
 CC ?= cc
 AR ?= ar
-CLANG_TIDY ?= clang-tidy
+CLANG_TIDY ?= ../tools/run_clang_tidy.sh
 CFLAGS ?= -O2 -std=c2x
 CPPFLAGS += -I../include
 
@@ -22,4 +22,6 @@ clean:
 	rm -f $(OBJS) $(LIB)
 	
 tidy:
-	$(CLANG_TIDY) $(OBJS:.o=.c) -- $(CC) $(CFLAGS)
+	@for src in $(OBJS:.o=.c); do \
+	$(CLANG_TIDY) $$src -- $(CC) $(CPPFLAGS) $(CFLAGS); \
+	done
