@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
 set -u -o pipefail
+
+# log all successes and failures
+LOG_FILE=/tmp/setup.log
+rm -f "$LOG_FILE"
+
+# record failing commands without stopping execution
+trap 'rc=$?; echo "FAILED cmd: ${BASH_COMMAND} (exit $rc)" >> "$LOG_FILE"' ERR
 export DEBIAN_FRONTEND=noninteractive
 
 # collect failures rather than exiting on the first error
 APT_FAILED=()
 PIP_FAILED=()
-FAIL_LOG=/tmp/setup_failures.log
-rm -f "$FAIL_LOG"
 
 # helper to pin to the repo’s exact version if it exists
 apt_pin_install(){
@@ -18,10 +23,29 @@ apt_pin_install(){
   else
     apt-get install -y "$pkg" >/dev/null 2>&1
   fi
-  if [ $? -ne 0 ]; then
-    echo "apt failed: $pkg" >> "$FAIL_LOG"
+  rc=$?
+  if [ $rc -ne 0 ]; then
+    echo "APT FAIL $pkg" >> "$LOG_FILE"
     APT_FAILED+=("$pkg")
     return 1
+  else
+    echo "APT OK   $pkg" >> "$LOG_FILE"
+    return 0
+  fi
+}
+
+# fallback installer using pip3 when apt fails
+install_with_pip(){
+  pkg="$1"
+  pip3 install "$pkg" >/dev/null 2>&1
+  rc=$?
+  if [ $rc -ne 0 ]; then
+    echo "PIP FAIL $pkg" >> "$LOG_FILE"
+    PIP_FAILED+=("$pkg")
+    return 1
+  else
+    echo "PIP OK   $pkg" >> "$LOG_FILE"
+    return 0
   fi
 }
 
@@ -29,10 +53,14 @@ apt_pin_install(){
 for arch in i386 armel armhf arm64 riscv64 powerpc ppc64el ia64; do
   dpkg --add-architecture "$arch"
 done
-apt-get update -y >/dev/null 2>&1 || echo "apt-get update failed" >> "$FAIL_LOG"
+# update package lists
+apt-get update -y >/dev/null 2>&1 && echo "APT OK   update" >> "$LOG_FILE" || {
+  echo "APT FAIL update" >> "$LOG_FILE"
+  APT_FAILED+=("update")
+}
 # guarantee bmake and bison are present
-apt_pin_install bmake
-apt_pin_install bison
+apt_pin_install bmake || install_with_pip bmake
+apt_pin_install bison || install_with_pip bison
 
 # core build tools, formatters, analysis, science libs
 for pkg in \
@@ -45,7 +73,7 @@ for pkg in \
   strace ltrace linux-perf systemtap systemtap-sdt-dev crash \
   valgrind kcachegrind trace-cmd kernelshark \
   libasan6 libubsan1 likwid hwloc; do
-  apt_pin_install "$pkg"
+  apt_pin_install "$pkg" || install_with_pip "$pkg"
 done
 
 # Python & deep-learning / MLOps
@@ -55,38 +83,32 @@ for pkg in \
   python3-matplotlib python3-scikit-learn \
   python3-torch python3-torchvision python3-torchaudio \
   python3-onnx python3-onnxruntime; do
-  apt_pin_install "$pkg"
+  apt_pin_install "$pkg" || install_with_pip "$pkg"
 done
 
-# attempt pip fallback for any failed apt python packages
-for pkg in "${APT_FAILED[@]}"; do
-  if [[ "$pkg" == python3-* ]]; then
-    pip_pkg=${pkg#python3-}
-    python3 -m pip install --no-cache-dir "$pip_pkg" >/dev/null 2>&1 || {
-      echo "pip fallback failed: $pip_pkg" >> "$FAIL_LOG";
-      PIP_FAILED+=("$pip_pkg")
-    }
-  fi
-done
 
 for pip_pkg in \
   tensorflow-cpu jax jaxlib \
   tensorflow-model-optimization mlflow onnxruntime-tools \
   meson ninja cmake pre-commit; do
-  python3 -m pip install --no-cache-dir "$pip_pkg" >/dev/null 2>&1 || {
-    echo "pip failed: $pip_pkg" >> "$FAIL_LOG";
+  pip3 install "$pip_pkg" >/dev/null 2>&1
+  rc=$?
+  if [ $rc -ne 0 ]; then
+    echo "PIP FAIL $pip_pkg" >> "$LOG_FILE"
     PIP_FAILED+=("$pip_pkg")
-  }
+  else
+    echo "PIP OK   $pip_pkg" >> "$LOG_FILE"
+  fi
 done
 
 # set up pre-commit hooks if available
 if command -v pre-commit >/dev/null 2>&1; then
   (cd "$(dirname "$0")" && pre-commit install --install-hooks) || {
-    echo "pre-commit install failed" >> "$FAIL_LOG";
+    echo "PIP FAIL pre-commit hook" >> "$LOG_FILE"
     PIP_FAILED+=("pre-commit")
   }
 else
-  echo "pre-commit not found after installation" >> "$FAIL_LOG"
+  echo "PIP FAIL pre-commit" >> "$LOG_FILE"
   PIP_FAILED+=("pre-commit")
 fi
 
@@ -95,7 +117,7 @@ for pkg in \
   qemu-user-static \
   qemu-system-x86 qemu-system-arm qemu-system-aarch64 \
   qemu-system-riscv64 qemu-system-ppc qemu-system-ppc64 qemu-utils; do
-  apt_pin_install "$pkg"
+  apt_pin_install "$pkg" || install_with_pip "$pkg"
 done
 
 # multi-arch cross-compilers
@@ -117,7 +139,7 @@ for pkg in \
   gcc-mipsel-linux-gnu g++-mipsel-linux-gnu \
   gcc-mips64-linux-gnuabi64 g++-mips64-linux-gnuabi64 \
   gcc-mips64el-linux-gnuabi64 g++-mips64el-linux-gnuabi64; do
-  apt_pin_install "$pkg"
+  apt_pin_install "$pkg" || install_with_pip "$pkg"
 done
 
 # high-level language runtimes and tools
@@ -134,7 +156,7 @@ for pkg in \
   ruby ruby-dev gem bundler php-cli php-dev composer phpunit \
   r-base r-base-dev dart flutter gnat gprbuild gfortran gnucobol \
   fpc lazarus zig nim nimble crystal shards gforth; do
-  apt_pin_install "$pkg"
+  apt_pin_install "$pkg" || install_with_pip "$pkg"
 done
 
 if ! command -v swift >/dev/null 2>&1; then
@@ -152,7 +174,7 @@ for pkg in \
   libwxgtk3.0-dev libwxgtk3.0-gtk3-dev \
   libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev \
   libglfw3-dev libglew-dev; do
-  apt_pin_install "$pkg"
+  apt_pin_install "$pkg" || install_with_pip "$pkg"
 done
 
 # containers, virtualization, HPC, debug
@@ -160,7 +182,7 @@ for pkg in \
   docker.io podman buildah virt-manager libvirt-daemon-system qemu-kvm \
   gdb lldb perf gcovr lcov bcc-tools bpftrace \
   openmpi-bin libopenmpi-dev mpich; do
-  apt_pin_install "$pkg"
+  apt_pin_install "$pkg" || install_with_pip "$pkg"
 done
 
 # IA-16 (8086/286) cross-compiler
@@ -196,8 +218,8 @@ command -v gmake >/dev/null 2>&1 || {
 apt-get clean
 rm -rf /var/lib/apt/lists/*
 
-if [ -s "$FAIL_LOG" ]; then
-  echo "Some packages failed to install. See $FAIL_LOG for details." >&2
+if [ ${#APT_FAILED[@]} -ne 0 ] || [ ${#PIP_FAILED[@]} -ne 0 ]; then
+  echo "Some packages failed to install. See $LOG_FILE for details." >&2
   echo "APT failures: ${APT_FAILED[*]}" >&2
   echo "PIP failures: ${PIP_FAILED[*]}" >&2
 fi

@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
+LOG=/tmp/clang_tidy.log
+rm -f "$LOG"
+trap 'rc=$?; echo "FAILED: ${BASH_COMMAND} (exit $rc)" >> "$LOG"' ERR
 file="$1"
 args=("${@:2}")
 if [[ "$file" == *.c ]]; then
