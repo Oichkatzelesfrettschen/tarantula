@@ -1,4 +1,4 @@
-OBJS = sched_hooks.o vm_hooks.o vfs_hooks.o
+OBJS = proc_hooks.o sched_hooks.o vm_hooks.o vfs_hooks.o
 LIB = libkern_stubs.a
 
 CC ?= cc
