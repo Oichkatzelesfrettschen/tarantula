@@ -13,10 +13,10 @@ CFLAGS   += -DKERNEL
 all: $(LIB)
 
 $(LIB): $(OBJS)
-        $(AR) rcs $@ $(OBJS)
+	$(AR) rcs $@ $(OBJS)
 
 %.o: %.c
-        $(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OBJS) $(LIB)
