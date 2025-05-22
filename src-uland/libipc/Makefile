@@ -1,4 +1,4 @@
-OBJS = ipc_dummy.o
+OBJS = ipc.o
 LIB  = libipc.a
 
 CC ?= cc
