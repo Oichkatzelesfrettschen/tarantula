@@ -11,6 +11,7 @@ LIBOWN?=	bin
 LIBMODE?=	444
 
 STRIP?=	-s
+CLANG_TIDY?=	clang-tidy
 
 BINGRP?=	bin
 BINOWN?=	bin
@@ -145,6 +146,11 @@ afterinstall: maninstall
 
 .if !target(lint)
 lint:
+.endif
+
+.if !target(tidy)
+tidy:
+@${CLANG_TIDY} ${SRCS:M*.c} -- ${CFLAGS}
 .endif
 
 .if !target(tags)
