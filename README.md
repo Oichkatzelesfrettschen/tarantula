@@ -7,6 +7,9 @@ Downloaded from: ftp://alge.anart.no/pub/BSD/4.4BSD-Lite/4.4BSD-Lite2.tar.gz
 For kernel build instructions see [docs/building_kernel.md](docs/building_kernel.md).
 For GitHub CI examples see [docs/ci_workflows.md](docs/ci_workflows.md).
 For FHS migration steps see [docs/fhs_migration.md](docs/fhs_migration.md).
+For microkernel tasks see [docs/microkernel_plan.md](docs/microkernel_plan.md)
+and the functional overview in
+[docs/microkernel_functional_model.md](docs/microkernel_functional_model.md).
 For exokernel tasks see [docs/exokernel_plan.md](docs/exokernel_plan.md).
 
 ### User's Supplementary Documents
