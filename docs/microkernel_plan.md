@@ -56,6 +56,8 @@ The steps in `tools/migrate_to_fhs.sh` will be updated so these directories map 
 2. **Build System Updates**
    - The **Build System Engineer** drafts makefiles for `src-kernel` and `src-uland` so they build independently.
    - Update `tools/migrate_to_fhs.sh` to place these directories under `/usr` during migration.
+   - Collect required kernel headers in `src-headers/` so user-space
+     servers compile without referencing the entire `sys/` tree.
    - Existing FHS tasks such as verifying symlinks and updating scripts continue to apply, but now reference the new directories.
 
 3. **Microkernel Extraction**

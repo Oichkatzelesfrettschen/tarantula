@@ -2,7 +2,9 @@ OBJS = kern_proc.o
 PROG = proc_manager
 CC ?= cc
 CFLAGS ?= -O2
-CPPFLAGS ?= -I../../../src-headers -I../../../sys -I../../../sys/i386/include
+CPPFLAGS ?= -I../../../src-headers -I../../../src-headers/machine \
+            -I../../../include -I../../../sys -I../../../sys/sys \
+            -I../../../sys/i386/include
 
 all: $(PROG)
 
