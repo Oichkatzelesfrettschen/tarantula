@@ -213,35 +213,36 @@ for pkg in \
 done
 
 # IA-16 (8086/286) cross-compiler
-IA16_VER=$(curl -fsSL https://api.github.com/repos/tkchia/gcc-ia16/releases/latest \
-           | awk -F\" '/tag_name/{print $4; exit}')
-if [ $? -ne 0 ] || [ -z "$IA16_VER" ]; then
+IA16_JSON=$(curl -fsSL https://api.github.com/repos/tkchia/gcc-ia16/releases/latest)
+rc=$?
+if [ $rc -ne 0 ] || [ -z "$IA16_JSON" ]; then
   echo "curl FAILED ia16 version" >> "$LOG_FILE"
   APT_FAILED+=("ia16-elf-gcc")
 else
-  curl -fsSL "https://github.com/tkchia/gcc-ia16/releases/download/${IA16_VER}/ia16-elf-gcc-linux64.tar.xz" -o /tmp/ia16.tar.xz
-  rc=$?
-  if [ $rc -ne 0 ]; then
-    echo "curl FAILED ia16-elf-gcc" >> "$LOG_FILE"
+  IA16_VER=$(echo "$IA16_JSON" | awk -F\" '/tag_name/{print $4; exit}')
+  if [ -z "$IA16_VER" ]; then
+    echo "curl FAILED ia16 version parse" >> "$LOG_FILE"
     APT_FAILED+=("ia16-elf-gcc")
   else
-    tar -Jx -f /tmp/ia16.tar.xz -C /opt
-    echo 'export PATH=/opt/ia16-elf-gcc/bin:$PATH' > /etc/profile.d/ia16.sh
-    export PATH=/opt/ia16-elf-gcc/bin:$PATH
+    if curl -fsSL "https://github.com/tkchia/gcc-ia16/releases/download/${IA16_VER}/ia16-elf-gcc-linux64.tar.xz" -o /tmp/ia16.tar.xz; then
+      tar -Jx -f /tmp/ia16.tar.xz -C /opt
+      echo 'export PATH=/opt/ia16-elf-gcc/bin:$PATH' > /etc/profile.d/ia16.sh
+      export PATH=/opt/ia16-elf-gcc/bin:$PATH
+    else
+      echo "curl FAILED ia16-elf-gcc" >> "$LOG_FILE"
+      APT_FAILED+=("ia16-elf-gcc")
+    fi
   fi
 fi
 
 # protoc installer (pinned)
 PROTO_VERSION=25.1
-curl -fsSL "https://raw.githubusercontent.com/protocolbuffers/protobuf/v${PROTO_VERSION}/protoc-${PROTO_VERSION}-linux-x86_64.zip" \
-  -o /tmp/protoc.zip
-rc=$?
-if [ $rc -ne 0 ]; then
-  echo "curl FAILED protoc" >> "$LOG_FILE"
-  APT_FAILED+=("protoc")
-else
+if curl -fsSL "https://raw.githubusercontent.com/protocolbuffers/protobuf/v${PROTO_VERSION}/protoc-${PROTO_VERSION}-linux-x86_64.zip" -o /tmp/protoc.zip; then
   unzip -d /usr/local /tmp/protoc.zip
   rm /tmp/protoc.zip
+else
+  echo "curl FAILED protoc" >> "$LOG_FILE"
+  APT_FAILED+=("protoc")
 fi
 
 
