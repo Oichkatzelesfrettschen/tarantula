@@ -86,6 +86,7 @@ command -v bmake >/dev/null 2>&1 || build_bmake_from_source
 apt_pin_install mk-configure || install_with_pip mk-configure
 apt_pin_install bison || install_with_pip bison
 apt_pin_install byacc || install_with_pip byacc
+apt_pin_install shellcheck || install_with_pip shellcheck
 
 # core build tools, formatters, analysis, science libs
 for pkg in \
