@@ -1,4 +1,5 @@
 #include "ipc.h"
+#include <stdatomic.h>
 
 /* Shared queue used by kernel stubs and user-space servers */
 struct ipc_queue kern_ipc_queue;
