@@ -21,3 +21,8 @@ repos:
         entry: shellcheck
         language: system
         files: \.sh$
+  - repo: https://github.com/koalaman/shellcheck
+    rev: 'v0.9.0'
+    hooks:
+      - id: shellcheck
+        files: \.sh$
