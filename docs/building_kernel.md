@@ -11,6 +11,10 @@ for **bmake**, will download the upstream source and build it locally. Optionall
 `bmake`. All results are logged in `/tmp/setup.log`. Packages that fail via
 `apt` are automatically retried with `pip` when possible.
 
+The script also validates that the `bmake` executable is present and that the
+`bmake` package was installed successfully via `dpkg`; it aborts if either
+check fails.
+
 If `bison` is missing, install it and export `YACC="bison -y"` before building.
 Then proceed with the steps below.
 

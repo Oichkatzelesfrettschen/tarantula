@@ -263,6 +263,12 @@ if ! command -v bmake >/dev/null 2>&1; then
   exit 1
 fi
 
+# ensure the package itself is registered with dpkg
+if ! dpkg -s bmake >/dev/null 2>&1; then
+  echo "bmake package is not installed" >&2
+  exit 1
+fi
+
 # clean up
 apt-get clean
 rm -rf /var/lib/apt/lists/*
