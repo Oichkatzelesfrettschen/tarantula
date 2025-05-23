@@ -23,5 +23,6 @@ This document outlines tasks for flattening the 4.4BSD-Lite2 source tree and mod
    `tools/migrate_to_src_layout.sh` (or the older `tools/organize_sources.sh`)
    to move them into `src-kernel`, `src-uland`, `src-headers` and `src-lib`.
    The `src-lib` directory stores archive libraries separated from the rest of
-   the tree.
+   the tree.  These scripts create `src-lib/.gitkeep` automatically so the
+   directory remains in version control even when empty.
 

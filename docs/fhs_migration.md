@@ -68,7 +68,8 @@ when modernizing historic BSD trees.
 5. Execute `tools/migrate_to_src_layout.sh` (add `--force` when outside the chroot)
    to relocate the sources. The script moves the kernel into `src-kernel`, user
    programs into `src-uland`, headers into `src-headers` and collects archive
-   libraries into `src-lib`.
+   libraries into `src-lib`. The `src-lib` directory keeps these libraries
+   together so they can be built independently of the rest of the tree.
 6. Verify the new symlinks by running `ls -l` on `bin`, `sbin` and related
    directories.
 7. Update makefiles and scripts to reference the new paths. `grep -r "/bin"`
