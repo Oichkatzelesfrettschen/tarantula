@@ -3,7 +3,7 @@ CFLAGS ?= -O2 -std=c2x
 CPPFLAGS = -I../tests/include -I../include -I../src-headers -I../src-headers/machine -I../src-kernel
 LIBS = ../src-kernel/libkern_stubs.a
 
-OBJS = test_kern.o fs_open.o pm_entry.o vm_entry.o mock_vm.o
+OBJS = test_kern.o fs_open.o pm_entry.o vm_entry.o sched_stub.o mock_vm.o
 
 all: test_kern
 
@@ -21,6 +21,9 @@ vm_entry.o: ../src-uland/libvm/vm_entry.c
 
 mock_vm.o: mock_vm.c
 	$(CC) -I../tests/include $(CFLAGS) -c $< -o $@
+
+sched_stub.o: sched_stub.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 clean:
 	 rm -f $(OBJS) test_kern
