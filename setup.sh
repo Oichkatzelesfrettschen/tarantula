@@ -63,6 +63,21 @@ build_bmake_from_source(){
       APT_FAILED+=("bmake-source")
     else
       echo "SRC OK   bmake" >> "$LOG_FILE"
+      # create a minimal deb so dpkg records bmake as installed
+      pkgdir=$(mktemp -d)
+      mkdir -p "$pkgdir/DEBIAN"
+      cat > "$pkgdir/DEBIAN/control" <<EOF
+Package: bmake
+Version: 2024-source
+Section: misc
+Priority: optional
+Architecture: $(dpkg --print-architecture)
+Maintainer: local
+Description: locally built bmake
+EOF
+      dpkg-deb --build "$pkgdir" >/dev/null 2>&1
+      dpkg -i "$pkgdir.deb" >/dev/null 2>&1
+      rm -rf "$pkgdir" "$pkgdir.deb"
     fi
   else
     echo "SRC DL   FAIL bmake" >> "$LOG_FILE"
