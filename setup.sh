@@ -260,6 +260,7 @@ command -v gmake >/dev/null 2>&1 || {
 # verify bmake was installed successfully
 if ! command -v bmake >/dev/null 2>&1; then
   echo "bmake not found after installation" >&2
+  exit 1
 fi
 
 # clean up
