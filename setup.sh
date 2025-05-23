@@ -58,16 +58,17 @@ apt-get update -y >/dev/null 2>&1 && echo "APT OK   update" >> "$LOG_FILE" || {
   echo "APT FAIL update" >> "$LOG_FILE"
   APT_FAILED+=("update")
 }
-# guarantee bmake and bison are present
+# guarantee bmake, bison and byacc are present
 apt_pin_install bmake || install_with_pip bmake
 apt_pin_install bison || install_with_pip bison
+apt_pin_install byacc || install_with_pip byacc
 
 # core build tools, formatters, analysis, science libs
 for pkg in \
   build-essential gcc g++ clang lld llvm \
   clang-format clang-tidy uncrustify astyle editorconfig pre-commit \
   make bmake ninja-build cmake meson \
-  autoconf automake libtool m4 gawk flex bison \
+  autoconf automake libtool m4 gawk flex bison byacc \
   pkg-config file ca-certificates curl git unzip \
   libopenblas-dev liblapack-dev libeigen3-dev \
   libbsd0 libbsd-dev \
