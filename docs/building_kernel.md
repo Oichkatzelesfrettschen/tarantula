@@ -13,6 +13,10 @@ an Autotools-style layer on top of `bmake`. All results are logged in
 `/tmp/setup.log`. Packages that fail via `apt` are automatically retried with
 `pip` when possible.
 
+If network access prevents installing `bmake`, the script logs a `FALLBACK`
+entry and symlinks the system `make` binary as `bmake`. This keeps the build
+steps functional though some `bmake` features may be missing.
+
 The script also validates that the `bmake` executable is present and that the
 `bmake` package was installed successfully via `dpkg`; it aborts if either
 check fails.

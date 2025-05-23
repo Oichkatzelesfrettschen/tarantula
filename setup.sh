@@ -296,10 +296,15 @@ command -v gmake >/dev/null 2>&1 || {
   fi
 }
 
-# verify bmake was installed successfully
+# verify bmake was installed successfully, falling back to make when offline
 if ! command -v bmake >/dev/null 2>&1; then
-  echo "bmake not found after installation" >&2
-  exit 1
+  if command -v make >/dev/null 2>&1; then
+    ln -s "$(command -v make)" /usr/local/bin/bmake
+    echo "FALLBACK bmake -> make" >> "$LOG_FILE"
+  else
+    echo "bmake not found after installation" >&2
+    exit 1
+  fi
 fi
 
 # ensure the package itself is registered with dpkg
