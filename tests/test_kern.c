@@ -10,7 +10,8 @@
 #include "ipc.h"
 
 int main(void) {
-    ipc_queue_init(&kern_ipc_queue);
+    /* start scheduler which also sets up the IPC queue */
+    kern_sched_init();
 
     int fd = kern_open("README.md", O_RDONLY);
     if (fd < 0) {
