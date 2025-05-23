@@ -49,6 +49,27 @@ install_with_pip(){
   fi
 }
 
+# attempt to build bmake from upstream source if package install fails
+build_bmake_from_source(){
+  url="https://ftp.NetBSD.org/pub/NetBSD/misc/sjg/bmake.tar.gz"
+  tmpdir=$(mktemp -d)
+  if curl -fsSL "$url" -o "$tmpdir/bmake.tar.gz"; then
+    tar -xzf "$tmpdir/bmake.tar.gz" -C "$tmpdir"
+    srcdir=$(find "$tmpdir" -maxdepth 1 -type d -name "bmake*")
+    (cd "$srcdir" && ./boot-strap --prefix=/usr/local >/dev/null 2>&1)
+    rc=$?
+    if [ $rc -ne 0 ]; then
+      echo "SRC FAIL bmake" >> "$LOG_FILE"
+      APT_FAILED+=("bmake-source")
+    else
+      echo "SRC OK   bmake" >> "$LOG_FILE"
+    fi
+  else
+    echo "SRC DL   FAIL bmake" >> "$LOG_FILE"
+    APT_FAILED+=("bmake-source-download")
+  fi
+}
+
 # enable foreign architectures for cross-compilation
 for arch in i386 armel armhf arm64 riscv64 powerpc ppc64el ia64; do
   dpkg --add-architecture "$arch"
@@ -61,6 +82,7 @@ apt-get update -y >/dev/null 2>&1 && echo "APT OK   update" >> "$LOG_FILE" || {
 # guarantee bmake (with its mk framework) is present
 # mk-configure is optional and layers an Autotools-style system on top
 apt_pin_install bmake || install_with_pip bmake
+command -v bmake >/dev/null 2>&1 || build_bmake_from_source
 apt_pin_install mk-configure || install_with_pip mk-configure
 apt_pin_install bison || install_with_pip bison
 apt_pin_install byacc || install_with_pip byacc

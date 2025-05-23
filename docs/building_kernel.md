@@ -3,11 +3,13 @@
 This short guide explains how to compile the historic 4.4BSD-Lite2 kernel on an i386 host. The steps mirror the classic workflow using `config` and `bmake`. The same procedure works on modern x86_64 systems when passing the appropriate compiler flags.
 
 Before building, run the repository's `setup.sh` script as root to install all
-required toolchains and utilities. The script uses `apt-get` to install
-**bison**, **byacc**, and **bmake** (which includes the full mk framework).
-Optionally **mk-configure** can also be installed to provide an Autotools-style
-layer on top of `bmake`. All results are logged in `/tmp/setup.log`. Packages
-that fail via `apt` are automatically retried with `pip` when possible.
+required toolchains and utilities. The script first attempts to install
+**bison**, **byacc**, and **bmake** (which includes the full mk framework)
+using `apt-get`. If the package installation fails it falls back to `pip` and,
+for **bmake**, will download the upstream source and build it locally. Optionally
+**mk-configure** can be installed to provide an Autotools-style layer on top of
+`bmake`. All results are logged in `/tmp/setup.log`. Packages that fail via
+`apt` are automatically retried with `pip` when possible.
 
 If `bison` is missing, install it and export `YACC="bison -y"` before building.
 Then proceed with the steps below.
