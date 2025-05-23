@@ -30,7 +30,7 @@ Steps from `tools/migrate_to_fhs.sh` still place these directories under `/usr` 
 ## Refactor Steps
 
 1. **Inventory**
-   - Use `tools/create_inventory.py` as described in [building_kernel.md](building_kernel.md) to capture the current tree.
+   - Use `python3 tools/create_inventory.py` as described in [building_kernel.md](building_kernel.md) to capture the current tree.
 2. **Kernel Minimization**
    - Strip existing kernel files to a bare allocator, context switch code and interrupt handlers.
    - Provide system calls for safe access to hardware resources (CPU time slices, memory pages, I/O ports).
@@ -46,5 +46,5 @@ Steps from `tools/migrate_to_fhs.sh` still place these directories under `/usr` 
 
 ## Mapping FHS Tasks
 
-The migration steps in [fhs_migration.md](fhs_migration.md) apply unchanged. `tools/create_inventory.py` records new directories, and `tools/migrate_to_fhs.sh` copies them under `/usr`. Build scripts should reference the `/usr` paths once the migration is complete.
+The migration steps in [fhs_migration.md](fhs_migration.md) apply unchanged. `python3 tools/create_inventory.py` records new directories, and `tools/migrate_to_fhs.sh` copies them under `/usr`. Build scripts should reference the `/usr` paths once the migration is complete.
 

@@ -49,7 +49,7 @@ var
 ## Proposed Agent Tasks
 
 1. **Codebase Enumeration**
-   - Run `tools/analyze_codebase.py` to obtain counts of source files by extension.
+   - Run `python3 tools/analyze_codebase.py` to obtain counts of source files by extension.
    - Generate cross references using `tools/generate_cscope.sh` and `tools/generate_ctags.sh`.
    - Document any existing assembly files (`.s`) and identify their architecture dependencies.
 

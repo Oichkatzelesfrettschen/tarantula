@@ -9,7 +9,7 @@ For a summary of directory mappings during the reorganization see
 
 ## Phase 1: Codebase Analysis
 - Generate cross-reference databases using `cscope` and `ctags`.
-- Use `tools/analyze_codebase.py` to count source files by extension.
+- Use `python3 tools/analyze_codebase.py` to count source files by extension.
 - Document architectural assumptions found in headers and assembly files.
 
 ## Phase 2: Infrastructure Updates
