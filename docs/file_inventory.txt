@@ -214,6 +214,7 @@ root/.profile
 root/.rhosts
 root/AGENTS.md
 setup.sh
+src-headers/libipc.h
 src-kernel/.gitkeep
 src-kernel/AGENTS.md
 src-kernel/Makefile
