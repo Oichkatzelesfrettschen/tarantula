@@ -1,11 +1,12 @@
 # Using pre-commit
 
 This repository provides a `.pre-commit-config.yaml` with hooks for
-`clang-format`, `clang-tidy` and `shellcheck`. Running `setup.sh` installs the
-`pre-commit` tool via both `apt` and `pip` and automatically sets up
-the git hooks. The script also installs `shellcheck` using `apt_pin_install`
-with a fallback to `pip`. After executing the script no manual steps are needed,
-but you can re-install the hooks any time:
+`clang-format`, `clang-tidy`, `shellcheck` and `codespell`. Running `setup.sh`
+installs the `pre-commit` tool via both `apt` and `pip`, installs `codespell`,
+and automatically configures the git hooks. The script also installs
+`shellcheck` using `apt_pin_install` with a fallback to `pip`. After executing
+the script no manual steps are needed, but you can re-install the hooks any
+time:
 
 ```sh
 pre-commit install --install-hooks

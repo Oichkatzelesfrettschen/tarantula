@@ -17,8 +17,9 @@ The script also validates that the `bmake` executable is present and that the
 `bmake` package was installed successfully via `dpkg`; it aborts if either
 check fails.
 
-If `bison` is missing, install it and export `YACC="bison -y"` before building.
-Then proceed with the steps below.
+If `bison` is missing, install it and rerun `setup.sh`. The script now sets
+`YACC="bison -y"` automatically using `/etc/profile.d/yacc.sh`. Then proceed
+with the steps below.
 
 1. **Build the `config` utility**
    ```sh
@@ -102,7 +103,10 @@ The exokernel layout relocates sources using `tools/organize_sources.sh`. After 
    cd src-kernel
    bmake clean && bmake
    ```
-   Use the same environment variables as the classic build. If `YACC` was exported earlier, export it again before invoking `bmake`. Append `CFLAGS=-m32` or `CFLAGS=-m64` for your architecture as needed.
+Use the same environment variables as the classic build. `setup.sh` exports
+`YACC=bison -y` for you. If the variable is missing in your shell, export it
+before invoking `bmake`. Append `CFLAGS=-m32` or `CFLAGS=-m64` for your
+architecture as needed.
 
 2. **Build user-space managers**
    ```sh
