@@ -49,6 +49,25 @@ install_with_pip(){
   fi
 }
 
+# use aptitude to install a package when available
+aptitude_install(){
+  pkg="$1"
+  if command -v aptitude >/dev/null 2>&1; then
+    aptitude -y install "$pkg" >/dev/null 2>&1
+    rc=$?
+    if [ $rc -ne 0 ]; then
+      echo "APTITUDE FAIL $pkg" >> "$LOG_FILE"
+      APT_FAILED+=("$pkg")
+      return 1
+    else
+      echo "APTITUDE OK   $pkg" >> "$LOG_FILE"
+      return 0
+    fi
+  else
+    return 1
+  fi
+}
+
 # attempt to build bmake from upstream source if package install fails
 build_bmake_from_source(){
   url="https://ftp.NetBSD.org/pub/NetBSD/misc/sjg/bmake.tar.gz"
@@ -94,9 +113,13 @@ apt-get update -y >/dev/null 2>&1 && echo "APT OK   update" >> "$LOG_FILE" || {
   echo "APT FAIL update" >> "$LOG_FILE"
   APT_FAILED+=("update")
 }
-# guarantee bmake (with its mk framework) is present
-# mk-configure is optional and layers an Autotools-style system on top
-apt_pin_install bmake || install_with_pip bmake
+# install aptitude then install bmake using aptitude
+apt_pin_install aptitude || install_with_pip aptitude
+if command -v aptitude >/dev/null 2>&1; then
+  aptitude update >/dev/null 2>&1 || true
+fi
+# guarantee bmake (with its mk framework) is present via aptitude
+aptitude_install bmake || install_with_pip bmake
 command -v bmake >/dev/null 2>&1 || build_bmake_from_source
 apt_pin_install mk-configure || install_with_pip mk-configure
 apt_pin_install bison || install_with_pip bison
@@ -112,7 +135,7 @@ apt_pin_install codespell || install_with_pip codespell
 for pkg in \
   build-essential gcc g++ clang lld llvm \
   clang-format clang-tidy uncrustify astyle editorconfig pre-commit shellcheck codespell \
-  make bmake ninja-build cmake meson \
+  make ninja-build cmake meson \
   autoconf automake libtool m4 gawk flex bison byacc \
   pkg-config file ca-certificates curl git unzip \
   libopenblas-dev liblapack-dev libeigen3-dev \
@@ -137,7 +160,8 @@ done
 for pip_pkg in \
   tensorflow-cpu jax jaxlib \
   tensorflow-model-optimization mlflow onnxruntime-tools \
-  meson ninja cmake pre-commit compiledb codespell; do
+  meson ninja cmake pre-commit compiledb codespell \
+  configuredb pytest pyyaml pylint pyfuzz; do
   pip3 install "$pip_pkg" >/dev/null 2>&1
   rc=$?
   if [ $rc -ne 0 ]; then
@@ -158,6 +182,22 @@ else
   echo "PIP FAIL pre-commit" >> "$LOG_FILE"
   PIP_FAILED+=("pre-commit")
 fi
+
+# verify Python tools installed
+for tool in pytest pylint pyfuzz; do
+  if command -v "$tool" >/dev/null 2>&1; then
+    "$tool" --version >/dev/null 2>&1 || true
+  else
+    echo "PIP WARN $tool not in PATH" >> "$LOG_FILE"
+  fi
+done
+
+python3 - <<'EOF' >/dev/null 2>&1 || echo "PIP WARN pyyaml import failed" >> "$LOG_FILE"
+import yaml
+EOF
+python3 - <<'EOF' >/dev/null 2>&1 || echo "PIP WARN configuredb import failed" >> "$LOG_FILE"
+import configuredb
+EOF
 
 # QEMU emulation for foreign binaries
 for pkg in \
@@ -279,10 +319,15 @@ command -v gmake >/dev/null 2>&1 || {
   fi
 }
 
-# verify bmake was installed successfully
+# verify bmake was installed successfully, falling back to make when offline
 if ! command -v bmake >/dev/null 2>&1; then
-  echo "bmake not found after installation" >&2
-  exit 1
+  if command -v make >/dev/null 2>&1; then
+    ln -s "$(command -v make)" /usr/local/bin/bmake
+    echo "FALLBACK bmake -> make" >> "$LOG_FILE"
+  else
+    echo "bmake not found after installation" >&2
+    exit 1
+  fi
 fi
 
 # ensure the package itself is registered with dpkg

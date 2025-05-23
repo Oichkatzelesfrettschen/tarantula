@@ -5,8 +5,9 @@ The story: https://en.wikipedia.org/wiki/History_of_the_Berkeley_Software_Distri
 Downloaded from: ftp://alge.anart.no/pub/BSD/4.4BSD-Lite/4.4BSD-Lite2.tar.gz
 
 For kernel build instructions see [docs/building_kernel.md](docs/building_kernel.md).
-Run `setup.sh` first to install required tools. The script uses `apt-get install` to
-fetch **bmake** and its mk framework and can optionally install **mk-configure**
+Run `setup.sh` first to install required tools. The script installs `aptitude`
+and then uses it to fetch **bmake** and its mk framework. It can optionally
+install **mk-configure**
 to provide an Autotools-style build system layered on top.
 For GitHub CI examples see [docs/ci_workflows.md](docs/ci_workflows.md).
 For FHS migration steps see [docs/fhs_migration.md](docs/fhs_migration.md).
@@ -66,6 +67,6 @@ For exokernel tasks see [docs/exokernel_plan.md](docs/exokernel_plan.md).
 
 All Python utilities require **Python 3**.
 
-The `tools` directory contains helper scripts. `generate_dependency_graph.py` scans the source tree to build a DOT file of include dependencies and syscall implementations. Run `python3 tools/generate_dependency_graph.py` to produce `dependency_graph.dot` (use `--include-calls` to add a simple call graph).
+The `tools` directory contains helper scripts. `generate_dependency_graph.py` scans the source tree to build a DOT file of include dependencies and syscall implementations. Run `python3 tools/generate_dependency_graph.py` to produce `dependency_graph.dot` (use `--include-calls` to add a simple call graph). The `dependency_graph.dot` file tracked in this repository was generated using this command.
 `tools/generate_compiledb.sh` runs `compiledb` to create a `compile_commands.json` database for clang-tidy.
 
