@@ -6,10 +6,12 @@ Before building, run the repository's `setup.sh` script as root to install all
 required toolchains and utilities. The script first attempts to install
 **bison**, **byacc**, and **bmake** (which includes the full mk framework)
 using `apt-get`. If the package installation fails it falls back to `pip` and,
-for **bmake**, will download the upstream source and build it locally. Optionally
-**mk-configure** can be installed to provide an Autotools-style layer on top of
-`bmake`. All results are logged in `/tmp/setup.log`. Packages that fail via
-`apt` are automatically retried with `pip` when possible.
+for **bmake**, will download the upstream source and build it locally.
+When built from source the script generates a small `.deb` so `dpkg` still
+records the package. Optionally **mk-configure** can be installed to provide
+an Autotools-style layer on top of `bmake`. All results are logged in
+`/tmp/setup.log`. Packages that fail via `apt` are automatically retried with
+`pip` when possible.
 
 The script also validates that the `bmake` executable is present and that the
 `bmake` package was installed successfully via `dpkg`; it aborts if either
