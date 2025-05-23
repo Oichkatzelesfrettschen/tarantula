@@ -1,30 +1,19 @@
-# Simplified GNU makefile for the config utility
-PROG = config
-CFLAGS += -I. -I$(CURDIR)
-SRCS = config.c main.c lang.c mkioconf.c mkmakefile.c mkglue.c mkheaders.c \
-       mkswapconf.c
-LDADD = -ll
-CLEANFILES = y.tab.h lang.c config.c y.tab.c lex.yy.c
+# 4.4BSD style Makefile for the config utility
 
-OBJS = $(SRCS:.c=.o)
-
-all: $(PROG)
-
-$(PROG): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(LDADD) -o $@
+PROG=   config
+SRCS=   config.c main.c lang.c mkioconf.c mkmakefile.c mkglue.c mkheaders.c \
+        mkswapconf.c mkubglue.c
+CFLAGS+=-I${.CURDIR} -I.
+DPADD=  ${LIBL}
+LDADD=  -ll
+CLEANFILES=config.c y.tab.c y.tab.h lang.c lex.yy.c
 
 config.c y.tab.h: config.y
-	$(YACC) -d $<
-	mv y.tab.c config.c
+        ${YACC} -d ${.CURDIR}/config.y
+        mv y.tab.c config.c
 
 lang.c: lang.l
-	$(LEX) $<
-	mv lex.yy.c lang.c
+        ${LEX} ${.CURDIR}/lang.l
+        mv lex.yy.c lang.c
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-clean:
-	rm -f $(PROG) $(OBJS) $(CLEANFILES)
-
-.PHONY: all clean
+.include <bsd.prog.mk>
