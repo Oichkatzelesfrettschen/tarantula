@@ -26,3 +26,9 @@ repos:
     hooks:
       - id: shellcheck
         files: \.sh$
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.2.5
+    hooks:
+      - id: codespell
+        name: codespell
+        files: \.(c|cpp|h|hpp|md|sh|txt)$

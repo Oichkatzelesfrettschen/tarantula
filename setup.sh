@@ -101,12 +101,17 @@ command -v bmake >/dev/null 2>&1 || build_bmake_from_source
 apt_pin_install mk-configure || install_with_pip mk-configure
 apt_pin_install bison || install_with_pip bison
 apt_pin_install byacc || install_with_pip byacc
+if command -v bison >/dev/null 2>&1; then
+  export YACC="bison -y"
+  echo 'export YACC="bison -y"' > /etc/profile.d/yacc.sh
+fi
 apt_pin_install shellcheck || install_with_pip shellcheck
+apt_pin_install codespell || install_with_pip codespell
 
 # core build tools, formatters, analysis, science libs
 for pkg in \
   build-essential gcc g++ clang lld llvm \
-  clang-format clang-tidy uncrustify astyle editorconfig pre-commit shellcheck \
+  clang-format clang-tidy uncrustify astyle editorconfig pre-commit shellcheck codespell \
   make bmake ninja-build cmake meson \
   autoconf automake libtool m4 gawk flex bison byacc \
   pkg-config file ca-certificates curl git unzip \
@@ -132,7 +137,7 @@ done
 for pip_pkg in \
   tensorflow-cpu jax jaxlib \
   tensorflow-model-optimization mlflow onnxruntime-tools \
-  meson ninja cmake pre-commit compiledb; do
+  meson ninja cmake pre-commit compiledb codespell; do
   pip3 install "$pip_pkg" >/dev/null 2>&1
   rc=$?
   if [ $rc -ne 0 ]; then
