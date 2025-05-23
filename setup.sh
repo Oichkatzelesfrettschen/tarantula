@@ -137,7 +137,8 @@ done
 for pip_pkg in \
   tensorflow-cpu jax jaxlib \
   tensorflow-model-optimization mlflow onnxruntime-tools \
-  meson ninja cmake pre-commit compiledb codespell; do
+  meson ninja cmake pre-commit compiledb codespell \
+  configuredb pytest pyyaml pylint pyfuzz; do
   pip3 install "$pip_pkg" >/dev/null 2>&1
   rc=$?
   if [ $rc -ne 0 ]; then
@@ -158,6 +159,22 @@ else
   echo "PIP FAIL pre-commit" >> "$LOG_FILE"
   PIP_FAILED+=("pre-commit")
 fi
+
+# verify Python tools installed
+for tool in pytest pylint pyfuzz; do
+  if command -v "$tool" >/dev/null 2>&1; then
+    "$tool" --version >/dev/null 2>&1 || true
+  else
+    echo "PIP WARN $tool not in PATH" >> "$LOG_FILE"
+  fi
+done
+
+python3 - <<'EOF' >/dev/null 2>&1 || echo "PIP WARN pyyaml import failed" >> "$LOG_FILE"
+import yaml
+EOF
+python3 - <<'EOF' >/dev/null 2>&1 || echo "PIP WARN configuredb import failed" >> "$LOG_FILE"
+import configuredb
+EOF
 
 # QEMU emulation for foreign binaries
 for pkg in \
