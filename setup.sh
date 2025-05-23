@@ -49,6 +49,25 @@ install_with_pip(){
   fi
 }
 
+# use aptitude to install a package when available
+aptitude_install(){
+  pkg="$1"
+  if command -v aptitude >/dev/null 2>&1; then
+    aptitude -y install "$pkg" >/dev/null 2>&1
+    rc=$?
+    if [ $rc -ne 0 ]; then
+      echo "APTITUDE FAIL $pkg" >> "$LOG_FILE"
+      APT_FAILED+=("$pkg")
+      return 1
+    else
+      echo "APTITUDE OK   $pkg" >> "$LOG_FILE"
+      return 0
+    fi
+  else
+    return 1
+  fi
+}
+
 # attempt to build bmake from upstream source if package install fails
 build_bmake_from_source(){
   url="https://ftp.NetBSD.org/pub/NetBSD/misc/sjg/bmake.tar.gz"
@@ -94,9 +113,13 @@ apt-get update -y >/dev/null 2>&1 && echo "APT OK   update" >> "$LOG_FILE" || {
   echo "APT FAIL update" >> "$LOG_FILE"
   APT_FAILED+=("update")
 }
-# guarantee bmake (with its mk framework) is present
-# mk-configure is optional and layers an Autotools-style system on top
-apt_pin_install bmake || install_with_pip bmake
+# install aptitude then install bmake using aptitude
+apt_pin_install aptitude || install_with_pip aptitude
+if command -v aptitude >/dev/null 2>&1; then
+  aptitude update >/dev/null 2>&1 || true
+fi
+# guarantee bmake (with its mk framework) is present via aptitude
+aptitude_install bmake || install_with_pip bmake
 command -v bmake >/dev/null 2>&1 || build_bmake_from_source
 apt_pin_install mk-configure || install_with_pip mk-configure
 apt_pin_install bison || install_with_pip bison
@@ -112,7 +135,7 @@ apt_pin_install codespell || install_with_pip codespell
 for pkg in \
   build-essential gcc g++ clang lld llvm \
   clang-format clang-tidy uncrustify astyle editorconfig pre-commit shellcheck codespell \
-  make bmake ninja-build cmake meson \
+  make ninja-build cmake meson \
   autoconf automake libtool m4 gawk flex bison byacc \
   pkg-config file ca-certificates curl git unzip \
   libopenblas-dev liblapack-dev libeigen3-dev \
