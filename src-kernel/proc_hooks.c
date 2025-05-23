@@ -8,7 +8,8 @@ extern int pm_exec(const char *path, char *const argv[]);
 int
 kern_fork(void)
 {
-    struct ipc_message msg = { .type = IPC_MSG_FORK };
+
+    struct ipc_message msg = { .type = IPC_MSG_PROC_FORK };
     ipc_queue_send(&kern_ipc_queue, &msg);
     struct ipc_message reply;
     if (ipc_queue_recv(&kern_ipc_queue, &reply))
@@ -20,7 +21,7 @@ int
 kern_exec(const char *path, char *const argv[])
 {
     struct ipc_message msg = {
-        .type = IPC_MSG_EXEC,
+        .type = IPC_MSG_PROC_EXEC,
         .a = (uintptr_t)path,
         .b = (uintptr_t)argv
     };

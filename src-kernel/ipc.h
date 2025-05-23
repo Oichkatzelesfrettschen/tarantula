@@ -12,8 +12,8 @@ enum ipc_msg_type {
     IPC_MSG_SCHED_INIT = 1,
     IPC_MSG_VM_FAULT,
     IPC_MSG_OPEN,
-    IPC_MSG_FORK,
-    IPC_MSG_EXEC
+    IPC_MSG_PROC_FORK,
+    IPC_MSG_PROC_EXEC
 };
 
 struct ipc_message {
