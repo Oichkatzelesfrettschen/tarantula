@@ -58,8 +58,10 @@ apt-get update -y >/dev/null 2>&1 && echo "APT OK   update" >> "$LOG_FILE" || {
   echo "APT FAIL update" >> "$LOG_FILE"
   APT_FAILED+=("update")
 }
-# guarantee bmake, bison and byacc are present
+# guarantee bmake (with its mk framework) is present
+# mk-configure is optional and layers an Autotools-style system on top
 apt_pin_install bmake || install_with_pip bmake
+apt_pin_install mk-configure || install_with_pip mk-configure
 apt_pin_install bison || install_with_pip bison
 apt_pin_install byacc || install_with_pip byacc
 
