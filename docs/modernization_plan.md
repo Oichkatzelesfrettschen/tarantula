@@ -19,6 +19,8 @@ For a summary of directory mappings during the reorganization see
 - Prototype CMake build files using **CMake 3.16+** to evaluate a cross-platform build system.
 - Integrate static analysis tools such as `clang-tidy`.
 - Set up a `pre-commit` hook to run `clang-format` and `clang-tidy`.
+- Generate a `compile_commands.json` database using `compiledb` for use with
+  static analysis.
 
 ## Phase 3: Userland Modernization
 - Update core libraries (`libc`, `libm`) to use ANSI C prototypes.

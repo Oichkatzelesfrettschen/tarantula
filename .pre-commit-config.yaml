@@ -1,6 +1,11 @@
 repos:
   - repo: local
     hooks:
+      - id: compiledb
+        name: generate compile_commands.json
+        entry: tools/generate_compiledb.sh
+        language: system
+        pass_filenames: false
       - id: clang-format
         name: clang-format
         entry: clang-format -i
