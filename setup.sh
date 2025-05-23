@@ -34,6 +34,11 @@ apt_pin_install(){
   fi
 }
 
+# directory for cached third-party sources relative to this script
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+BMAKE_CACHE_DIR="$SCRIPT_DIR/third_party/bmake"
+mkdir -p "$BMAKE_CACHE_DIR"
+
 # fallback installer using pip3 when apt fails
 install_with_pip(){
   pkg="$1"
@@ -70,22 +75,35 @@ aptitude_install(){
 
 # attempt to build bmake from upstream source if package install fails
 build_bmake_from_source(){
-  url="https://ftp.NetBSD.org/pub/NetBSD/misc/sjg/bmake.tar.gz"
+  local listing tarball srcdir tmpdir
+  listing=$(curl -fsSL http://www.crufty.net/ftp/pub/sjg/ 2>/dev/null || true)
+  if [ -n "$listing" ]; then
+    tarball=$(echo "$listing" | grep -o 'bmake-[0-9]\{8\}.tar.gz' | sort -V | tail -n1)
+    if [ -n "$tarball" ]; then
+      if [ ! -f "$BMAKE_CACHE_DIR/$tarball" ]; then
+        curl -fsSL "http://www.crufty.net/ftp/pub/sjg/$tarball" -o "$BMAKE_CACHE_DIR/$tarball" || true
+      fi
+    fi
+  fi
+  tarball=$(ls "$BMAKE_CACHE_DIR"/bmake-*.tar.gz 2>/dev/null | sort -V | tail -n1)
+  if [ -z "$tarball" ]; then
+    echo "SRC DL   FAIL bmake" >> "$LOG_FILE"
+    APT_FAILED+=("bmake-source-download")
+    return
+  fi
   tmpdir=$(mktemp -d)
-  if curl -fsSL "$url" -o "$tmpdir/bmake.tar.gz"; then
-    tar -xzf "$tmpdir/bmake.tar.gz" -C "$tmpdir"
-    srcdir=$(find "$tmpdir" -maxdepth 1 -type d -name "bmake*")
-    (cd "$srcdir" && ./boot-strap --prefix=/usr/local >/dev/null 2>&1)
-    rc=$?
-    if [ $rc -ne 0 ]; then
-      echo "SRC FAIL bmake" >> "$LOG_FILE"
-      APT_FAILED+=("bmake-source")
-    else
-      echo "SRC OK   bmake" >> "$LOG_FILE"
-      # create a minimal deb so dpkg records bmake as installed
-      pkgdir=$(mktemp -d)
-      mkdir -p "$pkgdir/DEBIAN"
-      cat > "$pkgdir/DEBIAN/control" <<EOF
+  tar -xzf "$tarball" -C "$tmpdir"
+  srcdir=$(find "$tmpdir" -maxdepth 1 -type d -name 'bmake*' | head -n1)
+  (cd "$srcdir" && ./boot-strap --prefix=/usr/local >/dev/null 2>&1)
+  rc=$?
+  if [ $rc -ne 0 ]; then
+    echo "SRC FAIL bmake" >> "$LOG_FILE"
+    APT_FAILED+=("bmake-source")
+  else
+    echo "SRC OK   bmake" >> "$LOG_FILE"
+    pkgdir=$(mktemp -d)
+    mkdir -p "$pkgdir/DEBIAN"
+    cat > "$pkgdir/DEBIAN/control" <<EOF
 Package: bmake
 Version: 2024-source
 Section: misc
@@ -94,13 +112,9 @@ Architecture: $(dpkg --print-architecture)
 Maintainer: local
 Description: locally built bmake
 EOF
-      dpkg-deb --build "$pkgdir" >/dev/null 2>&1
-      dpkg -i "$pkgdir.deb" >/dev/null 2>&1
-      rm -rf "$pkgdir" "$pkgdir.deb"
-    fi
-  else
-    echo "SRC DL   FAIL bmake" >> "$LOG_FILE"
-    APT_FAILED+=("bmake-source-download")
+    dpkg-deb --build "$pkgdir" >/dev/null 2>&1
+    dpkg -i "$pkgdir.deb" >/dev/null 2>&1
+    rm -rf "$pkgdir" "$pkgdir.deb"
   fi
 }
 
