@@ -7,6 +7,7 @@ required toolchains and utilities. The script first installs `aptitude` and
 then uses it to install **bison**, **byacc**, and **bmake** (which includes the
 full mk framework). If the package installation fails it falls back to `pip` and
 for **bmake**, will download the upstream source and build it locally.
+The tarball is cached under `third_party/bmake` so subsequent runs work offline.
 When built from source the script generates a small `.deb` so `dpkg` still
 records the package. Optionally **mk-configure** can be installed to provide
 an Autotools-style layer on top of `bmake`. All results are logged in
