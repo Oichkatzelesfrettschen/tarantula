@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdatomic.h>
+#include "../include/spinlock.h"
 
 #define IPC_QUEUE_SIZE 32
 
@@ -27,7 +28,7 @@ struct ipc_queue {
     struct ipc_message msgs[IPC_QUEUE_SIZE];
     volatile uint32_t head;
     volatile uint32_t tail;
-    atomic_flag lock;
+    spinlock_t lock;
 };
 
 /* Global queue instance defined in ipc.c */
