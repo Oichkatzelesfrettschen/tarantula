@@ -7,8 +7,8 @@ AR ?= ar
 CFLAGS ?= -O2
 CSTD ?= -std=c2x
 CPPFLAGS ?= -I../../src-headers -I../../src-headers/machine \
-            -I../../include -I../../sys -I../../sys/sys \
-            -I../../sys/i386/include
+	-I../../include -I../../sys -I../../sys/sys \
+	-I../../sys/i386/include
 CFLAGS   += $(CSTD) -DKERNEL
 
 all: $(LIB)
