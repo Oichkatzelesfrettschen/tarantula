@@ -65,6 +65,8 @@ The steps in `tools/migrate_to_fhs.sh` will be updated so these directories map 
    - Device drivers and BSD daemons become user space services under `src-uland/servers` and `src-uland/drivers`.
    - Introduce `proc_hooks.c` so `kern_fork()` and `kern_exec()` delegate to the
      user-space `proc_manager`.
+   - Process requests are forwarded over IPC using `IPC_MSG_FORK` and
+     `IPC_MSG_EXEC` message types.
 
 4. **User Space Isolation**
    - Servers communicate with the microkernel via message passing or shared memory APIs.
