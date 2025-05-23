@@ -6,7 +6,8 @@ trap 'rc=$?; echo "FAILED: ${BASH_COMMAND} (exit $rc)" >> "$LOG"' ERR
 file="$1"
 args=("${@:2}")
 if [[ "$file" == *.c ]]; then
-    clang-tidy "$file" "${args[@]}" -- -std=c23
+    # Match the C standard used by the makefiles (-std=c2x)
+    clang-tidy "$file" "${args[@]}" -- -std=c2x
 elif [[ "$file" == *.cpp || "$file" == *.cc || "$file" == *.cxx ]]; then
     clang-tidy "$file" "${args[@]}" -- -std=c++17
 else
