@@ -61,6 +61,7 @@ move_artifacts() {
     base="$1"
     [ -d "$base" ] || return 0
     run_cmd "mkdir -p src-lib"
+    run_cmd "touch src-lib/.gitkeep"
     find "$base" -type f \( -name '*.o' -o -name '*.a' -o -name '*.so' -o -name '*.so.*' \) | while read f; do
         rel="${f#$base/}"
         dest="src-lib/$rel"
