@@ -1,3 +1,4 @@
+// Generated via python3 tools/generate_dependency_graph.py
 digraph G {
   "usr/src/bin/cat/cat.c" -> "usr/src/include/ctype.h";
   "usr/src/bin/cat/cat.c" -> "usr/src/include/err.h";
