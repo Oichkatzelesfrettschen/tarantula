@@ -12,7 +12,7 @@ This document outlines tasks for flattening the 4.4BSD-Lite2 source tree and mod
 
 ## Implementation Steps
 
-1. Generate an inventory of files using `tools/create_inventory.py`.
+1. Generate an inventory of files using `python3 tools/create_inventory.py`.
 2. Draft new makefiles under `src/`, `include/`, `lib/`, and `tests/`.
 3. Incrementally refactor C sources to ANSI prototypes and replace legacy headers.
 4. Compile each subsystem with modern compilers and run tests.

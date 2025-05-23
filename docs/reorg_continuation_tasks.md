@@ -12,7 +12,7 @@ This document outlines tasks for agents to continue migrating the 4.4BSD-Lite2 t
   - [ ] Adjust makefiles under `usr/src` to reference the new paths created during the migration
   - [x] Ensure `tools/migrate_to_fhs.sh` updates symlinks when rerun
 - [x] **Inventory Remaining Legacy Files**
-  - [x] Use `tools/create_inventory.py` to produce an updated file list
+  - [x] Use `python3 tools/create_inventory.py` to produce an updated file list
   - [x] Mark files that are deprecated or replaced in the modern layout
 ## Mid-Term Goals
 

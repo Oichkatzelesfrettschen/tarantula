@@ -55,7 +55,7 @@ when modernizing historic BSD trees.
 
 ## Migration steps
 
-1. Run `tools/create_inventory.py` to snapshot the current tree. The generated
+1. Run `python3 tools/create_inventory.py` to snapshot the current tree. The generated
    `docs/file_inventory.txt` serves as a record of the pre-migration layout.
 2. Prepare a chroot environment (or pass `--force`) and execute
    `tools/migrate_to_fhs.sh --dry-run` to review the planned actions.
@@ -76,7 +76,7 @@ when modernizing historic BSD trees.
    can help locate hard-coded locations.
 8. Once the build succeeds with the new layout, remove any compatibility links
    that are no longer needed.
-9. Re-run `tools/create_inventory.py` so that `docs/file_inventory.txt` reflects
+9. Re-run `python3 tools/create_inventory.py` so that `docs/file_inventory.txt` reflects
    the updated structure and commit the results alongside documentation notes.
 10. Keep a log of each mapping for future developers.
 
