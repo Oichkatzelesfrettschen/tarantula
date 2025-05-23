@@ -3,7 +3,7 @@ LIB  = libipc.a
 
 CC ?= cc
 AR ?= ar
-CPPFLAGS ?= -I../../src-kernel
+CPPFLAGS ?= -I../../src-headers -I../../src-kernel
 CFLAGS ?= -O2
 CSTD ?= -std=c2x
 CFLAGS += $(CSTD)

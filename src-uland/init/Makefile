@@ -5,6 +5,7 @@ PROG = init
 CC ?= cc
 CFLAGS ?= -O2
 CSTD ?= -std=c2x
+CPPFLAGS ?= -I../../src-headers
 CFLAGS += $(CSTD)
 
 all: $(PROG)
