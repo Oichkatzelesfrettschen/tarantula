@@ -68,3 +68,15 @@ Successful output prints `all ok` and verifies that:
 - `kern_open()` delegates to `fs_open()` and opens `README.md`.
 - `kern_vm_fault()` returns `true` using the mock VM handler.
 - `kern_fork()` creates a child process which exits normally.
+
+## Performance Measurement
+
+Reliable latency numbers require a clean CPU state before each test run. Follow these steps to minimize noise:
+
+1. **Flush caches** – run `clflush` on touched buffers or invalidate the entire L1/L2 caches using a small kernel helper between measurements.
+2. **Drop TLB entries** – issue a full TLB shootdown (or toggle CR3) to remove stale address translations.
+3. **Pin CPU frequency** – set the governor to `performance` and disable turbo so the core runs at a fixed rate.
+4. **Isolate test CPUs** – boot the machine with `isolcpus=` and `nohz_full=` for the cores reserved for measurements. Avoid scheduling other tasks on them.
+
+After collecting at least 30 samples, remove the top and bottom 5% to discard outliers. Compute confidence intervals with bootstrap resampling (10,000 iterations is typical) and report the 95% range.
+
