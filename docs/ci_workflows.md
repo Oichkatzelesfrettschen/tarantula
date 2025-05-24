@@ -78,7 +78,7 @@ jobs:
 
 ## Reviewdog Annotations
 
-Reviewdog can turn any linter output into GitHub pull request checks. The following example matrix runs several linters in parallel and reports results inline:
+Reviewdog can turn any linter output into GitHub pull request checks. The following example matrix runs several linters in parallel and reports results inline. Because `black`, `ruff`, and `golangci-lint` are not preinstalled on the runner, the workflow installs them before execution:
 
 ```yaml
 name: lint-and-annotate
@@ -111,9 +111,10 @@ jobs:
       run: |
         sudo apt-get update -y
         sudo apt-get install -y shellcheck
+        pip install black ruff
+        go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
     - name: Run ${{ matrix.linter.id }} & feed Reviewdog
       uses: reviewdog/reviewdog@v0.20.3
-      uses: reviewdog/reviewdog@master
       with:
         name: ${{ matrix.linter.id }}
         reporter: github-pr-check
