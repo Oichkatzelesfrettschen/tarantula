@@ -36,6 +36,9 @@ User-space components implement nearly all traditional BSD services:
 - The **scheduler library** and **VM library** in `src-uland/libkern_sched`
   and `src-uland/libvm` make policy decisions for scheduling and memory
   management.
+- Capability management uses `cap_set_security_mode(cap_endpoint, mode)` to
+  toggle security levels (`FAST`, `HARDENED` or `PARANOID`) for a running
+  service.
 - Additional drivers will appear under `src-uland/servers` as standalone
   tasks communicating with the kernel via the IPC layer.
 
