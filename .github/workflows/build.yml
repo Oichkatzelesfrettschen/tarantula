@@ -100,3 +100,24 @@ jobs:
         run: |
           bmake -C src-uland/libkern_sched CC=clang CFLAGS='-m32'
           bmake -C src-uland/libvm CC=clang CFLAGS='-m32'
+  test-kern:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install GCC and bmake
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential gcc-multilib aptitude
+          sudo aptitude -y install bmake
+      - name: Build test binary
+        run: |
+          bmake -C src-kernel CC=gcc
+          bmake -C tests CC=gcc
+      - name: Run test_kern
+        run: ./tests/test_kern > test_kern.log
+      - uses: actions/upload-artifact@v3
+        with:
+          name: test_kern_results
+          path: |
+            tests/test_kern
+            test_kern.log
