@@ -15,6 +15,8 @@ system safely.  These include:
   then performs context switches on request.
 - **Virtual memory hooks** – page faults call `kern_vm_fault()` which forwards
   to a user-space memory manager for allocation and paging decisions.
+- **Kernel memory allocator** – see [memory_allocator.md](memory_allocator.md)
+  for the slab-style design with per-CPU caches.
 - **System call gate** – simple wrappers like `kern_open()` pass file
   operations to the file server running in user space.
 - **IPC primitives** – the kernel exposes message queues for servers and
