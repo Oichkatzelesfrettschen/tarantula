@@ -16,6 +16,16 @@ PIP_FAILED=()
 # helper to pin to the repo’s exact version if it exists
 apt_pin_install(){
   pkg="$1"
+  local deb
+  deb=$(ls "$APT_CACHE_DIR"/${pkg}_*.deb 2>/dev/null | sort -V | tail -n1)
+  if [ -n "$deb" ]; then
+    dpkg -i "$deb" >/dev/null 2>&1
+    rc=$?
+    if [ $rc -eq 0 ]; then
+      echo "APT OK   $pkg (cached)" >> "$LOG_FILE"
+      return 0
+    fi
+  fi
   ver=$(apt-cache show "$pkg" 2>/dev/null \
         | awk '/^Version:/{print $2; exit}')
   if [ -n "$ver" ]; then
@@ -30,6 +40,8 @@ apt_pin_install(){
     return 1
   else
     echo "APT OK   $pkg" >> "$LOG_FILE"
+    apt-get -y download "$pkg" >/dev/null 2>&1 && \
+      mv ${pkg}_*.deb "$APT_CACHE_DIR"/ 2>/dev/null || true
     return 0
   fi
 }
@@ -37,11 +49,33 @@ apt_pin_install(){
 # directory for cached third-party sources relative to this script
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 BMAKE_CACHE_DIR="$SCRIPT_DIR/third_party/bmake"
-mkdir -p "$BMAKE_CACHE_DIR"
+APT_CACHE_DIR="$SCRIPT_DIR/third_party/apt"
+PIP_CACHE_DIR="$SCRIPT_DIR/third_party/pip"
+mkdir -p "$BMAKE_CACHE_DIR" "$APT_CACHE_DIR" "$PIP_CACHE_DIR"
 
 # fallback installer using pip3 when apt fails
 install_with_pip(){
   pkg="$1"
+  local wheel
+  wheel=$(ls "$PIP_CACHE_DIR"/${pkg}-*.whl 2>/dev/null | sort -V | tail -n1)
+  if [ -n "$wheel" ]; then
+    pip3 install "$wheel" >/dev/null 2>&1
+    rc=$?
+    if [ $rc -eq 0 ]; then
+      echo "PIP OK   $pkg (cached)" >> "$LOG_FILE"
+      return 0
+    fi
+  fi
+  local src
+  src=$(ls "$PIP_CACHE_DIR"/${pkg}-*.tar.gz 2>/dev/null | sort -V | tail -n1)
+  if [ -n "$src" ]; then
+    pip3 install "$src" >/dev/null 2>&1
+    rc=$?
+    if [ $rc -eq 0 ]; then
+      echo "PIP OK   $pkg (cached)" >> "$LOG_FILE"
+      return 0
+    fi
+  fi
   pip3 install "$pkg" >/dev/null 2>&1
   rc=$?
   if [ $rc -ne 0 ]; then
@@ -49,6 +83,7 @@ install_with_pip(){
     PIP_FAILED+=("$pkg")
     return 1
   else
+    pip3 download "$pkg" -d "$PIP_CACHE_DIR" >/dev/null 2>&1 || true
     echo "PIP OK   $pkg" >> "$LOG_FILE"
     return 0
   fi
