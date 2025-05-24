@@ -5,7 +5,7 @@ CC ?= cc
 AR ?= ar
 CLANG_TIDY ?= ../tools/run_clang_tidy.sh
 CFLAGS ?= -O2 -std=c2x
-CPPFLAGS += -I../include
+CPPFLAGS += -I../src-headers
 
 
 all: $(LIB)

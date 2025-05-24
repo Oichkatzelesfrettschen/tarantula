@@ -1,4 +1,4 @@
-#include "../include/exokernel.h"
+#include "exokernel.h"
 #include <stdbool.h>
 #include "ipc.h"
 /* Stubs delegating to user-space VM library */

@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "../include/exokernel.h"
+#include "exokernel.h"
 #include "ipc.h"
 /* Stubs delegating to user-space file server */
 extern int fs_open(const char *path, int flags);
