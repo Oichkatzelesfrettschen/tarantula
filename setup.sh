@@ -210,7 +210,8 @@ for pip_pkg in \
   tensorflow-cpu jax jaxlib \
   tensorflow-model-optimization mlflow onnxruntime-tools \
   meson ninja cmake pre-commit compiledb codespell \
-  configuredb pytest pyyaml pylint pyfuzz; do
+  configuredb pytest pyyaml pylint pyfuzz \
+  black ruff golangci-lint; do
   pip3 install "$pip_pkg" >/dev/null 2>&1
   rc=$?
   if [ $rc -ne 0 ]; then
