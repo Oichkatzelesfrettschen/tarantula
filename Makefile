@@ -1,4 +1,4 @@
-.PHONY: all inventory
+.PHONY: all inventory test
 
 SUBDIRS = \
     src-lib/libipc \
@@ -17,3 +17,6 @@ all:
 
 inventory:
 	python3 tools/create_inventory.py
+
+test:
+	$(MAKE) -C tests

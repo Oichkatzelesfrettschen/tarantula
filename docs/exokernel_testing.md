@@ -59,8 +59,8 @@ full system. Build and run it after compiling `libkern_stubs.a`:
 
 ```sh
 cd src-kernel && bmake
-cd ../tests && bmake clean all
-./test_kern
+bmake test
+./tests/test_kern
 ```
 
 Successful output prints `all ok` and verifies that:

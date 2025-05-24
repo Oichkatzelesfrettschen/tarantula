@@ -148,7 +148,7 @@ test-kern:
     - name: Build test binary
       run: |
         bmake -C src-kernel CC=gcc
-        bmake -C tests CC=gcc
+        bmake test CC=gcc
     - name: Run test_kern
       run: ./tests/test_kern > test_kern.log
     - uses: actions/upload-artifact@v3
