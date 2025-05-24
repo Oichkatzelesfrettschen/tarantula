@@ -5,7 +5,29 @@ on:
   pull_request:
 
 jobs:
+  precommit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.cache/pre-commit
+          key: ${{ runner.os }}-pip-${{ hashFiles('.pre-commit-config.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install pre-commit
+        run: pip install pre-commit
+      - name: Run pre-commit
+        run: pre-commit run --show-diff-on-failure
+
   gcc-amd64:
+    needs: precommit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -30,6 +52,7 @@ jobs:
           bmake -C src-uland/libvm CC=gcc CFLAGS='-m64'
 
   gcc-i686:
+    needs: precommit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -54,6 +77,7 @@ jobs:
           bmake -C src-uland/libvm CC=gcc CFLAGS='-m32'
 
   clang-amd64:
+    needs: precommit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -78,6 +102,7 @@ jobs:
           bmake -C src-uland/libvm CC=clang CFLAGS='-m64'
 
   clang-i686:
+    needs: precommit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -101,6 +126,7 @@ jobs:
           bmake -C src-uland/libkern_sched CC=clang CFLAGS='-m32'
           bmake -C src-uland/libvm CC=clang CFLAGS='-m32'
   test-kern:
+    needs: precommit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

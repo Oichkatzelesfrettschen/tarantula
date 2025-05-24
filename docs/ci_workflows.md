@@ -2,7 +2,9 @@
 
 This document describes recommended workflows for integrating CodeQL security scanning and Reviewdog-based linting. Sample workflow files can be found in `.github/workflows/codeql-analysis.yml` and `.github/workflows/reviewdog.yml`.
 For local linting before pushing, enable the `pre-commit` hooks described in
-[precommit.md](precommit.md).
+[precommit.md](precommit.md). The primary build workflow also executes
+`pre-commit run --show-diff-on-failure` and caches pip downloads to speed up
+subsequent runs.
 
 ## CodeQL with Bundled Query Packs
 
