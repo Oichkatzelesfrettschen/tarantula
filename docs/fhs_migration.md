@@ -4,7 +4,10 @@
 This repository preserves the historic 4.4BSD tree which places `bin`, `sbin` and
 other directories at the root of the filesystem. The `tools/migrate_to_fhs.sh`
 script converts the layout to a more modern FHS style by copying these
-directories under `/usr` and creating the appropriate symlinks.
+directories under `/usr` and creating the appropriate symlinks. The result is a
+*hybrid* layout that keeps the legacy paths available while moving active
+development under `/usr/src`; see [hybrid_plan.md](hybrid_plan.md) for a short
+overview.
 
 The script is idempotent and may be rerun to update files as needed. By default
 it only executes when run inside a chroot to avoid modifying a live system.
@@ -81,7 +84,17 @@ when modernizing historic BSD trees.
 10. Keep a log of each mapping for future developers.
 
 Following these steps alongside the broader plan in `reorg_plan.md` helps turn
-the BSD distribution into a structure that is familiar to modern systems.
+the BSD distribution into a structure that is familiar to modern systems. The
+next stage of the [hybrid plan](hybrid_plan.md) continues reorganizing sources
+under `/usr/src`.
+
+## Preferred Source Layout Script
+
+After running `migrate_to_fhs.sh`, the recommended tool for relocating sources
+is `tools/migrate_to_src_layout.sh`. This script supersedes the older
+`tools/organize_sources.sh` helper and gathers the kernel, user programs and
+libraries into the `src-*` directories. Run it soon after the FHS migration to
+complete the hybrid layout.
 ## Remaining Manual Symlinks
 Some directories are not handled by `migrate_to_fhs.sh` and must be linked manually.
 After running `tools/migrate_to_src_layout.sh` the kernel sources live in `src-kernel`.

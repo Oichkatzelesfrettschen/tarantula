@@ -26,3 +26,7 @@ This document outlines tasks for flattening the 4.4BSD-Lite2 source tree and mod
    the tree.  These scripts create `src-lib/.gitkeep` automatically so the
    directory remains in version control even when empty.
 
+The combination of `migrate_to_fhs.sh` and `migrate_to_src_layout.sh` forms the
+basis of the [hybrid plan](hybrid_plan.md) which retains historical paths while
+organizing active development under `/usr/src`.
+
