@@ -6,7 +6,7 @@ Downloaded from: ftp://alge.anart.no/pub/BSD/4.4BSD-Lite/4.4BSD-Lite2.tar.gz
 
 For kernel build instructions see [docs/building_kernel.md](docs/building_kernel.md).
 Run `setup.sh` first to install required tools. The script installs `aptitude`
-and then uses it to fetch **bmake** and its mk framework. It can optionally
+and then uses `apt` to fetch **bmake** and its mk framework. It can optionally
 install **mk-configure**
 to provide an Autotools-style build system layered on top.
 `setup.sh` also checks `third_party/apt` for local `.deb` files and

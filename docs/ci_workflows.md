@@ -144,7 +144,7 @@ test-kern:
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential gcc-multilib aptitude
-        sudo aptitude -y install bmake
+        sudo apt-get install -y bmake
     - name: Build test binary
       run: |
         bmake -C src-kernel CC=gcc

@@ -162,13 +162,13 @@ apt-get update -y >/dev/null 2>&1 && echo "APT OK   update" >> "$LOG_FILE" || {
   echo "APT FAIL update" >> "$LOG_FILE"
   APT_FAILED+=("update")
 }
-# install aptitude then install bmake using aptitude
+# install aptitude (when available)
 apt_pin_install aptitude || install_with_pip aptitude
 if command -v aptitude >/dev/null 2>&1; then
   aptitude update >/dev/null 2>&1 || true
 fi
-# guarantee bmake (with its mk framework) is present via aptitude
-aptitude_install bmake || install_with_pip bmake
+# guarantee bmake (with its mk framework) via apt
+apt_pin_install bmake || install_with_pip bmake
 command -v bmake >/dev/null 2>&1 || build_bmake_from_source
 apt_pin_install mk-configure || install_with_pip mk-configure
 apt_pin_install bison || install_with_pip bison
