@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "../../src-kernel/ipc.h"
+#include <ipc.h>
 
 /* User-space convenience wrappers */
 static inline bool ipc_send(const struct ipc_message *m)

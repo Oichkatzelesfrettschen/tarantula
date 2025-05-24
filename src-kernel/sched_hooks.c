@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "../include/exokernel.h"
+#include "exokernel.h"
 #include "ipc.h"
 /* Stubs delegating to user-space scheduler */
 extern void uland_sched_init(void);
