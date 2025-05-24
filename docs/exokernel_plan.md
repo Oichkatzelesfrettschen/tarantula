@@ -37,6 +37,8 @@ Steps from `tools/migrate_to_fhs.sh` still place these directories under `/usr` 
 3. **User-Level Resource Managers**
    - Port the scheduler, virtual memory manager and filesystem logic from `sys/` into libraries under `src-uland/`.
    - Each manager communicates with the exokernel through the new low-level API.
+   - The capability revocation model in [formal/I-CAP-1.tla](formal/I-CAP-1.tla)
+     demonstrates the expected invariant for these managers.
 4. **Build System Updates**
    - Update makefiles so the exokernel and user managers build separately but link during installation.
    - Continue following the FHS migration guide to ensure files end up under `/usr/src-kernel` and `/usr/src-uland`.
