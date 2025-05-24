@@ -75,11 +75,13 @@ if ! in_chroot && [ "$FORCE" -ne 1 ]; then
     exit 1
 fi
 
-move_and_link sys src-kernel
-move_and_link usr/src src-uland
-move_and_link src-uland/include src-headers
+SRC_ULAND_DIR="${SRC_ULAND:-src-uland}"
+SRC_KERNEL_DIR="${SRC_KERNEL:-src-kernel}"
+move_and_link sys "$SRC_KERNEL_DIR"
+move_and_link usr/src "$SRC_ULAND_DIR"
+move_and_link "$SRC_ULAND_DIR"/include src-headers
 
-move_artifacts src-uland
-move_artifacts src-kernel
+move_artifacts "$SRC_ULAND_DIR"
+move_artifacts "$SRC_KERNEL_DIR"
 
 echo "Source tree organization complete."

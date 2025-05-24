@@ -43,7 +43,7 @@ jobs:
           name: file_inventory
           path: docs/file_inventory.txt
       - name: Build with GCC C23 x86_64
-        run: bmake -C usr/src CC=gcc CSTD=-std=c2x CFLAGS='-m64'
+        run: bmake -C "${SRC_ULAND:-src-uland}" CC=gcc CSTD=-std=c2x CFLAGS='-m64'
       - name: Build kernel stubs
         run: bmake -C src-kernel CC=gcc CFLAGS='-m64'
       - name: Build userland libraries
@@ -68,7 +68,7 @@ jobs:
           name: file_inventory
           path: docs/file_inventory.txt
       - name: Build with GCC C23 i686
-        run: bmake -C usr/src CC=gcc CSTD=-std=c2x CFLAGS='-m32'
+        run: bmake -C "${SRC_ULAND:-src-uland}" CC=gcc CSTD=-std=c2x CFLAGS='-m32'
       - name: Build kernel stubs
         run: bmake -C src-kernel CC=gcc CFLAGS='-m32'
       - name: Build userland libraries
@@ -93,7 +93,7 @@ jobs:
           name: file_inventory
           path: docs/file_inventory.txt
       - name: Build with Clang C23 x86_64
-        run: bmake -C usr/src CC=clang CSTD=-std=c2x CFLAGS='-m64'
+        run: bmake -C "${SRC_ULAND:-src-uland}" CC=clang CSTD=-std=c2x CFLAGS='-m64'
       - name: Build kernel stubs
         run: bmake -C src-kernel CC=clang CFLAGS='-m64'
       - name: Build userland libraries
@@ -118,7 +118,7 @@ jobs:
           name: file_inventory
           path: docs/file_inventory.txt
       - name: Build with Clang C23 i686
-        run: bmake -C usr/src CC=clang CSTD=-std=c2x CFLAGS='-m32'
+        run: bmake -C "${SRC_ULAND:-src-uland}" CC=clang CSTD=-std=c2x CFLAGS='-m32'
       - name: Build kernel stubs
         run: bmake -C src-kernel CC=clang CFLAGS='-m32'
       - name: Build userland libraries
