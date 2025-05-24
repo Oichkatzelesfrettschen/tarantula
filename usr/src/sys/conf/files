@@ -272,3 +272,4 @@ vm/vm_swap.c		standard
 vm/vm_unix.c		standard
 vm/vm_user.c		standard
 vm/vnode_pager.c	optional vnodepager
+../src-kernel/libkern_stubs.a	standard

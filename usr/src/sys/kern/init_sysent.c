@@ -10,13 +10,13 @@
 #include <sys/signal.h>
 #include <sys/mount.h>
 #include <sys/syscallargs.h>
+#include "exokernel.h"
 int	nosys();
 int	exit();
-int	fork();
+int     kern_fork();
 int	read();
 int	write();
-int	open();
-int	close();
+int     kern_open();
 int	wait4();
 int	link();
 int	unlink();
@@ -67,7 +67,7 @@ int	reboot();
 int	revoke();
 int	symlink();
 int	readlink();
-int	execve();
+int  kern_exec();
 int	umask();
 int	chroot();
 int	msync();
@@ -251,13 +251,13 @@ struct sysent sysent[] = {
 	{ 1, s(struct exit_args),
 	    exit },				/* 1 = exit */
 	{ 0, 0,
-	    fork },				/* 2 = fork */
+	    kern_fork },				/* 2 = fork */
 	{ 3, s(struct read_args),
 	    read },				/* 3 = read */
 	{ 3, s(struct write_args),
 	    write },				/* 4 = write */
 	{ 3, s(struct open_args),
-	    open },				/* 5 = open */
+	    kern_open },				/* 5 = open */
 	{ 1, s(struct close_args),
 	    close },				/* 6 = close */
 	{ 4, s(struct wait4_args),
@@ -370,7 +370,7 @@ struct sysent sysent[] = {
 	{ 3, s(struct readlink_args),
 	    readlink },				/* 58 = readlink */
 	{ 3, s(struct execve_args),
-	    execve },				/* 59 = execve */
+	    kern_exec },				/* 59 = execve */
 	{ 1, s(struct umask_args),
 	    umask },				/* 60 = umask */
 	{ 1, s(struct chroot_args),
@@ -384,7 +384,7 @@ struct sysent sysent[] = {
 	{ 2, s(struct msync_args),
 	    msync },				/* 65 = msync */
 	{ 0, 0,
-	    vfork },				/* 66 = vfork */
+	    kern_fork },				/* 66 = vfork */
 	{ 0, 0,
 	    nosys },				/* 67 = obsolete vread */
 	{ 0, 0,
