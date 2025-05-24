@@ -47,7 +47,8 @@ def build_index(files, bases):
     return index
 
 
-def map_includes(files, index):
+def map_includes(files, index, prefixes=None, ignore_unresolved=False):
+    prefixes = prefixes or []
     edges = set()
     for path in files:
         try:
@@ -58,14 +59,30 @@ def map_includes(files, index):
                         inc = m.group(1)
                         local = os.path.normpath(os.path.join(os.path.dirname(path), inc))
                         target = index.get(local) or index.get(inc) or index.get(os.path.basename(inc))
+                        if not target:
+                            for pfx in prefixes:
+                                candidate = os.path.join(pfx, inc)
+                                if os.path.exists(candidate):
+                                    target = candidate
+                                    break
                         if target:
                             edges.add((path, target))
+                        elif not ignore_unresolved:
+                            edges.add((path, inc))
                     m = INCLUDE_ANGLE_RE.search(line)
                     if m:
                         inc = m.group(1)
                         target = index.get(inc) or index.get(os.path.basename(inc))
+                        if not target:
+                            for pfx in prefixes:
+                                candidate = os.path.join(pfx, inc)
+                                if os.path.exists(candidate):
+                                    target = candidate
+                                    break
                         if target:
                             edges.add((path, target))
+                        elif not ignore_unresolved:
+                            edges.add((path, inc))
         except OSError:
             continue
     return edges
@@ -147,6 +164,10 @@ def main():
                         help='Path to syscalls.master')
     parser.add_argument('--include-calls', action='store_true',
                         help='Include simple function call edges')
+    parser.add_argument('--include-prefix', action='append', default=[],
+                        help='Additional include path prefixes')
+    parser.add_argument('--ignore-unresolved-includes', action='store_true',
+                        help='Do not record edges for missing includes')
     args = parser.parse_args()
 
     files = gather_source_files(args.base)
@@ -154,15 +175,18 @@ def main():
     func_defs = extract_function_defs(files)
 
     edges = set()
-    edges.update(map_includes(files, index))
+    edges.update(
+        map_includes(files, index, args.include_prefix, args.ignore_unresolved_includes)
+    )
     edges.update(parse_syscalls(args.master, func_defs))
     if args.include_calls:
         edges.update(map_function_calls(files, func_defs))
 
     out_path = 'dependency_graph.dot'
+    unique_edges = sorted(set(edges))
     with open(out_path, 'w') as out:
         out.write('digraph G {\n')
-        for src, dst in sorted(edges):
+        for src, dst in unique_edges:
             out.write(f'  "{src}" -> "{dst}";\n')
         out.write('}\n')
     print(f'DOT file written to {out_path}')

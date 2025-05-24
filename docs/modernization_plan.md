@@ -10,6 +10,9 @@ For a summary of directory mappings during the reorganization see
 ## Phase 1: Codebase Analysis
 - Generate cross-reference databases using `cscope` and `ctags`.
 - Use `python3 tools/analyze_codebase.py` to count source files by extension.
+- Generate an include dependency graph with `python3 tools/generate_dependency_graph.py`.
+  Use `--include-prefix` for additional header locations and
+  `--ignore-unresolved-includes` to drop missing headers from the graph.
 - Document architectural assumptions found in headers and assembly files.
 
 ## Phase 2: Infrastructure Updates
