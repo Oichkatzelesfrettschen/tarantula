@@ -37,6 +37,22 @@ Steps from `tools/migrate_to_fhs.sh` still place these directories under `/usr` 
 3. **User-Level Resource Managers**
    - Port the scheduler, virtual memory manager and filesystem logic from `sys/` into libraries under `src-uland/`.
    - Each manager communicates with the exokernel through the new low-level API.
+
+### tlb_sync() and Platform-Specific Queues
+
+The planned IOMMU domain object (`src-kernel/iommu/domain.c`,
+`include/iommu/domain.h`) implements `tlb_sync()` as a wrapper that
+expands into architecture specific queue commands:
+
+* **Intel VT-d** &ndash; `tlb_sync()` inserts a queue invalidation descriptor
+  and waits for the associated completion status before returning.
+* **AMD-Vi** &ndash; the call formats a command entry in the device queue,
+  polling the completion field referenced by the queued event ID.
+* **ARM SMMU** &ndash; `tlb_sync()` issues a `TLBI` command followed by a
+  `SYNC` entry to ensure the command queue has drained.
+
+This routine guarantees that DMA mappings are visible to hardware before
+control is returned to user code.
    - The capability revocation model in [formal/I-CAP-1.tla](formal/I-CAP-1.tla)
      demonstrates the expected invariant for these managers.
 4. **Build System Updates**
