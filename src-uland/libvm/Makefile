@@ -1,25 +1,26 @@
-SRCS = $(wildcard *.c)
-OBJS = $(SRCS:.c=.o)
-LIB  = libvm.a
+LIB = libvm.a
+LIBDIR = ../../src-lib/libvm
+LIBFILE = $(LIBDIR)/libvm.a
 
 CC ?= cc
 AR ?= ar
-CFLAGS ?= -O2
-CSTD ?= -std=c2x
 CPPFLAGS ?= -I../../src-headers -I../../src-headers/machine \
         -I../../sys -I../../sys/sys \
-	-I../../sys/i386/include
-CFLAGS   += $(CSTD) -DKERNEL
+        -I../../sys/i386/include
+CFLAGS ?= -O2
+CSTD ?= -std=c2x
+CFLAGS += $(CSTD) -DKERNEL
 
-all: $(LIB)
+all: $(LIBFILE) $(LIB)
 
-$(LIB): $(OBJS)
-	$(AR) rcs $@ $(OBJS)
+$(LIB): $(LIBFILE)
+cp $(LIBFILE) $(LIB)
 
-%.o: %.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+$(LIBFILE):
+$(MAKE) -C $(LIBDIR)
 
 clean:
-	rm -f $(OBJS) $(LIB)
+rm -f $(LIB)
+$(MAKE) -C $(LIBDIR) clean
 
 .PHONY: all clean
