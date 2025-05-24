@@ -1,5 +1,7 @@
-OBJS = proc_hooks.o sched_hooks.o vm_hooks.o vfs_hooks.o ipc.o
+OBJS = proc_hooks.o sched_hooks.o vm_hooks.o vfs_hooks.o
 LIB = libkern_stubs.a
+LIBIPC_DIR = ../src-lib/libipc
+LIBIPC = $(LIBIPC_DIR)/libipc.a
 
 CC ?= cc
 AR ?= ar
@@ -8,10 +10,13 @@ CFLAGS ?= -O2 -std=c2x
 CPPFLAGS += -I../src-headers
 
 
-all: $(LIB)
+all: $(LIBIPC) $(LIB)
 
 $(LIB): $(OBJS)
 	$(AR) rcs $@ $(OBJS)
+
+$(LIBIPC):
+	$(MAKE) -C $(LIBIPC_DIR)
 
 %.o: %.c
 	@$(CLANG_TIDY) $< -- $(CC) $(CPPFLAGS) $(CFLAGS) || true
@@ -19,6 +24,7 @@ $(LIB): $(OBJS)
 
 clean:
 	rm -f $(OBJS) $(LIB)
+	$(MAKE) -C $(LIBIPC_DIR) clean
 	
 tidy:
 	@for src in $(OBJS:.o=.c); do \
