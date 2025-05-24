@@ -4,7 +4,7 @@ This short guide explains how to compile the historic 4.4BSD-Lite2 kernel on an 
 
 Before building, run the repository's `setup.sh` script as root to install all
 required toolchains and utilities. The script first installs `aptitude` and
-then uses it to install **bison**, **byacc**, and **bmake** (which includes the
+then uses `apt` to install **bison**, **byacc**, and **bmake** (which includes the
 full mk framework). If the package installation fails it falls back to `pip` and
 for **bmake**, will download the upstream source and build it locally.
 The tarball is cached under `third_party/bmake` so subsequent runs work offline.
