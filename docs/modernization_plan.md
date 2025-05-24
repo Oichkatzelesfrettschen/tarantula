@@ -47,3 +47,6 @@ For a summary of directory mappings during the reorganization see
   link properly.
 - Track regression tests and performance benchmarks.
 
+
+When the overall source lines of code (SLOC) exceed budget, modules can be pruned to keep the project manageable. Experimental drivers that are not required for the main target hardware and userland servers that have no active use should be removed first. A module qualifies for pruning when it lacks test coverage, has no known downstream consumers, or duplicates functionality already provided elsewhere in the tree. This trimming keeps the codebase under the SLOC limit while focusing modernization efforts on well-supported components.
+

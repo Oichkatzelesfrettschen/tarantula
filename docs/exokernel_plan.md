@@ -53,6 +53,8 @@ expands into architecture specific queue commands:
 
 This routine guarantees that DMA mappings are visible to hardware before
 control is returned to user code.
+   - The capability revocation model in [formal/I-CAP-1.tla](formal/I-CAP-1.tla)
+     demonstrates the expected invariant for these managers.
 4. **Build System Updates**
    - Update makefiles so the exokernel and user managers build separately but link during installation.
    - Continue following the FHS migration guide to ensure files end up under `/usr/src-kernel` and `/usr/src-uland`.

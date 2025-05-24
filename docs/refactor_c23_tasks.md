@@ -94,3 +94,23 @@ This roadmap is intentionally high level. Full conversion of the 4.4BSD-Lite2 tr
 - Added a `CSTD` variable to all makefiles under `src-uland/` and
   appended it to `CFLAGS` so these components build with C23 by default.
 
+## Lazy Generation-based Revocation
+
+Earlier drafts suggested invoking a `zero_entire_pml` routine whenever a
+process had its address space revoked.  That approach eagerly cleared
+all mappings and forced every CPU to flush its view of the page tables.
+
+Instead, store a small **epoch** counter in each PTE.  Each CPU maintains
+its own epoch value.  When global revocation is required, the system
+simply increments the current epoch without touching individual PTEs.
+
+If a CPU accesses a PTE whose epoch differs from its local epoch, a page
+fault occurs.  The fault handler checks the epoch, updates the entry to
+match the CPU's epoch, and re-establishes or discards the mapping as
+appropriate.  This lazy check avoids unnecessary TLB shootdowns while
+ensuring revoked mappings cannot be used.
+
+Periodic reconciliation walks the CPUs and advances any stale epoch
+counters.  This keeps the per-CPU epochs bounded so old generations do
+not linger indefinitely.
+
