@@ -12,6 +12,7 @@ This repository contains the 4.4BSD-Lite2 sources as released by the University 
 - `etc/`, `dev/`, `root/` – system configuration, device files and root account files
 - `usr/` – userland programs and manual pages
 - `var/` – runtime data
+- `ports/` – experimental language ports (Chicken Scheme, Go)
 - `Domestic/` and `Foreign/` – cryptographic software separated due to export regulations of the time
 
 ## Using this source tree

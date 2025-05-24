@@ -114,3 +114,6 @@ Periodic reconciliation walks the CPUs and advances any stale epoch
 counters.  This keeps the per-CPU epochs bounded so old generations do
 not linger indefinitely.
 
+- Created `src-headers/arch.h` with C23 macros to detect 16-, 32- and 64-bit
+  architectures.
+- Added a new `ports/` tree containing initial Chicken Scheme and Go stubs.
