@@ -29,7 +29,8 @@ jobs:
     - name: Install linter runtime deps
       run: |
         sudo apt-get update -y
-        sudo apt-get install -y shellcheck
+        sudo apt-get install -y shellcheck golangci-lint
+        sudo pip3 install black ruff
     - name: Run ${{ matrix.linter.id }} & feed Reviewdog
       uses: reviewdog/reviewdog@v0.20.3
       with:
