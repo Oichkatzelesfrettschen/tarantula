@@ -159,9 +159,13 @@ weprobe(is)
 	sc->we_vmem_addr = (caddr_t)is->id_maddr;
 	sc->we_vmem_size = is->id_msize;
 	sc->we_vmem_ring = sc->we_vmem_addr + (WD_PAGE_SIZE * WD_TXBUF_SIZE);
-	sc->we_vmem_end = sc->we_vmem_addr + is->id_msize;
+        sc->we_vmem_end = sc->we_vmem_addr + is->id_msize;
+        if (sc->we_vmem_addr == 0 || sc->we_vmem_size == 0) {
+            printf("we%d: no shared memory configured\n", is->id_unit);
+            return (0);
+        }
 
-	/*
+        /*
 	 * Save board ROM station address
 	 */
 	for (i = 0; i < ETHER_ADDR_LEN; ++i)
