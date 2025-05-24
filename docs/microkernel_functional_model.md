@@ -18,8 +18,12 @@ system safely.  These include:
 - **System call gate** – simple wrappers like `kern_open()` pass file
   operations to the file server running in user space.
 - **IPC primitives** – the kernel exposes message queues for servers and
-  drivers to communicate.  Messages are fixed-size structures shared via
-  a ring buffer.
+  drivers to communicate.  Messages are fixed-size structures shared via a ring buffer.
+### Memory Reservation and OOM Policy
+
+The kernel invokes the OOM policy whenever a page allocation fails or free memory drops below its reserved threshold. The routine uses an emergency pool so it can post a low-memory message on the IPC queue.
+
+User-space memory managers listening on that queue should reclaim caches and page out unused data when notified. If pressure continues, they may terminate the least important tasks and then report success back to the kernel.
 
 The microkernel itself remains small and largely architecture independent.
 Device drivers, filesystems and process management are all provided by
