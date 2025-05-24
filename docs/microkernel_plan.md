@@ -108,3 +108,13 @@ When executed without `--dry-run`, the script relocates `sys/` into
 paths. Running it after the migration scripts ensures the microkernel build
 operates on the consolidated layout referenced throughout this plan.
 
+## Reincarnation Server
+
+A small watchdog service named `reincarnation` launches before the other user
+managers. Each server periodically sends an `IPC_MSG_HEARTBEAT` message with its
+PID to this monitor. The reincarnation server listens for these heartbeats via
+`libipc` and notes the last time each server responded. If a heartbeat is missed
+for several seconds a warning is printed and the service can be restarted. This
+component mirrors the MINIX3 approach and illustrates how managers can watch one
+another purely through IPC.
+
