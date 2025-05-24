@@ -7,11 +7,22 @@ This guide explains how to start the exokernel with only the essential user-leve
 - `qemu-system-i386` or another x86 emulator
 - The exokernel binary built under `src-kernel`
 - User-level managers (scheduler, memory manager, file server) built under `src-uland`
-- A bootable disk image containing the managers in `/bin` or `/usr/bin`
+- A bootable disk image containing the managers in `/bin` or `/usr/bin` (use
+  `tools/create_exokernel_image.sh` to generate it)
 - The `init` program built under `src-uland/init`
 
+### Creating the Disk Image
+Run the helper script after building the kernel and managers:
+
+```sh
+tools/create_exokernel_image.sh build/exo.img 64M
+```
+
+This produces `build/exo.img`, an ext2 image with the compiled programs in
+place. Pass this file to QEMU using `-hda`.
+
 ## Booting in QEMU
-1. Create a disk image with the managers installed and copy `init` to `/sbin/init`.
+1. Build a disk image using `tools/create_exokernel_image.sh`.
 2. Launch QEMU using the exokernel as the kernel image:
    ```sh
    qemu-system-i386 -kernel path/to/exokernel \
