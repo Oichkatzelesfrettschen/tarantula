@@ -48,6 +48,7 @@
 #include <sys/vnode.h>
 #include <sys/mount.h>
 #include <sys/proc.h>
+#include "exokernel.h"
 #include <sys/uio.h>
 #include <sys/malloc.h>
 #include <sys/dirent.h>
@@ -727,75 +728,17 @@ change_dir(ndp, p)
  */
 int
 open(p, uap, retval)
-	struct proc *p;
-	register struct open_args /* {
-		syscallarg(char *) path;
-		syscallarg(int) flags;
-		syscallarg(int) mode;
-	} */ *uap;
-	register_t *retval;
+        struct proc *p;
+        register struct open_args /* {
+                syscallarg(char *) path;
+                syscallarg(int) flags;
+                syscallarg(int) mode;
+        } */ *uap;
+        register_t *retval;
 {
-	register struct filedesc *fdp = p->p_fd;
-	register struct file *fp;
-	register struct vnode *vp;
-	int flags, cmode;
-	struct file *nfp;
-	int type, indx, error;
-	struct flock lf;
-	struct nameidata nd;
-	extern struct fileops vnops;
+        return kern_open(SCARG(uap, path), SCARG(uap, flags));
+}
 
-	if (error = falloc(p, &nfp, &indx))
-		return (error);
-	fp = nfp;
-	flags = FFLAGS(SCARG(uap, flags));
-	cmode = ((SCARG(uap, mode) &~ fdp->fd_cmask) & ALLPERMS) &~ S_ISTXT;
-	NDINIT(&nd, LOOKUP, FOLLOW, UIO_USERSPACE, SCARG(uap, path), p);
-	p->p_dupfd = -indx - 1;			/* XXX check for fdopen */
-	if (error = vn_open(&nd, flags, cmode)) {
-		ffree(fp);
-		if ((error == ENODEV || error == ENXIO) &&
-		    p->p_dupfd >= 0 &&			/* XXX from fdopen */
-		    (error =
-			dupfdopen(fdp, indx, p->p_dupfd, flags, error)) == 0) {
-			*retval = indx;
-			return (0);
-		}
-		if (error == ERESTART)
-			error = EINTR;
-		fdp->fd_ofiles[indx] = NULL;
-		return (error);
-	}
-	p->p_dupfd = 0;
-	vp = nd.ni_vp;
-	fp->f_flag = flags & FMASK;
-	fp->f_type = DTYPE_VNODE;
-	fp->f_ops = &vnops;
-	fp->f_data = (caddr_t)vp;
-	if (flags & (O_EXLOCK | O_SHLOCK)) {
-		lf.l_whence = SEEK_SET;
-		lf.l_start = 0;
-		lf.l_len = 0;
-		if (flags & O_EXLOCK)
-			lf.l_type = F_WRLCK;
-		else
-			lf.l_type = F_RDLCK;
-		type = F_FLOCK;
-		if ((flags & FNONBLOCK) == 0)
-			type |= F_WAIT;
-		VOP_UNLOCK(vp, 0, p);
-		if (error = VOP_ADVLOCK(vp, (caddr_t)fp, F_SETLK, &lf, type)) {
-			(void) vn_close(vp, fp->f_flag, fp->f_cred, p);
-			ffree(fp);
-			fdp->fd_ofiles[indx] = NULL;
-			return (error);
-		}
-		vn_lock(vp, LK_EXCLUSIVE | LK_RETRY, p);
-		fp->f_flag |= FHASLOCK;
-	}
-	VOP_UNLOCK(vp, 0, p);
-	*retval = indx;
-	return (0);
 }
 
 #ifdef COMPAT_43

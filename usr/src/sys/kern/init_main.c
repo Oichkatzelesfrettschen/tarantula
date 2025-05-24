@@ -64,6 +64,7 @@
 #include <machine/cpu.h>
 
 #include <vm/vm.h>
+#include "exokernel.h"
 
 #ifdef HPFPLIB
 char	copyright[] =
@@ -294,9 +295,10 @@ main(framep)
 		/* NOTREACHED */
 	}
 
-	/* The scheduler is an infinite loop. */
-	scheduler();
-	/* NOTREACHED */
+       /* Initialize the scheduler hooks then enter the main loop. */
+       kern_sched_init();
+       scheduler();
+       /* NOTREACHED */
 }
 
 /*

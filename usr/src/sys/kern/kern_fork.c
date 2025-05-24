@@ -45,6 +45,7 @@
 #include <sys/kernel.h>
 #include <sys/malloc.h>
 #include <sys/proc.h>
+#include "exokernel.h"
 #include <sys/resourcevar.h>
 #include <sys/vnode.h>
 #include <sys/file.h>
@@ -57,8 +58,7 @@ fork(p, uap, retval)
 	void *uap;
 	register_t *retval;
 {
-
-	return (fork1(p, 0, retval));
+        return kern_fork();
 }
 
 /* ARGSUSED */
@@ -67,8 +67,7 @@ vfork(p, uap, retval)
 	void *uap;
 	register_t *retval;
 {
-
-	return (fork1(p, 1, retval));
+        return kern_fork();
 }
 
 int	nprocs = 1;		/* process 0 */

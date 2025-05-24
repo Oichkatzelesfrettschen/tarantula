@@ -72,6 +72,7 @@
 #include <vm/vm.h>
 #include <vm/vm_page.h>
 #include <vm/vm_pageout.h>
+#include "exokernel.h"
 
 /*
  *	vm_fault:
@@ -98,6 +99,8 @@ vm_fault(map, vaddr, fault_type, change_wiring)
 	vm_prot_t	fault_type;
 	boolean_t	change_wiring;
 {
+        if (kern_vm_fault((void *)vaddr))
+                return KERN_SUCCESS;
 	vm_object_t		first_object;
 	vm_offset_t		first_offset;
 	vm_map_entry_t		entry;
