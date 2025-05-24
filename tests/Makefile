@@ -21,7 +21,7 @@ fs_open.o: ../src-uland/fs-server/fs_open.c
 pm_entry.o: ../src-uland/servers/proc_manager/pm_entry.c
 	$(CC) -I../tests/include $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-vm_entry.o: ../src-uland/libvm/vm_entry.c
+vm_entry.o: ../src-lib/libvm/vm_entry.c
 	$(CC) -I../tests/include $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 mock_vm.o: mock_vm.c
