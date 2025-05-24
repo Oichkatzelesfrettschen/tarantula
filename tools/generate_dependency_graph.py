@@ -6,8 +6,10 @@ import argparse
 # Default locations within this repository
 # By default we scan the traditional tree along with the modern kernel and
 # userland directories.
-DEFAULT_BASE = ['usr/src', 'src-kernel', 'src-uland']
-DEFAULT_MASTER = 'usr/src/sys/kern/syscalls.master'
+SRC_ULAND = os.environ.get('SRC_ULAND', 'src-uland')
+SRC_KERNEL = os.environ.get('SRC_KERNEL', 'src-kernel')
+DEFAULT_BASE = [SRC_ULAND, SRC_KERNEL]
+DEFAULT_MASTER = os.path.join(SRC_KERNEL, 'syscalls.master')
 
 INCLUDE_QUOTE_RE = re.compile(r'#include\s+"([^"]+)"')
 INCLUDE_ANGLE_RE = re.compile(r'#include\s+<([^>]+)>')
@@ -148,7 +150,8 @@ def main():
     parser = argparse.ArgumentParser(
         description=(
             'Generate a dependency graph. By default the script scans '
-            'usr/src, src-kernel, and src-uland.'
+            'directories defined by the SRC_ULAND and SRC_KERNEL environment '
+            'variables.'
         )
     )
     parser.add_argument(
@@ -156,8 +159,8 @@ def main():
         action='append',
         default=list(DEFAULT_BASE),
         help=(
-            'Base directories to scan (may be repeated; defaults to '
-            'usr/src, src-kernel, and src-uland)'
+            'Base directories to scan (may be repeated; defaults to the '
+            'values of SRC_ULAND and SRC_KERNEL)'
         ),
     )
     parser.add_argument('--master', default=DEFAULT_MASTER,

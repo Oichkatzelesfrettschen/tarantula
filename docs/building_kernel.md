@@ -26,9 +26,14 @@ If `bison` is missing, install it and rerun `setup.sh`. The script now sets
 `YACC="bison -y"` automatically using `/etc/profile.d/yacc.sh`. Then proceed
 with the steps below.
 
+All helper scripts expect the environment variables `SRC_ULAND` and
+`SRC_KERNEL` to point to the userland and kernel source directories. They
+default to `src-uland` and `src-kernel` respectively. Adjust these variables
+if you move the sources elsewhere.
+
 1. **Build the `config` utility**
    ```sh
-   cd usr/src/usr.sbin/config
+   cd ${SRC_ULAND:-usr/src}/usr.sbin/config
    bmake clean && bmake
    ```
    This produces a `config` binary used to generate kernel build directories.
@@ -37,7 +42,7 @@ with the steps below.
    ```sh
    cd ../../..
    cd sys/i386/conf
-   ../../usr/src/usr.sbin/config/config GENERIC.i386
+   ../../${SRC_ULAND:-usr/src}/usr.sbin/config/config GENERIC.i386
    ```
    The command creates a compile directory such as `../compile/GENERIC.i386`.
 

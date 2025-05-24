@@ -13,5 +13,6 @@ case "${ARCH}" in
         ;;
 esac
 
-make -C usr/src CC="${CC:-cc}" CSTD="${CSTD:--std=c2x}" CFLAGS="${CFLAGS} ${ARCH_FLAGS}" \
+SRC_ULAND_DIR="${SRC_ULAND:-src-uland}"
+make -C "$SRC_ULAND_DIR" CC="${CC:-cc}" CSTD="${CSTD:--std=c2x}" CFLAGS="${CFLAGS} ${ARCH_FLAGS}" \
     2>&1 | tee "$LOGDIR/build_${ARCH:-native}.log"
