@@ -99,3 +99,11 @@ busy-wait until the operation completes.  User-space wrappers `ipc_send()` and
 The spinlock header now exposes `SPINLOCK_DEFINE()` and
 `spin_pause()` helpers to simplify definition and reduce CPU usage
 during contention.
+
+## C++23 interface
+
+`src-headers/spinlock.hpp` offers a thin RAII wrapper around the
+spinlock primitives.  It defines `SpinLock` and `LockGuard` classes
+and a `with_lock()` helper that accepts a lambda expression.  This
+lets modern C++ code share the same synchronization mechanism used by
+the C stubs.
