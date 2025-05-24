@@ -1,8 +1,10 @@
 #include <unistd.h>
+#include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 static const char *servers[] = {
+    "/usr/libexec/reincarnation",
     "/usr/libexec/proc_manager",
     "/usr/libexec/fs_server",
     NULL

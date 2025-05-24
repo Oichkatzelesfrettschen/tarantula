@@ -8,7 +8,12 @@ CSTD ?= -std=c2x
 CPPFLAGS ?= -I../../src-headers
 CFLAGS += $(CSTD)
 
-all: $(PROG)
+SUBDIRS = ../servers/reincarnation
+
+all: $(PROG) subdirs
+
+subdirs:
+	$(MAKE) -C $(SUBDIRS)
 
 $(PROG): $(OBJS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(OBJS) -o $@
@@ -18,5 +23,6 @@ $(PROG): $(OBJS)
 
 clean:
 	rm -f $(OBJS) $(PROG)
+	$(MAKE) -C $(SUBDIRS) clean
 
-.PHONY: all clean
+.PHONY: all clean subdirs
