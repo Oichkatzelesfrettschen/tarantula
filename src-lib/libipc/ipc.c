@@ -1,24 +1,22 @@
 #include "ipc.h"
-#include <stdatomic.h>
 
 /* Shared queue used by kernel stubs and user-space servers */
 struct ipc_queue kern_ipc_queue;
 
 static void lock_queue(struct ipc_queue *q)
 {
-    while (atomic_flag_test_and_set_explicit(&q->lock, memory_order_acquire))
-        ;
+    spinlock_lock(&q->lock);
 }
 
 static void unlock_queue(struct ipc_queue *q)
 {
-    atomic_flag_clear_explicit(&q->lock, memory_order_release);
+    spinlock_unlock(&q->lock);
 }
 
 void ipc_queue_init(struct ipc_queue *q)
 {
     q->head = q->tail = 0;
-    atomic_flag_clear(&q->lock);
+    spinlock_init(&q->lock);
 }
 
 bool ipc_queue_send(struct ipc_queue *q, const struct ipc_message *m)

@@ -1,5 +1,6 @@
-OBJS = ipc.o
 LIB  = libipc.a
+LIBIPC_DIR = ../../src-lib/libipc
+LIBIPC = $(LIBIPC_DIR)/libipc.a
 
 CC ?= cc
 AR ?= ar
@@ -8,15 +9,16 @@ CFLAGS ?= -O2
 CSTD ?= -std=c2x
 CFLAGS += $(CSTD)
 
-all: $(LIB)
+all: $(LIBIPC) $(LIB)
 
-$(LIB): $(OBJS)
-	$(AR) rcs $@ $(OBJS)
+$(LIB): $(LIBIPC)
+	cp $(LIBIPC) $(LIB)
 
-%.o: %.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+$(LIBIPC):
+	$(MAKE) -C $(LIBIPC_DIR)
 
 clean:
-	rm -f $(OBJS) $(LIB)
+	rm -f $(LIB)
+	$(MAKE) -C $(LIBIPC_DIR) clean
 
 .PHONY: all clean
