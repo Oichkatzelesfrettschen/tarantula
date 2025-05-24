@@ -9,6 +9,10 @@ Run `setup.sh` first to install required tools. The script installs `aptitude`
 and then uses it to fetch **bmake** and its mk framework. It can optionally
 install **mk-configure**
 to provide an Autotools-style build system layered on top.
+`setup.sh` also checks `third_party/apt` for local `.deb` files and
+`third_party/pip` for Python wheels before contacting the network.
+Populate these directories with `apt-get download <pkg>` and
+`pip download <pkg>` while online to enable offline runs.
 For GitHub CI examples see [docs/ci_workflows.md](docs/ci_workflows.md).
 For FHS migration steps see [docs/fhs_migration.md](docs/fhs_migration.md).
 For microkernel tasks see [docs/microkernel_plan.md](docs/microkernel_plan.md)
