@@ -126,3 +126,18 @@ architecture as needed.
    Install each manager under `/usr/libexec` or another appropriate directory.
 
 No additional bmake targets are defined yet; simply run `bmake` in each directory to compile the components.
+
+## Running Kernel Self-Tests
+
+After the kernel builds successfully you can compile and execute the small
+`tests/test_kern` program. This follows the example shown in
+[exokernel_testing.md](exokernel_testing.md) and exercises the kernel stubs
+without booting the entire system:
+
+```sh
+bmake -C src-kernel
+bmake -C tests
+./tests/test_kern
+```
+
+The program prints `all ok` when the stubs behave correctly.
