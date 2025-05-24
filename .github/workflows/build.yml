@@ -21,8 +21,10 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('.pre-commit-config.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-      - name: Install pre-commit
-        run: pip install pre-commit
+      - name: Install pre-commit and helpers
+        run: |
+          pip install pre-commit compiledb configuredb buildcache
+          pre-commit install --install-hooks
       - name: Run pre-commit
         run: pre-commit run --show-diff-on-failure
 
