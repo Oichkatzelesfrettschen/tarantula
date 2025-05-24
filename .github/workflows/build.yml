@@ -50,8 +50,8 @@ jobs:
         run: bmake -C src-kernel CC=gcc CFLAGS='-m64'
       - name: Build userland libraries
         run: |
-          bmake -C src-uland/libkern_sched CC=gcc CFLAGS='-m64'
-          bmake -C src-uland/libvm CC=gcc CFLAGS='-m64'
+          bmake -C src-lib/libkern_sched CC=gcc CFLAGS='-m64'
+          bmake -C src-lib/libvm CC=gcc CFLAGS='-m64'
 
   gcc-i686:
     needs: precommit
@@ -75,8 +75,8 @@ jobs:
         run: bmake -C src-kernel CC=gcc CFLAGS='-m32'
       - name: Build userland libraries
         run: |
-          bmake -C src-uland/libkern_sched CC=gcc CFLAGS='-m32'
-          bmake -C src-uland/libvm CC=gcc CFLAGS='-m32'
+          bmake -C src-lib/libkern_sched CC=gcc CFLAGS='-m32'
+          bmake -C src-lib/libvm CC=gcc CFLAGS='-m32'
 
   clang-amd64:
     needs: precommit
@@ -100,8 +100,8 @@ jobs:
         run: bmake -C src-kernel CC=clang CFLAGS='-m64'
       - name: Build userland libraries
         run: |
-          bmake -C src-uland/libkern_sched CC=clang CFLAGS='-m64'
-          bmake -C src-uland/libvm CC=clang CFLAGS='-m64'
+          bmake -C src-lib/libkern_sched CC=clang CFLAGS='-m64'
+          bmake -C src-lib/libvm CC=clang CFLAGS='-m64'
 
   clang-i686:
     needs: precommit
@@ -125,8 +125,8 @@ jobs:
         run: bmake -C src-kernel CC=clang CFLAGS='-m32'
       - name: Build userland libraries
         run: |
-          bmake -C src-uland/libkern_sched CC=clang CFLAGS='-m32'
-          bmake -C src-uland/libvm CC=clang CFLAGS='-m32'
+          bmake -C src-lib/libkern_sched CC=clang CFLAGS='-m32'
+          bmake -C src-lib/libvm CC=clang CFLAGS='-m32'
   test-kern:
     needs: precommit
     runs-on: ubuntu-latest

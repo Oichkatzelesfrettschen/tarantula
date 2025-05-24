@@ -39,8 +39,8 @@ User-space components implement nearly all traditional BSD services:
   `proc_manager` in `src-uland/servers`.
 - The **file server** (`fs_server`) maintains vnodes and dispatches file
   requests from the `kern_open()` hook.
-- The **scheduler library** and **VM library** in `src-uland/libkern_sched`
-  and `src-uland/libvm` make policy decisions for scheduling and memory
+- The **scheduler library** and **VM library** in `src-lib/libkern_sched`
+  and `src-lib/libvm` make policy decisions for scheduling and memory
   management.
 - Capability management uses `cap_set_security_mode(cap_endpoint, mode)` to
   toggle security levels (`FAST`, `HARDENED` or `PARANOID`) for a running

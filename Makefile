@@ -2,7 +2,10 @@
 
 SUBDIRS = \
     src-lib/libipc \
+    src-lib/libkern_sched \
+    src-lib/libvm \
     src-kernel \
+    src-uland/libipc \
     src-uland/libkern_sched \
     src-uland/libvm \
     src-uland/fs-server \
