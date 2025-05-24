@@ -92,7 +92,10 @@ for a corresponding reply from the user-space server.
 The queue implementation originally offered only non-blocking `ipc_queue_send()`
 and `ipc_queue_recv()` calls.  To simplify users of the API a lightweight
 the ring buffer is protected by a small spinlock implemented in
-`include/spinlock.h`. Two blocking helpers were added:
+`src-headers/spinlock.h`. Two blocking helpers were added:
 `ipc_queue_send_blocking()` and `ipc_queue_recv_blocking()`.  These functions
 busy-wait until the operation completes.  User-space wrappers `ipc_send()` and
 `ipc_recv()` invoke the blocking variants to guarantee delivery.
+The spinlock header now exposes `SPINLOCK_DEFINE()` and
+`spin_pause()` helpers to simplify definition and reduce CPU usage
+during contention.
