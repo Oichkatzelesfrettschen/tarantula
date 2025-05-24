@@ -2,20 +2,39 @@
 #define SPINLOCK_H
 
 #include <stdatomic.h>
+#include <stdbool.h>
+
+#define SPINLOCK_INITIALIZER { ATOMIC_FLAG_INIT }
+
+#if defined(__x86_64__) || defined(__i386__)
+# define spin_pause() __builtin_ia32_pause()
+#else
+# define spin_pause() ((void)0)
+#endif
 
 typedef struct spinlock {
     atomic_flag flag;
 } spinlock_t;
+
+#define SPINLOCK_DEFINE(name) \
+    spinlock_t name = SPINLOCK_INITIALIZER
+#define SPINLOCK_DECLARE(name) \
+    extern spinlock_t name
 
 static inline void spinlock_init(spinlock_t *l)
 {
     atomic_flag_clear(&l->flag);
 }
 
+static inline bool spinlock_is_locked(const spinlock_t *l)
+{
+    return atomic_flag_test_explicit(&l->flag, memory_order_relaxed);
+}
+
 static inline void spinlock_lock(spinlock_t *l)
 {
     while (atomic_flag_test_and_set_explicit(&l->flag, memory_order_acquire))
-        ;
+        spin_pause();
 }
 
 static inline int spinlock_trylock(spinlock_t *l)
