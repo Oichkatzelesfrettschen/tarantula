@@ -25,6 +25,7 @@ void kern_sched_init(void);
 int kern_open(const char *path, int flags);
 bool kern_vm_fault(void *addr);
 int kern_fork(void);
-int kern_exec(const char *path, char *const argv[]);
+int kern_execve(const char *path, char *const argv[], char *const envp[]);
+int kern_waitpid(int pid, int *status, int options);
 
 #endif /* EXOKERNEL_H */

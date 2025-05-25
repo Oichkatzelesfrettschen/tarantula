@@ -18,6 +18,7 @@ enum ipc_msg_type {
     IPC_MSG_OPEN,
     IPC_MSG_PROC_FORK,
     IPC_MSG_PROC_EXEC,
+    IPC_MSG_PROC_WAITPID,
     IPC_MSG_HEARTBEAT
 };
 

@@ -33,7 +33,7 @@ int main(void) {
     if (pid == 0) {
         exit(0);
     } else {
-        int status; waitpid(pid, &status, 0);
+        int status; kern_waitpid(pid, &status, 0);
         if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
             fprintf(stderr, "child failed: pid=%d status=%d\n", pid, status);
             return 1;

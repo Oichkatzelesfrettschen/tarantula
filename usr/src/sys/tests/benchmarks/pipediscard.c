@@ -3,8 +3,11 @@
  * write and discard using pipes.
  */
 
-main(argc, argv)
-	char *argv[];
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main(int argc, char **argv)
 {
 	char buf[512];
 	int fd[2], msgsize;
@@ -26,10 +29,14 @@ main(argc, argv)
 		perror("pipe");
 		exit(3);
 	}
-	if (fork() == 0)
-		for (i = 0; i < iter; i++)
-			read(fd[0], buf, msgsize);
-	else
-		for (i = 0; i < iter; i++)
-			write(fd[1], buf, msgsize);
+        int pid = fork();
+        if (pid == 0) {
+                for (i = 0; i < iter; i++)
+                        read(fd[0], buf, msgsize);
+                _exit(0);
+        } else {
+                for (i = 0; i < iter; i++)
+                        write(fd[1], buf, msgsize);
+                waitpid(pid, NULL, 0);
+        }
 }

@@ -18,7 +18,8 @@ SUBDIRS = \
     src-uland/fs-server \
     src-uland/servers/proc_manager \
     src-uland/init \
-    tests
+    tests \
+    tools/spawn_wait_demo
 
 ifeq ($(CAPNP),1)
 SUBDIRS += third_party/libcapnp tools/memserver modern/tests

@@ -3,8 +3,11 @@
  * write to self using pipes.
  */
 
-main(argc, argv)
-	char *argv[];
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int main(int argc, char **argv)
 {
 	char buf[512];
 	int fd[2], msgsize;
