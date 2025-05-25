@@ -2,22 +2,27 @@ CC = clang
 CXX ?= clang++
 CFLAGS ?= -O2 -std=c23 -Wall -Werror
 CXXFLAGS ?= -O2 -std=c++23 -Wall -Werror
-CPPFLAGS = -I../tests/include -I../src-headers -I../src-headers/machine -I../src-kernel -I../include
-LIBS = ../src-kernel/libkern_stubs.a ../src-lib/libipc/libipc.a
-
+	CPPFLAGS = -I../tests/include -I../src-headers -I../src-headers/machine -I../src-kernel -I../include
+LIBS = ../src-kernel/libkern_stubs.a ../src-lib/libipc/libipc.a \
+	       ../src-lib/libposix/libposix.a
+	
 OBJS = test_kern.o fs_open.o pm_entry.o vm_entry.o sched_stub.o mock_vm.o
-MAILBOX_OBJS = test_mailbox.o
+FIFO_OBJS = fifo_test.o
+	MAILBOX_OBJS = test_mailbox.o
 
-all: test_kern spinlock_cpp mailbox_test
+all: test_kern spinlock_cpp mailbox_test fifo_test
 
 test_kern: $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@
-
+	
 spinlock_cpp: test_spinlock.o
 	$(CXX) $(CXXFLAGS) test_spinlock.o -o $@
 
 mailbox_test: $(MAILBOX_OBJS)
 	$(CC) $(CFLAGS) $(MAILBOX_OBJS) $(LIBS) -o $@
+
+fifo_test: $(FIFO_OBJS)
+	$(CC) $(CFLAGS) $(FIFO_OBJS) $(LIBS) -o $@
 
 fs_open.o: ../src-uland/fs-server/fs_open.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
@@ -37,10 +42,13 @@ sched_stub.o: sched_stub.c
 test_mailbox.o: test_mailbox.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
+fifo_test.o: fifo_test.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
 test_spinlock.o: test_spinlock.cpp
 	$(CXX) $(CXXFLAGS) -I../src-headers -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(MAILBOX_OBJS) test_kern spinlock_cpp mailbox_test test_spinlock.o
+	rm -f $(OBJS) $(MAILBOX_OBJS) $(FIFO_OBJS) test_kern spinlock_cpp mailbox_test fifo_test test_spinlock.o
 
 .PHONY: all clean

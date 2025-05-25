@@ -10,10 +10,12 @@ CXXFLAGS ?= -O2 -std=c++23 -Wall -Werror
 
 SUBDIRS = \
     src-lib/libipc \
+    src-lib/libposix \
     src-lib/libkern_sched \
     src-lib/libvm \
     src-kernel \
     src-uland/libipc \
+    src-uland/libposix \
     src-uland/libkern_sched \
     src-uland/libvm \
     src-uland/fs-server \
