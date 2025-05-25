@@ -3,7 +3,7 @@
 # Outputs missing tools and returns non-zero if any are absent.
 
 missing=()
-for cmd in cmake ninja meson clang bison bmake flex clang-format clang-tidy; do
+for cmd in cmake ninja meson clang bison flex clang-format clang-tidy; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
     missing+=("$cmd")
   fi
