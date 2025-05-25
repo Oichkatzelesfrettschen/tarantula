@@ -58,9 +58,11 @@ A small program under `tests/` exercises the exokernel stubs without booting the
 full system. Build and run it after compiling `libkern_stubs.a`:
 
 ```sh
-cd src-kernel && bmake
-bmake test
-./tests/test_kern
+cmake -S src-kernel -B build/kernel -G Ninja
+cmake --build build/kernel
+cmake -S tests -B build/tests -G Ninja
+cmake --build build/tests
+./build/tests/test_kern
 ```
 
 Successful output prints `all ok` and verifies that:

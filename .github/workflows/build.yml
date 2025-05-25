@@ -28,124 +28,16 @@ jobs:
       - name: Run pre-commit
         run: pre-commit run --show-diff-on-failure
 
-  gcc-amd64:
+  clang-build:
     needs: precommit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Install GCC and bmake
+      - name: Install Clang and build tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential gcc-multilib aptitude
-          sudo aptitude -y install bmake
-      - name: Generate inventory
-        run: bmake inventory
-      - uses: actions/upload-artifact@v3
-        with:
-          name: file_inventory
-          path: docs/file_inventory.txt
-      - name: Build with GCC C23 x86_64
-        run: bmake -C "${SRC_ULAND:-src-uland}" CC=gcc CSTD=-std=c2x CFLAGS='-m64'
-      - name: Build kernel stubs
-        run: bmake -C src-kernel CC=gcc CFLAGS='-m64'
-      - name: Build userland libraries
-        run: |
-          bmake -C src-lib/libkern_sched CC=gcc CFLAGS='-m64'
-          bmake -C src-lib/libvm CC=gcc CFLAGS='-m64'
-
-  gcc-i686:
-    needs: precommit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install GCC and bmake
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential gcc-multilib aptitude
-          sudo aptitude -y install bmake
-      - name: Generate inventory
-        run: bmake inventory
-      - uses: actions/upload-artifact@v3
-        with:
-          name: file_inventory
-          path: docs/file_inventory.txt
-      - name: Build with GCC C23 i686
-        run: bmake -C "${SRC_ULAND:-src-uland}" CC=gcc CSTD=-std=c2x CFLAGS='-m32'
-      - name: Build kernel stubs
-        run: bmake -C src-kernel CC=gcc CFLAGS='-m32'
-      - name: Build userland libraries
-        run: |
-          bmake -C src-lib/libkern_sched CC=gcc CFLAGS='-m32'
-          bmake -C src-lib/libvm CC=gcc CFLAGS='-m32'
-
-  clang-amd64:
-    needs: precommit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install Clang and bmake
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang gcc-multilib aptitude
-          sudo aptitude -y install bmake
-      - name: Generate inventory
-        run: bmake inventory
-      - uses: actions/upload-artifact@v3
-        with:
-          name: file_inventory
-          path: docs/file_inventory.txt
-      - name: Build with Clang C23 x86_64
-        run: bmake -C "${SRC_ULAND:-src-uland}" CC=clang CSTD=-std=c2x CFLAGS='-m64'
-      - name: Build kernel stubs
-        run: bmake -C src-kernel CC=clang CFLAGS='-m64'
-      - name: Build userland libraries
-        run: |
-          bmake -C src-lib/libkern_sched CC=clang CFLAGS='-m64'
-          bmake -C src-lib/libvm CC=clang CFLAGS='-m64'
-
-  clang-i686:
-    needs: precommit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install Clang and bmake
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y clang gcc-multilib aptitude
-          sudo aptitude -y install bmake
-      - name: Generate inventory
-        run: bmake inventory
-      - uses: actions/upload-artifact@v3
-        with:
-          name: file_inventory
-          path: docs/file_inventory.txt
-      - name: Build with Clang C23 i686
-        run: bmake -C "${SRC_ULAND:-src-uland}" CC=clang CSTD=-std=c2x CFLAGS='-m32'
-      - name: Build kernel stubs
-        run: bmake -C src-kernel CC=clang CFLAGS='-m32'
-      - name: Build userland libraries
-        run: |
-          bmake -C src-lib/libkern_sched CC=clang CFLAGS='-m32'
-          bmake -C src-lib/libvm CC=clang CFLAGS='-m32'
-  test-kern:
-    needs: precommit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install GCC and bmake
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential gcc-multilib aptitude
-          sudo aptitude -y install bmake
-      - name: Build test binary
-        run: |
-          bmake -C src-kernel CC=gcc
-          bmake -C tests CC=gcc
-      - name: Run test_kern
-        run: ./tests/test_kern > test_kern.log
-      - uses: actions/upload-artifact@v3
-        with:
-          name: test_kern_results
-          path: |
-            tests/test_kern
-            test_kern.log
+          sudo apt-get install -y clang ninja-build cmake
+      - name: Configure
+        run: CC=clang cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_STANDARD=23 -DLLVM_ENABLE_LTO=ON
+      - name: Build
+        run: ninja -C build

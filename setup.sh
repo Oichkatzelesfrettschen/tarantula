@@ -74,11 +74,10 @@ apt_pin_install(){
 
 # directory for cached third-party sources relative to this script
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-BMAKE_CACHE_DIR="$SCRIPT_DIR/third_party/bmake"
 APT_CACHE_DIR="$SCRIPT_DIR/third_party/apt"
 PIP_CACHE_DIR="$SCRIPT_DIR/third_party/pip"
 OFFLINE_PKG_DIR="$SCRIPT_DIR/offline_packages"
-mkdir -p "$BMAKE_CACHE_DIR" "$APT_CACHE_DIR" "$PIP_CACHE_DIR" "$OFFLINE_PKG_DIR"
+mkdir -p "$APT_CACHE_DIR" "$PIP_CACHE_DIR" "$OFFLINE_PKG_DIR"
 
 # fallback installer using pip3 when apt fails
 install_with_pip(){
@@ -135,50 +134,6 @@ aptitude_install(){
   fi
 }
 
-# attempt to build bmake from upstream source if package install fails
-build_bmake_from_source(){
-  local listing tarball srcdir tmpdir
-  listing=$(curl -fsSL http://www.crufty.net/ftp/pub/sjg/ 2>/dev/null || true)
-  if [ -n "$listing" ]; then
-    tarball=$(echo "$listing" | grep -o 'bmake-[0-9]\{8\}.tar.gz' | sort -V | tail -n1)
-    if [ -n "$tarball" ]; then
-      if [ ! -f "$BMAKE_CACHE_DIR/$tarball" ]; then
-        curl -fsSL "http://www.crufty.net/ftp/pub/sjg/$tarball" -o "$BMAKE_CACHE_DIR/$tarball" || true
-      fi
-    fi
-  fi
-  tarball=$(ls "$BMAKE_CACHE_DIR"/bmake-*.tar.gz 2>/dev/null | sort -V | tail -n1)
-  if [ -z "$tarball" ]; then
-    echo "SRC DL   FAIL bmake" >> "$LOG_FILE"
-    APT_FAILED+=("bmake-source-download")
-    return
-  fi
-  tmpdir=$(mktemp -d)
-  tar -xzf "$tarball" -C "$tmpdir"
-  srcdir=$(find "$tmpdir" -maxdepth 1 -type d -name 'bmake*' | head -n1)
-  (cd "$srcdir" && ./boot-strap --prefix=/usr/local >/dev/null 2>&1)
-  rc=$?
-  if [ $rc -ne 0 ]; then
-    echo "SRC FAIL bmake" >> "$LOG_FILE"
-    APT_FAILED+=("bmake-source")
-  else
-    echo "SRC OK   bmake" >> "$LOG_FILE"
-    pkgdir=$(mktemp -d)
-    mkdir -p "$pkgdir/DEBIAN"
-    cat > "$pkgdir/DEBIAN/control" <<EOF
-Package: bmake
-Version: 2024-source
-Section: misc
-Priority: optional
-Architecture: $(dpkg --print-architecture)
-Maintainer: local
-Description: locally built bmake
-EOF
-    dpkg-deb --build "$pkgdir" >/dev/null 2>&1
-    dpkg -i "$pkgdir.deb" >/dev/null 2>&1
-    rm -rf "$pkgdir" "$pkgdir.deb"
-  fi
-}
 
 # enable foreign architectures for cross-compilation
 for arch in i386 armel armhf arm64 riscv64 powerpc ppc64el ia64; do
@@ -190,6 +145,10 @@ if [ $OFFLINE_MODE -eq 0 ]; then
     echo "APT FAIL update" >> "$LOG_FILE"
     APT_FAILED+=("update")
   }
+  apt-get dist-upgrade -y >/dev/null 2>&1 && echo "APT OK   dist-upgrade" >> "$LOG_FILE" || {
+    echo "APT FAIL dist-upgrade" >> "$LOG_FILE"
+    APT_FAILED+=("dist-upgrade")
+  }
 else
   echo "OFFLINE mode - skipping apt-get update" >> "$LOG_FILE"
 fi
@@ -198,10 +157,6 @@ apt_pin_install aptitude || install_with_pip aptitude
 if command -v aptitude >/dev/null 2>&1; then
   aptitude update >/dev/null 2>&1 || true
 fi
-# guarantee bmake (with its mk framework) via apt
-apt_pin_install bmake || install_with_pip bmake
-command -v bmake >/dev/null 2>&1 || build_bmake_from_source
-apt_pin_install mk-configure || install_with_pip mk-configure
 apt_pin_install bison || install_with_pip bison
 apt_pin_install byacc || install_with_pip byacc
 if command -v bison >/dev/null 2>&1; then
@@ -387,34 +342,9 @@ else
 fi
 
 
-# ensure yacc points to bison and gmake invokes bmake
+# ensure yacc points to bison
 if command -v bison >/dev/null 2>&1; then
   ln -sf "$(command -v bison)" /usr/local/bin/yacc
-fi
-
-command -v gmake >/dev/null 2>&1 || {
-  if command -v bmake >/dev/null 2>&1; then
-    ln -s "$(command -v bmake)" /usr/local/bin/gmake
-  else
-    ln -s "$(command -v make)" /usr/local/bin/gmake
-  fi
-}
-
-# verify bmake was installed successfully, falling back to make when offline
-if ! command -v bmake >/dev/null 2>&1; then
-  if command -v make >/dev/null 2>&1; then
-    ln -s "$(command -v make)" /usr/local/bin/bmake
-    echo "FALLBACK bmake -> make" >> "$LOG_FILE"
-  else
-    echo "bmake not found after installation" >&2
-    exit 1
-  fi
-fi
-
-# ensure the package itself is registered with dpkg
-if ! dpkg -s bmake >/dev/null 2>&1; then
-  echo "bmake package is not installed" >&2
-  exit 1
 fi
 
 # clean up
