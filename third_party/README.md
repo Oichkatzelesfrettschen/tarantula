@@ -1,4 +1,4 @@
 Cached third party source archives used by `setup.sh`.
-The `bmake/` subdirectory stores the upstream tarball.
+Various archives such as clang and cmake are stored here for offline installation.
 `apt/` holds pre-downloaded Debian packages and `pip/` holds
 Python wheels or source archives for offline installs.
