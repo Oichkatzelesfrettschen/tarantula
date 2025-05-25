@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <time.h>
 #include "ipc.h"
+#include <exo_ipc.h>
 #include "../libipc/ipc.h"
 
 struct managed {
@@ -42,7 +43,7 @@ int main(void)
 
     struct ipc_message msg;
     for (;;) {
-        if (ipc_recv(&msg) == IPC_STATUS_SUCCESS && msg.type == IPC_MSG_HEARTBEAT) {
+        if (ipc_recv(&msg) == EXO_IPC_OK && msg.type == IPC_MSG_HEARTBEAT) {
             for (struct managed *m = managed_servers; m->path; ++m) {
                 if (m->pid == (pid_t)msg.a)
                     m->last_beat = time(NULL);

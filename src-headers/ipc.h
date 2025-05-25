@@ -6,16 +6,10 @@
 #include <stdbool.h>
 #include <stdatomic.h>
 #include "spinlock.h"
+#include <exo_ipc.h>
 
 #define IPC_QUEUE_SIZE 32
 
-/* Status codes for queue operations */
-typedef enum {
-    IPC_STATUS_SUCCESS = 0,
-    IPC_STATUS_EMPTY,
-    IPC_STATUS_FULL,
-    IPC_STATUS_TIMEOUT
-} ipc_status_t;
 
 /* Message types used by kernel hooks */
 enum ipc_msg_type {
@@ -45,12 +39,12 @@ struct ipc_queue {
 extern struct ipc_queue kern_ipc_queue;
 
 void ipc_queue_init(struct ipc_queue *q);
-ipc_status_t ipc_queue_send(struct ipc_queue *q, const struct ipc_message *m);
-ipc_status_t ipc_queue_recv(struct ipc_queue *q, struct ipc_message *m);
-ipc_status_t ipc_queue_send_blocking(struct ipc_queue *q, const struct ipc_message *m);
-ipc_status_t ipc_queue_recv_blocking(struct ipc_queue *q, struct ipc_message *m);
-ipc_status_t ipc_queue_recv_timed(struct ipc_queue *q, struct ipc_message *m,
-                                  unsigned tries);
+exo_ipc_status ipc_queue_send(struct ipc_queue *q, const struct ipc_message *m);
+exo_ipc_status ipc_queue_recv(struct ipc_queue *q, struct ipc_message *m);
+exo_ipc_status ipc_queue_send_blocking(struct ipc_queue *q, const struct ipc_message *m);
+exo_ipc_status ipc_queue_recv_blocking(struct ipc_queue *q, struct ipc_message *m);
+exo_ipc_status ipc_queue_recv_timed(struct ipc_queue *q, struct ipc_message *m,
+                                    unsigned tries);
 
 /* Basic per-process mailbox */
 struct ipc_mailbox {

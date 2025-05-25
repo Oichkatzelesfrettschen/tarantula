@@ -4,7 +4,7 @@ LIBIPC = $(LIBIPC_DIR)/libipc.a
 
 CC ?= cc
 AR ?= ar
-CPPFLAGS ?= -I../../src-headers
+CPPFLAGS ?= -I../../src-headers -I../../include
 CFLAGS ?= -O2
 CSTD ?= -std=c23
 CFLAGS += $(CSTD) -Wall -Werror

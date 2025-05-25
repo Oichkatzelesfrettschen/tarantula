@@ -6,7 +6,7 @@ CC ?= cc
 AR ?= ar
 CPPFLAGS ?= -I../../src-headers -I../../src-headers/machine \
         -I../../sys -I../../sys/sys \
-        -I../../sys/i386/include
+        -I../../sys/i386/include -I../../include
 CFLAGS ?= -O2
 CSTD ?= -std=c23
 CFLAGS += $(CSTD) -DKERNEL -Wall -Werror

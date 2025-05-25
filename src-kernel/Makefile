@@ -7,7 +7,7 @@ CC ?= cc
 AR ?= ar
 CLANG_TIDY ?= ../tools/run_clang_tidy.sh
 CFLAGS ?= -O2 -std=c23 -Wall -Werror
-CPPFLAGS += -I../src-headers
+CPPFLAGS += -I../src-headers -I../include
 
 
 all: $(LIBIPC) $(LIB)

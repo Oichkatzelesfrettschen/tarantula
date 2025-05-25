@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "exokernel.h"
 #include "ipc.h"
+#include <exo_ipc.h>
 /* Stubs delegating to user-space process manager */
 extern int pm_fork(void);
 extern int pm_exec(const char *path, char *const argv[]);
@@ -13,7 +14,7 @@ kern_fork(void)
     (void)ipc_queue_send(&kern_ipc_queue, &msg);
     struct ipc_message reply;
     struct ipc_mailbox *mb = ipc_mailbox_current();
-    if (ipc_queue_recv_timed(&mb->queue, &reply, 1000) == IPC_STATUS_SUCCESS) {
+    if (ipc_queue_recv_timed(&mb->queue, &reply, 1000) == EXO_IPC_OK) {
         if (reply.type != IPC_MSG_PROC_FORK)
             return (int)reply.a;
     }
@@ -31,7 +32,7 @@ kern_exec(const char *path, char *const argv[])
     (void)ipc_queue_send(&kern_ipc_queue, &msg);
     struct ipc_message reply;
     struct ipc_mailbox *mb2 = ipc_mailbox_current();
-    if (ipc_queue_recv_timed(&mb2->queue, &reply, 1000) == IPC_STATUS_SUCCESS)
+    if (ipc_queue_recv_timed(&mb2->queue, &reply, 1000) == EXO_IPC_OK)
         return (int)reply.a;
     return pm_exec(path, argv);
 }
