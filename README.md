@@ -28,6 +28,9 @@ For microkernel tasks see [docs/microkernel_plan.md](docs/microkernel_plan.md)
 and the functional overview in
 [docs/microkernel_functional_model.md](docs/microkernel_functional_model.md).
 For exokernel tasks see [docs/exokernel_plan.md](docs/exokernel_plan.md).
+The mailbox-based IPC API is described in [docs/IPC.md](docs/IPC.md) and
+provides `ipc_queue_init()`, `ipc_queue_send()`/`recv()` and blocking
+variants for message passing.
 
 ### User's Supplementary Documents
 * An Introduction to the C shell: https://github.com/sergev/4.4BSD-Lite2/blob/master/usr/share/doc/usd/04.csh.pdf?raw=true
