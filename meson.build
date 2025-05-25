@@ -8,6 +8,9 @@ endif
 libipc = static_library('ipc', 'src-lib/libipc/ipc.c',
                         include_directories : include_directories('src-headers'))
 
+libtimer = static_library('timer', 'src-lib/libtimer/timer.c',
+                         include_directories : include_directories('src-headers'))
+
 kern_srcs = [
   'src-kernel/proc_hooks.c',
   'src-kernel/sched_hooks.c',
@@ -38,4 +41,8 @@ executable('fs_server', fs_srcs,
                                                     'sys/i386/include'),
            c_args : ['-DKERNEL'],
            link_with : libipc)
+
+executable('timer_test', 'tests/test_timer.c',
+           include_directories : include_directories('src-headers', 'tests/include'),
+           link_with : [libtimer, libipc, libkern])
 
