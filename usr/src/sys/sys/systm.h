@@ -167,4 +167,6 @@ void	startprofclock __P((struct proc *));
 void	stopprofclock __P((struct proc *));
 void	setstatclockrate __P((int hzrate));
 
+#if 0 /* libkern macros require K&R features not enabled under C23 */
 #include <libkern/libkern.h>
+#endif
