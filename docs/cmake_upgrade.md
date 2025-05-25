@@ -4,7 +4,7 @@ This guide outlines a gradual approach to replace the historical `bmake` build s
 
 ## 1. Prepare the environment
 
-Run `setup.sh` to install clang, bison and the other toolchain components.  CMake will detect these automatically.  Ensure `YACC="bison -y"` is exported in your shell.
+Run `setup.sh` to install clang, bison and the other toolchain components.  Codex environments may call `.codex/setup.sh`, which wraps this script and installs extra verification tools.  CMake will detect these automatically.  Ensure `YACC="bison -y"` is exported in your shell.
 
 ```sh
 sudo ./setup.sh

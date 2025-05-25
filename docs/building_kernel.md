@@ -3,7 +3,8 @@
 This short guide explains how to compile the historic 4.4BSD-Lite2 kernel on an i386 host. The steps mirror the classic workflow using `config` and `bmake`. The same procedure works on modern x86_64 systems when passing the appropriate compiler flags.
 
 Before building, run the repository's `setup.sh` script as root to install all
-required toolchains and utilities. The script first installs `aptitude` and
+required toolchains and utilities. Codex CI invokes `.codex/setup.sh`, which
+wraps this script and installs extra packages like Coq and TLA+. The script first installs `aptitude` and
 then uses `apt` to install **bison**, **byacc**, and **bmake** (which includes the
 full mk framework). If the package installation fails it falls back to `pip` and
 for **bmake**, will download the upstream source and build it locally.
