@@ -1497,6 +1497,8 @@ ENTRY(longjmp)
  *
  * Call should be made at spl6(), and p->p_stat should be SRUN
  */
+/* replaced by sys/kern/kern_runq.c lines 15-30 */
+#if 0
 ENTRY(setrunqueue)
 	movl	sp@(4),a0
 	tstl	a0@(P_BACK)
@@ -1520,6 +1522,7 @@ Lset1:
 	movl	a0,a1@(P_FORW)
 	rts
 
+#endif
 Lset2:
 	.asciz	"setrunqueue"
 	.even
@@ -1529,6 +1532,8 @@ Lset2:
  *
  * Call should be made at spl6().
  */
+/* replaced by sys/kern/kern_runq.c lines 36-50 */
+#if 0
 ENTRY(remrq)
 	movl	sp@(4),a0
 	clrl	d0
@@ -1557,6 +1562,7 @@ Lrem1:
 Lrem2:
 	clrl	a0@(P_BACK)
 	rts
+#endif
 
 Lrem3:
 	.asciz	"remrq"

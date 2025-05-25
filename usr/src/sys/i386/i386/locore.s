@@ -1130,6 +1130,8 @@ movl	8(%esp),%eax
  * Call should be made at spl6(), and p->p_stat should be SRUN
  */
 	ALIGN32
+/* replaced by sys/kern/kern_runq.c lines 15-30 */
+#if 0
 ENTRY(setrunqueue)
 	movl	4(%esp),%eax
 	cmpl	$0,P_BACK(%eax)		# should not be on q already
@@ -1148,6 +1150,7 @@ set1:
 	movl	%eax,P_BACK(%edx)
 	movl	%eax,P_FORW(%ecx)
 	ret
+#endif
 
 set2:	.asciz	"setrunqueue"
 
@@ -1157,6 +1160,8 @@ set2:	.asciz	"setrunqueue"
  * Call should be made at spl6().
  */
 	ALIGN32
+/* replaced by sys/kern/kern_runq.c lines 36-50 */
+#if 0
 ENTRY(remrq)
 	movl	4(%esp),%eax
 	movzbl	P_PRIORITY(%eax),%edx
@@ -1184,6 +1189,7 @@ rem1:
 rem2:
 	movl	$0,P_BACK(%eax)		# zap reverse link to indicate off list
 	ret
+#endif
 
 rem3:	.asciz	"remrq"
 sw0:	.asciz	"Xswitch"
