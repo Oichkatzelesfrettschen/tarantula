@@ -70,6 +70,7 @@
 #include <sys/param.h>
 #include <sys/systm.h>
 #include <sys/malloc.h>
+#include <stdint.h>
 
 #include <vm/vm.h>
 #include <vm/vm_page.h>
@@ -1417,12 +1418,12 @@ vm_object_print(object, full)
 	if (object == NULL)
 		return;
 
-	iprintf("Object 0x%x: size=0x%x, res=%d, ref=%d, ",
-		(int) object, (int) object->size,
-		object->resident_page_count, object->ref_count);
-	printf("pager=0x%x+0x%x, shadow=(0x%x)+0x%x\n",
-	       (int) object->pager, (int) object->paging_offset,
-	       (int) object->shadow, (int) object->shadow_offset);
+       iprintf("Object 0x%x: size=0x%x, res=%d, ref=%d, ",
+               (uintptr_t) object, (int) object->size,
+               object->resident_page_count, object->ref_count);
+       printf("pager=0x%x+0x%x, shadow=(0x%x)+0x%x\n",
+              (uintptr_t) object->pager, (uintptr_t) object->paging_offset,
+              (uintptr_t) object->shadow, (uintptr_t) object->shadow_offset);
 	printf("cache: next=0x%x, prev=0x%x\n",
 	       object->cached_list.tqe_next, object->cached_list.tqe_prev);
 
