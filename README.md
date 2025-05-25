@@ -6,18 +6,19 @@ Downloaded from: ftp://alge.anart.no/pub/BSD/4.4BSD-Lite/4.4BSD-Lite2.tar.gz
 
 For kernel build instructions see [docs/building_kernel.md](docs/building_kernel.md).
 Run `setup.sh` first to install required tools. The script installs `aptitude`
-and then uses `apt` to fetch **bmake** and its mk framework. It can optionally
-install **mk-configure**
-to provide an Autotools-style build system layered on top.
+and fetches **clang**, **bison** and **bmake** with its mk framework. It can
+optionally install **mk-configure** to provide an Autotools-style layer on top.
 The tree also ships a minimal **CMake** configuration.  Generate Ninja files
 with:
 
 ```sh
 cmake -S . -B build -G Ninja
-cmake --build build
+CC=clang cmake --build build
 ```
 `find_package(BISON)` checks that **bison** is available.  An example
-`meson.build` offers the same layout for Meson users.
+`meson.build` offers the same layout for Meson users.  See
+[docs/cmake_upgrade.md](docs/cmake_upgrade.md) for a gradual migration guide
+from the historic `bmake` system to CMake.
 `setup.sh` also checks `third_party/apt` for local `.deb` files and
 `third_party/pip` for Python wheels before contacting the network.
 Populate these directories with `apt-get download <pkg>` and

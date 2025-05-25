@@ -19,7 +19,7 @@ For a summary of directory mappings during the reorganization see
 - Configure modern compilers (e.g., GCC or Clang) with `-std=c2x`.
 - Maintain compatibility with existing BSD makefiles while introducing
   modern build options.
-- Prototype CMake build files using **CMake 3.16+** to evaluate a cross-platform build system.
+- Prototype CMake build files using **CMake 3.16+** to evaluate a cross-platform build system.  See `cmake_upgrade.md` for a directory-by-directory migration plan.
 - Integrate static analysis tools such as `clang-tidy`.
 - Set up a `pre-commit` hook to run `clang-format` and `clang-tidy`.
 - Generate a `compile_commands.json` database using `compiledb` for use with
