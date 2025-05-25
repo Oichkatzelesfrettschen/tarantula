@@ -37,7 +37,22 @@ extern struct ipc_queue kern_ipc_queue;
 
 void ipc_queue_init(struct ipc_queue *q);
 bool ipc_queue_send(struct ipc_queue *q, const struct ipc_message *m);
-bool ipc_queue_recv(struct ipc_queue *q, struct ipc_message *m);
+
+enum ipc_recv_status {
+    IPC_RECV_OK = 0,
+    IPC_RECV_EMPTY,
+    IPC_RECV_TIMEOUT
+};
+
+enum ipc_recv_status ipc_queue_recv_timeout(struct ipc_queue *q,
+                                            struct ipc_message *m,
+                                            uint32_t timeout_ms);
+
+static inline bool ipc_queue_recv(struct ipc_queue *q, struct ipc_message *m)
+{
+    return ipc_queue_recv_timeout(q, m, 0) == IPC_RECV_OK;
+}
+
 void ipc_queue_send_blocking(struct ipc_queue *q, const struct ipc_message *m);
 void ipc_queue_recv_blocking(struct ipc_queue *q, struct ipc_message *m);
 

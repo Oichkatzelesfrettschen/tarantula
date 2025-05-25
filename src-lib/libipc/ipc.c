@@ -33,18 +33,31 @@ bool ipc_queue_send(struct ipc_queue *q, const struct ipc_message *m)
     return ok;
 }
 
-bool ipc_queue_recv(struct ipc_queue *q, struct ipc_message *m)
+enum ipc_recv_status
+ipc_queue_recv_timeout(struct ipc_queue *q, struct ipc_message *m,
+                       uint32_t timeout_ms)
 {
-    bool ok = false;
-    lock_queue(q);
-    if (q->tail != q->head) {
-        *m = q->msgs[q->tail];
-        q->tail = (q->tail + 1) % IPC_QUEUE_SIZE;
-        ok = true;
+    uint32_t waited = 0;
+    for (;;) {
+        bool ok = false;
+        lock_queue(q);
+        if (q->tail != q->head) {
+            *m = q->msgs[q->tail];
+            q->tail = (q->tail + 1) % IPC_QUEUE_SIZE;
+            ok = true;
+        }
+        unlock_queue(q);
+        if (ok)
+            return IPC_RECV_OK;
+        if (timeout_ms == 0)
+            return IPC_RECV_EMPTY;
+        if (++waited > timeout_ms)
+            return IPC_RECV_TIMEOUT;
+        for (unsigned i = 0; i < 1000; ++i)
+            spin_pause();
     }
-    unlock_queue(q);
-    return ok;
 }
+
 
 void ipc_queue_send_blocking(struct ipc_queue *q, const struct ipc_message *m)
 {
@@ -54,6 +67,6 @@ void ipc_queue_send_blocking(struct ipc_queue *q, const struct ipc_message *m)
 
 void ipc_queue_recv_blocking(struct ipc_queue *q, struct ipc_message *m)
 {
-    while (!ipc_queue_recv(q, m))
+    while (ipc_queue_recv_timeout(q, m, 0) != IPC_RECV_OK)
         ;
 }

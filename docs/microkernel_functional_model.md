@@ -95,7 +95,10 @@ the ring buffer is protected by a small spinlock implemented in
 `src-headers/spinlock.h`. Two blocking helpers were added:
 `ipc_queue_send_blocking()` and `ipc_queue_recv_blocking()`.  These functions
 busy-wait until the operation completes.  User-space wrappers `ipc_send()` and
-`ipc_recv()` invoke the blocking variants to guarantee delivery.
+`ipc_recv()` invoke the blocking variants to guarantee delivery.  A timed
+receive helper `ipc_queue_recv_timeout()` waits up to the requested
+milliseconds and returns a status code so higher layers can implement the
+`Recv_T(a,T)` semantics.
 The spinlock header now exposes `SPINLOCK_DEFINE()` and `spin_pause()`
 helpers to simplify definition and reduce CPU usage during contention.
 It detects the CPU cache line size via the `cpuid` instruction so the

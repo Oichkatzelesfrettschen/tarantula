@@ -19,4 +19,10 @@ static inline bool ipc_recv(struct ipc_message *m)
     return true;
 }
 
+static inline enum ipc_recv_status ipc_recv_timeout(struct ipc_message *m,
+                                                    uint32_t timeout_ms)
+{
+    return ipc_queue_recv_timeout(&kern_ipc_queue, m, timeout_ms);
+}
+
 #endif /* LIBIPC_H */
