@@ -3,9 +3,9 @@ CXX ?= clang++
 CFLAGS ?= -O2 -std=c23 -Wall -Werror
 CXXFLAGS ?= -O2 -std=c++23 -Wall -Werror
 CPPFLAGS = -I../tests/include -I../src-headers -I../src-headers/machine -I../src-kernel -I../include
-LIBS = ../src-kernel/libkern_stubs.a ../src-lib/libipc/libipc.a
+LIBS = ../src-kernel/libkern_stubs.a ../src-lib/libipc/libipc.a ../src-lib/posix/libposix.a
 
-OBJS = test_kern.o fs_open.o pm_entry.o vm_entry.o sched_stub.o mock_vm.o
+OBJS = test_kern.o fs_open.o pm_entry.o vm_entry.o posix.o sched_stub.o mock_vm.o
 MAILBOX_OBJS = test_mailbox.o
 
 all: test_kern spinlock_cpp mailbox_test
@@ -27,6 +27,9 @@ pm_entry.o: ../src-uland/servers/proc_manager/pm_entry.c
 
 vm_entry.o: ../src-lib/libvm/vm_entry.c
 	$(CC) -I../tests/include $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+posix.o: ../src-lib/posix/posix.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 mock_vm.o: mock_vm.c
 	$(CC) -I../tests/include $(CFLAGS) -c $< -o $@

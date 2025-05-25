@@ -11,10 +11,12 @@ SUBDIRS = \
     src-lib/libipc \
     src-lib/libkern_sched \
     src-lib/libvm \
+    src-lib/posix \
     src-kernel \
     src-uland/libipc \
     src-uland/libkern_sched \
     src-uland/libvm \
+    src-uland/posix \
     src-uland/fs-server \
     src-uland/servers/proc_manager \
     src-uland/init \

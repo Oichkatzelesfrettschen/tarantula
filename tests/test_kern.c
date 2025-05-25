@@ -3,9 +3,11 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sys/mman.h>
 #include "exokernel.h"
 #include "fs_server.h"
 #include "libvm.h"
+#include "posix.h"
 #include "proc_manager.h"
 #include "ipc.h"
 
@@ -38,6 +40,29 @@ int main(void) {
             fprintf(stderr, "child failed: pid=%d status=%d\n", pid, status);
             return 1;
         }
+    }
+
+    void *region = posix_mmap(NULL, 4096, PROT_READ | PROT_WRITE,
+                               MAP_ANON | MAP_PRIVATE, -1, 0);
+    if (region == MAP_FAILED) {
+        perror("mmap");
+        return 1;
+    }
+    if (posix_mprotect(region, 4096, PROT_READ) != 0) {
+        perror("mprotect");
+        return 1;
+    }
+    if (posix_get_prot(region) != PROT_READ) {
+        fprintf(stderr, "prot not updated\n");
+        return 1;
+    }
+    if (posix_msync(region, 4096, MS_SYNC) != 0) {
+        perror("msync");
+        return 1;
+    }
+    if (posix_munmap(region, 4096) != 0) {
+        perror("munmap");
+        return 1;
     }
 
     printf("all ok\n");
