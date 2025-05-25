@@ -10,9 +10,9 @@ kern_fork(void)
 {
 
     struct ipc_message msg = { .type = IPC_MSG_PROC_FORK };
-    ipc_queue_send(&kern_ipc_queue, &msg);
+    (void)ipc_queue_send(&kern_ipc_queue, &msg);
     struct ipc_message reply;
-    if (ipc_queue_recv(&kern_ipc_queue, &reply)) {
+    if (ipc_queue_recv(&kern_ipc_queue, &reply) == IPC_OK) {
         if (reply.type != IPC_MSG_PROC_FORK)
             return (int)reply.a;
     }
@@ -27,9 +27,9 @@ kern_exec(const char *path, char *const argv[])
         .a = (uintptr_t)path,
         .b = (uintptr_t)argv
     };
-    ipc_queue_send(&kern_ipc_queue, &msg);
+    (void)ipc_queue_send(&kern_ipc_queue, &msg);
     struct ipc_message reply;
-    if (ipc_queue_recv(&kern_ipc_queue, &reply))
+    if (ipc_queue_recv(&kern_ipc_queue, &reply) == IPC_OK)
         return (int)reply.a;
     return pm_exec(path, argv);
 }

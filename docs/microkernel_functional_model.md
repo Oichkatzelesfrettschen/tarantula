@@ -80,7 +80,7 @@ struct ipc_message m = { .type = IPC_MSG_OPEN,
                          .a = (uintptr_t)"/etc/passwd",
                          .b = O_RDONLY };
 ipc_queue_send(&q, &m);
-if (ipc_queue_recv(&q, &m)) {
+if (ipc_queue_recv(&q, &m) == IPC_OK) {
     int fd = (int)m.a;
     /* use fd */
 }
@@ -90,7 +90,9 @@ Kernel hooks such as `kern_open()` push a request message to the queue and wait
 for a corresponding reply from the user-space server.
 
 The queue implementation originally offered only non-blocking `ipc_queue_send()`
-and `ipc_queue_recv()` calls.  To simplify users of the API a lightweight
+and `ipc_queue_recv()` calls.  Operations now return an `ipc_status_t`
+value where `IPC_EMPTY` and `IPC_FULL` indicate the queue state.  To
+simplify users of the API a lightweight
 the ring buffer is protected by a small spinlock implemented in
 `src-headers/spinlock.h`. Two blocking helpers were added:
 `ipc_queue_send_blocking()` and `ipc_queue_recv_blocking()`.  These functions
