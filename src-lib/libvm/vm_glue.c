@@ -370,8 +370,9 @@ loop:
 		(void) splstatclock();
 		if (p->p_stat == SRUN)
 			setrunqueue(p);
-		p->p_flag |= P_INMEM;
-		(void) spl0();
+                p->p_flag |= P_INMEM;
+                sched_increment_runin();
+                (void) spl0();
 		p->p_swtime = 0;
 		goto loop;
 	}
@@ -517,9 +518,10 @@ swapout(p)
 	pmap_collect(vm_map_pmap(&p->p_vmspace->vm_map));
 #endif
 	(void) splhigh();
-	p->p_flag &= ~P_INMEM;
-	if (p->p_stat == SRUN)
-		remrq(p);
+        p->p_flag &= ~P_INMEM;
+        sched_increment_runout();
+        if (p->p_stat == SRUN)
+                remrq(p);
 	(void) spl0();
 	p->p_swtime = 0;
 }
