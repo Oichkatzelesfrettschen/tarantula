@@ -11,6 +11,9 @@ endif()
 add_library(ipc STATIC src-lib/libipc/ipc.c)
 target_include_directories(ipc PUBLIC ${CMAKE_SOURCE_DIR}/src-headers)
 
+add_library(pthread_compat STATIC src-lib/pthread/pthread.c)
+target_include_directories(pthread_compat PUBLIC ${CMAKE_SOURCE_DIR}/src-headers)
+
 add_library(kern_stubs STATIC
   src-kernel/proc_hooks.c
   src-kernel/sched_hooks.c

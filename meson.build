@@ -8,6 +8,9 @@ endif
 libipc = static_library('ipc', 'src-lib/libipc/ipc.c',
                         include_directories : include_directories('src-headers'))
 
+libpthread = static_library('pthread_compat', 'src-lib/pthread/pthread.c',
+                            include_directories : include_directories('src-headers'))
+
 kern_srcs = [
   'src-kernel/proc_hooks.c',
   'src-kernel/sched_hooks.c',
