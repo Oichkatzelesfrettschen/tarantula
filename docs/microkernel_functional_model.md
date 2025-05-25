@@ -96,9 +96,12 @@ the ring buffer is protected by a small spinlock implemented in
 `ipc_queue_send_blocking()` and `ipc_queue_recv_blocking()`.  These functions
 busy-wait until the operation completes.  User-space wrappers `ipc_send()` and
 `ipc_recv()` invoke the blocking variants to guarantee delivery.
-The spinlock header now exposes `SPINLOCK_DEFINE()` and
-`spin_pause()` helpers to simplify definition and reduce CPU usage
-during contention.
+The spinlock header now exposes `SPINLOCK_DEFINE()` and `spin_pause()`
+helpers to simplify definition and reduce CPU usage during contention.
+It detects the CPU cache line size via the `cpuid` instruction so the
+structure aligns to `SPINLOCK_CACHELINE`.  A fair `ticketlock_t`
+implementation is available when stronger ordering is needed, and
+macros like `spin_lock()` become no-ops on uniprocessor builds.
 
 ## C++23 interface
 
