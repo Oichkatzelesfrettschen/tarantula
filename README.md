@@ -11,6 +11,8 @@ invoked directly or via `.codex/setup.sh` which adds extra packages like the
 Coq proof assistant, TLA+ utilities, Agda and Isabelle/HOL for CI. The wrapper
 automatically switches to `--offline` when network access is unavailable. It can optionally install
 **mk-configure** to provide an Autotools-style layer on top.
+See `docs/codex_bootstrap.md` for automating this process with a systemd unit
+that runs Codex at boot.
 The tree also ships a minimal **CMake** configuration.  Generate Ninja files
 with:
 
