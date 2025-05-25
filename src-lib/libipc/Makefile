@@ -5,8 +5,8 @@ CC ?= cc
 AR ?= ar
 CPPFLAGS ?= -I../../src-headers
 CFLAGS ?= -O2
-CSTD ?= -std=c2x
-CFLAGS += $(CSTD)
+CSTD ?= -std=c23
+CFLAGS += $(CSTD) -Wall -Werror
 
 all: $(LIB)
 

@@ -6,7 +6,7 @@ LIBIPC = $(LIBIPC_DIR)/libipc.a
 CC ?= cc
 AR ?= ar
 CLANG_TIDY ?= ../tools/run_clang_tidy.sh
-CFLAGS ?= -O2 -std=c2x
+CFLAGS ?= -O2 -std=c23 -Wall -Werror
 CPPFLAGS += -I../src-headers
 
 

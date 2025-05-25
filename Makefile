@@ -1,4 +1,8 @@
+
 .PHONY: all inventory test
+
+CFLAGS ?= -O2 -std=c23 -Wall -Werror
+CXXFLAGS ?= -O2 -std=c++23 -Wall -Werror
 
 SUBDIRS = \
     src-lib/libipc \

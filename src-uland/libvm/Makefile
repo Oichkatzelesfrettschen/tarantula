@@ -8,8 +8,8 @@ CPPFLAGS ?= -I../../src-headers -I../../src-headers/machine \
         -I../../sys -I../../sys/sys \
         -I../../sys/i386/include
 CFLAGS ?= -O2
-CSTD ?= -std=c2x
-CFLAGS += $(CSTD) -DKERNEL
+CSTD ?= -std=c23
+CFLAGS += $(CSTD) -DKERNEL -Wall -Werror
 
 all: $(LIBFILE) $(LIB)
 

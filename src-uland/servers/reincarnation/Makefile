@@ -4,9 +4,9 @@ PROG = reincarnation
 
 CC ?= cc
 CFLAGS ?= -O2
-CSTD ?= -std=c2x
+CSTD ?= -std=c23
 CPPFLAGS ?= -I../../../src-headers -I../../libipc
-CFLAGS += $(CSTD)
+CFLAGS += $(CSTD) -Wall -Werror
 
 all: $(PROG)
 

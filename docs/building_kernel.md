@@ -31,6 +31,11 @@ All helper scripts expect the environment variables `SRC_ULAND` and
 default to `src-uland` and `src-kernel` respectively. Adjust these variables
 if you move the sources elsewhere.
 
+Compilation now targets the upcoming C23 standard. Makefiles pass
+`-std=c23` (or `-std=c++23` for C++ files) along with `-Wall -Werror` by
+default. Use `CC=clang` if your system compiler does not yet recognize
+`-std=c23`.
+
 1. **Build the `config` utility**
    ```sh
    cd ${SRC_ULAND:-usr/src}/usr.sbin/config

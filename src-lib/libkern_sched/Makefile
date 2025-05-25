@@ -4,11 +4,11 @@ LIB  = libkern_sched.a
 CC ?= cc
 AR ?= ar
 CFLAGS ?= -O2
-CSTD ?= -std=c2x
+CSTD ?= -std=c23
 CPPFLAGS ?= -I../../src-headers -I../../src-headers/machine \
             -I../../sys -I../../sys/sys \
             -I../../sys/i386/include
-CFLAGS   += $(CSTD) -DKERNEL
+CFLAGS   += $(CSTD) -DKERNEL -Wall -Werror
 
 all: $(LIB)
 

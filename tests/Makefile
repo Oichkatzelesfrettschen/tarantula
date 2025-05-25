@@ -1,7 +1,7 @@
 CC ?= cc
-CFLAGS ?= -O2 -std=c2x
+CFLAGS ?= -O2 -std=c23 -Wall -Werror
 CXX ?= c++
-CXXFLAGS ?= -O2 -std=c++23
+CXXFLAGS ?= -O2 -std=c++23 -Wall -Werror
 CPPFLAGS = -I../tests/include -I../src-headers -I../src-headers/machine -I../src-kernel
 LIBS = ../src-kernel/libkern_stubs.a ../src-lib/libipc/libipc.a
 

@@ -1,4 +1,5 @@
 project('kern_stubs', 'c', default_options : ['c_std=c23'])
+add_project_arguments('-Wall', '-Werror', language : 'c')
 
 srcs = ['proc_hooks.c', 'sched_hooks.c', 'vm_hooks.c', 'vfs_hooks.c']
 srcs += ['ipc.c']
