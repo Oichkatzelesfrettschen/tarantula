@@ -6,7 +6,7 @@
 
 class SpinLock {
 public:
-    constexpr SpinLock() : lock_(SPINLOCK_INITIALIZER) {}
+    SpinLock() { spinlock_init(&lock_); }
     void lock() noexcept { spinlock_lock(&lock_); }
     bool try_lock() noexcept { return spinlock_trylock(&lock_); }
     void unlock() noexcept { spinlock_unlock(&lock_); }
