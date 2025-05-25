@@ -4,12 +4,15 @@ SUBDIRS = \
     src-lib/libipc \
     src-lib/libkern_sched \
     src-lib/libvm \
+    src-lib/libcapnp \
     src-kernel \
     src-uland/libipc \
     src-uland/libkern_sched \
     src-uland/libvm \
+    src-uland/libcapnp \
     src-uland/fs-server \
     src-uland/servers/proc_manager \
+    src-uland/servers/memory \
     src-uland/init \
     tests
 
