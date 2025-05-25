@@ -25,6 +25,9 @@ from the historic `bmake` system to CMake.
 `third_party/pip` for Python wheels before contacting the network.
 Populate these directories with `apt-get download <pkg>` and
 `pip download <pkg>` while online to enable offline runs.
+You can verify which commands are available at any time by running
+`tools/check_build_env.sh`. It lists missing build tools and exits
+non-zero when any are absent.
 For GitHub CI examples see [docs/ci_workflows.md](docs/ci_workflows.md).
 For FHS migration steps see [docs/fhs_migration.md](docs/fhs_migration.md).
 For microkernel tasks see [docs/microkernel_plan.md](docs/microkernel_plan.md)
