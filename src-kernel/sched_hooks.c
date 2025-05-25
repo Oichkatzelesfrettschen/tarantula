@@ -6,7 +6,8 @@ extern void uland_sched_init(void);
 void
 kern_sched_init(void)
 {
-    /* Ensure the message queue is ready before sending */
+    /* Initialize scheduler lock and IPC queue before sending messages */
+    spinlock_init(&sched_lock);
     ipc_queue_init(&kern_ipc_queue);
 
     struct ipc_message msg = { .type = IPC_MSG_SCHED_INIT };
