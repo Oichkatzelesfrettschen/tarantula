@@ -26,6 +26,16 @@ If `bison` is missing, install it and rerun `setup.sh`. The script now sets
 `YACC="bison -y"` automatically using `/etc/profile.d/yacc.sh`. Then proceed
 with the steps below.
 
+The repository also includes a simple **CMake** build. After installing the
+dependencies you can configure the entire tree using Ninja:
+
+```sh
+cmake -S . -B build -G Ninja
+cmake --build build
+```
+`find_package(BISON)` verifies that **bison** is installed. Meson users can run
+`meson setup build && ninja -C build` with the provided `meson.build`.
+
 All helper scripts expect the environment variables `SRC_ULAND` and
 `SRC_KERNEL` to point to the userland and kernel source directories. They
 default to `src-uland` and `src-kernel` respectively. Adjust these variables
