@@ -38,6 +38,17 @@
 #define	_MACHTYPES_H_
 #include <stdint.h>
 
+/*
+ * Provide BSD-style integral type aliases when building the
+ * userland versions of kernel components.  These are normally
+ * defined by <machine/types.h> in the kernel tree but are
+ * missing from this trimmed header used for user-space builds.
+ */
+typedef uint8_t  u_int8_t;
+typedef uint16_t u_int16_t;
+typedef uint32_t u_int32_t;
+typedef uint64_t u_int64_t;
+
 #if !defined(_ANSI_SOURCE) && !defined(_POSIX_SOURCE)
 typedef struct _physadr {
 	int r[1];
