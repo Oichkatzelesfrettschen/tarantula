@@ -1,6 +1,7 @@
 #include "exokernel.h"
 #include <stdbool.h>
 #include "ipc.h"
+#include <exo_ipc.h>
 /* Stubs delegating to user-space VM library */
 extern bool uland_vm_fault(void *addr);
 
@@ -12,7 +13,7 @@ kern_vm_fault(void *addr)
     /* Synchronous reply */
     struct ipc_message reply;
     struct ipc_mailbox *mb = ipc_mailbox_current();
-    if (ipc_queue_recv_timed(&mb->queue, &reply, 1000) == IPC_STATUS_SUCCESS) {
+    if (ipc_queue_recv_timed(&mb->queue, &reply, 1000) == EXO_IPC_OK) {
         if (reply.type != IPC_MSG_VM_FAULT)
             return reply.a != 0;
     }

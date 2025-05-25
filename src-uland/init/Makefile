@@ -5,7 +5,7 @@ PROG = init
 CC ?= cc
 CFLAGS ?= -O2
 CSTD ?= -std=c23
-CPPFLAGS ?= -I../../src-headers
+CPPFLAGS ?= -I../../src-headers -I../../include
 CFLAGS += $(CSTD) -Wall -Werror
 
 SUBDIRS = ../servers/reincarnation

@@ -1,4 +1,5 @@
 #include "ipc.h"
+#include <exo_ipc.h>
 #include <stdio.h>
 
 int main(void)
@@ -10,13 +11,13 @@ int main(void)
     struct ipc_message msg = { .type = IPC_MSG_HEARTBEAT, .a = 123 };
     ipc_queue_send(&a->queue, &msg);
 
-    if (ipc_queue_recv_timed(&b->queue, &msg, 5) != IPC_STATUS_TIMEOUT) {
+    if (ipc_queue_recv_timed(&b->queue, &msg, 5) != EXO_IPC_TIMEOUT) {
         printf("unexpected message\n");
         return 1;
     }
 
     ipc_queue_send(&b->queue, &msg);
-    if (ipc_queue_recv_timed(&b->queue, &msg, 5) != IPC_STATUS_SUCCESS) {
+    if (ipc_queue_recv_timed(&b->queue, &msg, 5) != EXO_IPC_OK) {
         printf("recv failed\n");
         return 1;
     }
