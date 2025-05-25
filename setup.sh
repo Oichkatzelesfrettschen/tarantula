@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -u -o pipefail
 
+# optional offline mode
+OFFLINE_MODE=0
+if [ "${1:-}" = "--offline" ]; then
+  OFFLINE_MODE=1
+  shift
+fi
+
 # log all successes and failures
 LOG_FILE=/tmp/setup.log
 rm -f "$LOG_FILE"
@@ -17,6 +24,25 @@ PIP_FAILED=()
 apt_pin_install(){
   pkg="$1"
   local deb
+  if [ $OFFLINE_MODE -eq 1 ]; then
+    deb=$(ls "$OFFLINE_PKG_DIR"/${pkg}_*.deb 2>/dev/null | sort -V | tail -n1)
+    if [ -n "$deb" ]; then
+      dpkg -i "$deb" >/dev/null 2>&1
+      rc=$?
+      if [ $rc -eq 0 ]; then
+        echo "OFFLINE OK $pkg" >> "$LOG_FILE"
+        return 0
+      else
+        echo "OFFLINE FAIL $pkg" >> "$LOG_FILE"
+        APT_FAILED+=("$pkg")
+        return 1
+      fi
+    else
+      echo "OFFLINE MISS $pkg" >> "$LOG_FILE"
+      APT_FAILED+=("$pkg")
+      return 1
+    fi
+  fi
   deb=$(ls "$APT_CACHE_DIR"/${pkg}_*.deb 2>/dev/null | sort -V | tail -n1)
   if [ -n "$deb" ]; then
     dpkg -i "$deb" >/dev/null 2>&1
@@ -51,7 +77,8 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 BMAKE_CACHE_DIR="$SCRIPT_DIR/third_party/bmake"
 APT_CACHE_DIR="$SCRIPT_DIR/third_party/apt"
 PIP_CACHE_DIR="$SCRIPT_DIR/third_party/pip"
-mkdir -p "$BMAKE_CACHE_DIR" "$APT_CACHE_DIR" "$PIP_CACHE_DIR"
+OFFLINE_PKG_DIR="$SCRIPT_DIR/offline_packages"
+mkdir -p "$BMAKE_CACHE_DIR" "$APT_CACHE_DIR" "$PIP_CACHE_DIR" "$OFFLINE_PKG_DIR"
 
 # fallback installer using pip3 when apt fails
 install_with_pip(){
@@ -158,10 +185,14 @@ for arch in i386 armel armhf arm64 riscv64 powerpc ppc64el ia64; do
   dpkg --add-architecture "$arch"
 done
 # update package lists
-apt-get update -y >/dev/null 2>&1 && echo "APT OK   update" >> "$LOG_FILE" || {
-  echo "APT FAIL update" >> "$LOG_FILE"
-  APT_FAILED+=("update")
-}
+if [ $OFFLINE_MODE -eq 0 ]; then
+  apt-get update -y >/dev/null 2>&1 && echo "APT OK   update" >> "$LOG_FILE" || {
+    echo "APT FAIL update" >> "$LOG_FILE"
+    APT_FAILED+=("update")
+  }
+else
+  echo "OFFLINE mode - skipping apt-get update" >> "$LOG_FILE"
+fi
 # install aptitude (when available)
 apt_pin_install aptitude || install_with_pip aptitude
 if command -v aptitude >/dev/null 2>&1; then
