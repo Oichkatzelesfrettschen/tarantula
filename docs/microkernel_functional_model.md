@@ -73,14 +73,14 @@ to reason about.
 The ring-buffer API exposes three helper functions:
 
 ```c
-struct ipc_queue q;
-ipc_queue_init(&q);
+struct ipc_mailbox mb;
+ipc_queue_init(&mb);
 
 struct ipc_message m = { .type = IPC_MSG_OPEN,
                          .a = (uintptr_t)"/etc/passwd",
                          .b = O_RDONLY };
-ipc_queue_send(&q, &m);
-if (ipc_queue_recv(&q, &m)) {
+ipc_queue_send(&mb, &m);
+if (ipc_queue_recv(&mb, &m)) {
     int fd = (int)m.a;
     /* use fd */
 }

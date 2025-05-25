@@ -9,13 +9,19 @@
 /* User-space convenience wrappers */
 static inline bool ipc_send(const struct ipc_message *m)
 {
-    ipc_queue_send_blocking(&kern_ipc_queue, m);
+    struct ipc_mailbox *mb = ipc_get_mailbox();
+    if (!mb)
+        return false;
+    ipc_queue_send_blocking(mb, m);
     return true;
 }
 
 static inline bool ipc_recv(struct ipc_message *m)
 {
-    ipc_queue_recv_blocking(&kern_ipc_queue, m);
+    struct ipc_mailbox *mb = ipc_get_mailbox();
+    if (!mb)
+        return false;
+    ipc_queue_recv_blocking(mb, m);
     return true;
 }
 

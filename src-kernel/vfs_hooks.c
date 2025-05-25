@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "exokernel.h"
 #include "ipc.h"
+#include <unistd.h>
 /* Stubs delegating to user-space file server */
 extern int fs_open(const char *path, int flags);
 int
@@ -11,9 +12,10 @@ kern_open(const char *path, int flags)
         .a = (uintptr_t)path,
         .b = (uintptr_t)flags
     };
-    ipc_queue_send(&kern_ipc_queue, &msg);
+    struct ipc_mailbox *mb = ipc_get_mailbox();
+    ipc_queue_send(mb, &msg);
     struct ipc_message reply;
-    if (ipc_queue_recv(&kern_ipc_queue, &reply)) {
+    if (ipc_queue_recv(mb, &reply)) {
         if (reply.type != IPC_MSG_OPEN)
             return (int)reply.a;
     }

@@ -32,13 +32,26 @@ struct ipc_queue {
     spinlock_t lock;
 };
 
-/* Global queue instance defined in ipc.c */
-extern struct ipc_queue kern_ipc_queue;
+struct ipc_mailbox {
+    struct ipc_queue q;
+    int pid;
+    atomic_bool active;
+};
 
-void ipc_queue_init(struct ipc_queue *q);
-bool ipc_queue_send(struct ipc_queue *q, const struct ipc_message *m);
-bool ipc_queue_recv(struct ipc_queue *q, struct ipc_message *m);
-void ipc_queue_send_blocking(struct ipc_queue *q, const struct ipc_message *m);
-void ipc_queue_recv_blocking(struct ipc_queue *q, struct ipc_message *m);
+#define IPC_MAX_MAILBOXES 64
+
+/* Global mailbox array defined in ipc.c */
+extern struct ipc_mailbox ipc_mailboxes[IPC_MAX_MAILBOXES];
+
+struct ipc_mailbox *ipc_mailbox_lookup(int pid);
+struct ipc_mailbox *ipc_get_mailbox(void);
+void ipc_mailbox_alloc(int pid);
+void ipc_mailbox_free(int pid);
+
+void ipc_queue_init(struct ipc_mailbox *mb);
+bool ipc_queue_send(struct ipc_mailbox *mb, const struct ipc_message *m);
+bool ipc_queue_recv(struct ipc_mailbox *mb, struct ipc_message *m);
+void ipc_queue_send_blocking(struct ipc_mailbox *mb, const struct ipc_message *m);
+void ipc_queue_recv_blocking(struct ipc_mailbox *mb, struct ipc_message *m);
 
 #endif /* IPC_H */
