@@ -1,4 +1,4 @@
-OBJS = posix.o
+OBJS = posix.o posix_signal.o
 LIB  = libposix.a
 
 CC ?= cc
