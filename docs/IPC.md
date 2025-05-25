@@ -99,3 +99,27 @@ int capnp_parse(const char *buf, size_t len, struct capnp_message *msg);
 The `tools/memserver` program links against this stub.  It loads a file into
 memory and prints the parsed message size.  A basic regression test lives under
 `modern/tests` and is built automatically when `CAPNP=1` is supplied to `make`.
+
+## POSIX IPC Wrappers
+
+`libipc` also provides lightweight wrappers around the standard POSIX
+message queue, semaphore and shared memory APIs.  The functions accept a
+directory file descriptor as their first argument to support future
+capability-based restrictions.  The current implementation simply calls
+the regular POSIX routines.
+
+```c
+mqd_t cap_mq_open(int dirfd, const char *name, int oflag, mode_t mode,
+                  struct mq_attr *attr);
+int   cap_mq_unlink(int dirfd, const char *name);
+
+sem_t *cap_sem_open(int dirfd, const char *name, int oflag, mode_t mode,
+                    unsigned value);
+int   cap_sem_unlink(int dirfd, const char *name);
+
+int cap_shm_open(int dirfd, const char *name, int oflag, mode_t mode);
+int cap_shm_unlink(int dirfd, const char *name);
+```
+
+The program `modern/tests/posix_ipc_demo.c` demonstrates basic usage of
+these helpers.
