@@ -11,10 +11,10 @@
 
 /* Status codes for queue operations */
 typedef enum {
-    IPC_OK = 0,
-    IPC_EMPTY,
-    IPC_FULL,
-    IPC_TIMEOUT
+    IPC_STATUS_SUCCESS = 0,
+    IPC_STATUS_EMPTY,
+    IPC_STATUS_FULL,
+    IPC_STATUS_TIMEOUT
 } ipc_status_t;
 
 /* Message types used by kernel hooks */
@@ -49,5 +49,17 @@ ipc_status_t ipc_queue_send(struct ipc_queue *q, const struct ipc_message *m);
 ipc_status_t ipc_queue_recv(struct ipc_queue *q, struct ipc_message *m);
 ipc_status_t ipc_queue_send_blocking(struct ipc_queue *q, const struct ipc_message *m);
 ipc_status_t ipc_queue_recv_blocking(struct ipc_queue *q, struct ipc_message *m);
+ipc_status_t ipc_queue_recv_timed(struct ipc_queue *q, struct ipc_message *m,
+                                  unsigned tries);
+
+/* Basic per-process mailbox */
+struct ipc_mailbox {
+    int pid;
+    struct ipc_queue queue;
+};
+
+void ipc_mailbox_init(void);
+struct ipc_mailbox *ipc_mailbox_lookup(int pid);
+struct ipc_mailbox *ipc_mailbox_current(void);
 
 #endif /* IPC_H */

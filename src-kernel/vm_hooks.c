@@ -11,7 +11,8 @@ kern_vm_fault(void *addr)
     (void)ipc_queue_send(&kern_ipc_queue, &msg);
     /* Synchronous reply */
     struct ipc_message reply;
-    if (ipc_queue_recv(&kern_ipc_queue, &reply) == IPC_OK) {
+    struct ipc_mailbox *mb = ipc_mailbox_current();
+    if (ipc_queue_recv_timed(&mb->queue, &reply, 1000) == IPC_STATUS_SUCCESS) {
         if (reply.type != IPC_MSG_VM_FAULT)
             return reply.a != 0;
     }

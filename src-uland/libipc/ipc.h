@@ -17,4 +17,9 @@ static inline ipc_status_t ipc_recv(struct ipc_message *m)
     return ipc_queue_recv_blocking(&kern_ipc_queue, m);
 }
 
+static inline ipc_status_t ipc_recv_t(struct ipc_message *m, unsigned tries)
+{
+    return ipc_queue_recv_timed(&kern_ipc_queue, m, tries);
+}
+
 #endif /* LIBIPC_H */

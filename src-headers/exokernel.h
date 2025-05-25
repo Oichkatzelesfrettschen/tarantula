@@ -5,6 +5,11 @@
 /* Interface exported by the exokernel stubs. */
 
 #include <stdbool.h>
+#include "spinlock.h"
+
+SPINLOCK_DECLARE(sched_lock);
+void sched_lock_acquire(void);
+void sched_lock_release(void);
 
 void kern_sched_init(void);
 int kern_open(const char *path, int flags);
