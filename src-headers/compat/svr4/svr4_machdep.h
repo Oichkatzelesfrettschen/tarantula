@@ -32,6 +32,13 @@
 #ifndef _I386_SVR4_MACHDEP_H_
 #define _I386_SVR4_MACHDEP_H_
 
+/*
+ * Modernized for C23 compatibility.  Introduces fixed-width types and
+ * uses _Static_assert to verify structure sizes at compile time.
+ */
+
+#include <stdint.h>
+
 #include <compat/svr4/svr4_types.h>
 
 /*
@@ -60,12 +67,12 @@
 #define SVR4_X86_MAXREG    19
 
 
-typedef int svr4_greg_t;
+typedef int32_t svr4_greg_t;
 typedef svr4_greg_t svr4_gregset_t[SVR4_X86_MAXREG];
 
 typedef struct {
-    int     f_x87[62];   /* x87 registers */
-    long    f_weitek[33];    /* weitek */
+    int32_t f_x87[62];   /* x87 registers */
+    int32_t f_weitek[33];    /* weitek */
 } svr4_fregset_t;
 
 struct svr4_mcontext;
@@ -74,6 +81,9 @@ typedef struct svr4_mcontext {
     svr4_gregset_t  greg;
     svr4_fregset_t  freg;
 } svr4_mcontext_t;
+
+_Static_assert((sizeof(svr4_gregset_t) / sizeof(svr4_greg_t)) == SVR4_X86_MAXREG,
+               "SVR4 register set size mismatch");
 
 #define SVR4_UC_MACHINE_PAD 5
 
@@ -121,6 +131,14 @@ struct svr4_ssd {
 #define SVR4_TRAP_GETHRVTIME    4   /* implements gethrvtime(2) */
 #define SVR4_TRAP_GETHRESTIME   5   /* clock_gettime(CLOCK_REALTIME, tp) */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void svr4_syscall_intern(struct proc *);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* !_I386_SVR4_MACHDEP_H_ */

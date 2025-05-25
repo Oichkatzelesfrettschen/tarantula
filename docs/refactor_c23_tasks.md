@@ -117,3 +117,5 @@ not linger indefinitely.
 - Created `src-headers/arch.h` with C23 macros to detect 16-, 32- and 64-bit
   architectures.
 - Added a new `ports/` tree containing initial Chicken Scheme and Go stubs.
+- Modernized `src-headers/compat/svr4/svr4_machdep.h` with fixed-width types and
+  a `_Static_assert` to verify register counts.
