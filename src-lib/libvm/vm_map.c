@@ -70,6 +70,7 @@
 #include <sys/param.h>
 #include <sys/systm.h>
 #include <sys/malloc.h>
+#include <stdint.h>
 
 #include <vm/vm.h>
 #include <vm/vm_page.h>
@@ -2590,8 +2591,9 @@ vm_map_print(map, full)
 
 	iprintf("%s map 0x%x: pmap=0x%x,ref=%d,nentries=%d,version=%d\n",
 		(map->is_main_map ? "Task" : "Share"),
- 		(int) map, (int) (map->pmap), map->ref_count, map->nentries,
-		map->timestamp);
+               (uintptr_t) map, (uintptr_t) (map->pmap),
+               map->ref_count, map->nentries,
+               map->timestamp);
 
 	if (!full && indent)
 		return;
@@ -2599,8 +2601,10 @@ vm_map_print(map, full)
 	indent += 2;
 	for (entry = map->header.next; entry != &map->header;
 				entry = entry->next) {
-		iprintf("map entry 0x%x: start=0x%x, end=0x%x, ",
-			(int) entry, (int) entry->start, (int) entry->end);
+               iprintf("map entry 0x%x: start=0x%x, end=0x%x, ",
+                       (uintptr_t) entry,
+                       (uintptr_t) entry->start,
+                       (uintptr_t) entry->end);
 		if (map->is_main_map) {
 		     	static char *inheritance_name[4] =
 				{ "share", "copy", "none", "donate_copy"};
@@ -2613,9 +2617,9 @@ vm_map_print(map, full)
 		}
 
 		if (entry->is_a_map || entry->is_sub_map) {
-		 	printf("share=0x%x, offset=0x%x\n",
-				(int) entry->object.share_map,
-				(int) entry->offset);
+                       printf("share=0x%x, offset=0x%x\n",
+                               (uintptr_t) entry->object.share_map,
+                               (uintptr_t) entry->offset);
 			if ((entry->prev == &map->header) ||
 			    (!entry->prev->is_a_map) ||
 			    (entry->prev->object.share_map !=
@@ -2627,9 +2631,9 @@ vm_map_print(map, full)
 				
 		}
 		else {
-			printf("object=0x%x, offset=0x%x",
-				(int) entry->object.vm_object,
-				(int) entry->offset);
+                       printf("object=0x%x, offset=0x%x",
+                               (uintptr_t) entry->object.vm_object,
+                               (uintptr_t) entry->offset);
 			if (entry->copy_on_write)
 				printf(", copy (%s)",
 				       entry->needs_copy ? "needed" : "done");
