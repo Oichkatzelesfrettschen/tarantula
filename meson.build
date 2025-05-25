@@ -8,6 +8,21 @@ endif
 libipc = static_library('ipc', 'src-lib/libipc/ipc.c',
                         include_directories : include_directories('src-headers'))
 
+# scheduler library built from shared kernel sources
+sched_srcs = [
+  'src-lib/libkern_sched/kern_sched.c',
+  'src-lib/libkern_sched/runqueue.c',
+  'src-lib/libkern_sched/sched_lock.c',
+]
+libkern_sched = static_library('kern_sched', sched_srcs,
+                               include_directories :
+                                 include_directories('src-headers',
+                                                    'src-headers/machine',
+                                                    'sys',
+                                                    'sys/sys',
+                                                    'sys/i386/include'),
+                               c_args : ['-DKERNEL'])
+
 kern_srcs = [
   'src-kernel/proc_hooks.c',
   'src-kernel/sched_hooks.c',
@@ -37,7 +52,7 @@ executable('fs_server', fs_srcs,
                                                     'sys/sys',
                                                     'sys/i386/include'),
            c_args : ['-DKERNEL'],
-           link_with : libipc)
+           link_with : [libipc, libkern_sched])
 
 executable('posix_ipc_demo',
            'modern/tests/posix_ipc_demo.c',
