@@ -19,8 +19,11 @@ system safely.  These include:
   for the slab-style design with per-CPU caches.
 - **System call gate** – simple wrappers like `kern_open()` pass file
   operations to the file server running in user space.
-- **IPC primitives** – the kernel exposes message queues for servers and
-  drivers to communicate.  Messages are fixed-size structures shared via a ring buffer.
+ - **IPC primitives** – the kernel exposes message queues for servers and
+   drivers to communicate.  Messages are fixed-size structures shared via a ring buffer.
+   Each process owns a small `ipc_mailbox` containing its queue.  The helper
+   `ipc_mailbox_current()` retrieves the mailbox for the calling process so
+   kernel hooks can reply directly.
 ### Memory Reservation and OOM Policy
 
 The kernel invokes the OOM policy whenever a page allocation fails or free memory drops below its reserved threshold. The routine uses an emergency pool so it can post a low-memory message on the IPC queue.
@@ -80,7 +83,7 @@ struct ipc_message m = { .type = IPC_MSG_OPEN,
                          .a = (uintptr_t)"/etc/passwd",
                          .b = O_RDONLY };
 ipc_queue_send(&q, &m);
-if (ipc_queue_recv(&q, &m) == IPC_OK) {
+if (ipc_queue_recv(&q, &m) == IPC_STATUS_SUCCESS) {
     int fd = (int)m.a;
     /* use fd */
 }

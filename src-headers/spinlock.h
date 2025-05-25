@@ -11,8 +11,12 @@
 # define SPINLOCK_CACHELINE 64
 #endif
 
-#ifndef CONFIG_SMP
-# define CONFIG_SMP 1
+#if defined(SPINLOCK_UNIPROCESSOR)
+# define CONFIG_SMP 0
+#else
+# ifndef CONFIG_SMP
+#  define CONFIG_SMP 1
+# endif
 #endif
 
 #ifndef USE_TICKET_LOCK

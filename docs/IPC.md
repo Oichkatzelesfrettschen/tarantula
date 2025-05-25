@@ -35,21 +35,33 @@ struct ipc_message {
 The exact meaning of the fields depends on the message type.  Producers
 write a populated structure into the queue and consumers read it back.
 
+### Status Codes
+
+Queue operations return one of four status values:
+
+- `IPC_STATUS_SUCCESS` – the operation completed successfully.
+- `IPC_STATUS_EMPTY` – a receive operation found no messages.
+- `IPC_STATUS_FULL` – a send operation found the queue full.
+- `IPC_STATUS_TIMEOUT` – a timed receive exceeded the retry budget.
+
 ## Send and Receive Semantics
 
-Two non‑blocking helpers operate on a queue:
+Two non‑blocking helpers operate on a queue and return an `ipc_status_t`
+value describing the outcome:
 
-- `bool ipc_queue_send(struct ipc_queue *q, const struct ipc_message *m)`
-  – attempts to enqueue `m`.  Returns `true` on success or `false` if the
-  queue is full.
-- `bool ipc_queue_recv(struct ipc_queue *q, struct ipc_message *m)` –
-  attempts to dequeue the next message.  Returns `true` on success or
-  `false` if the queue is empty.
+- `ipc_status_t ipc_queue_send(struct ipc_queue *q, const struct ipc_message *m)`
+  – attempts to enqueue `m` and returns `IPC_STATUS_SUCCESS`,
+  `IPC_STATUS_FULL` or `IPC_STATUS_TIMEOUT`.
+- `ipc_status_t ipc_queue_recv(struct ipc_queue *q, struct ipc_message *m)` –
+  attempts to dequeue the next message and returns `IPC_STATUS_SUCCESS` or
+  `IPC_STATUS_EMPTY`.
 
 Blocking variants `ipc_queue_send_blocking()` and
 `ipc_queue_recv_blocking()` repeatedly call the non‑blocking forms until
 they succeed.  The wrappers `ipc_send()` and `ipc_recv()` in
-`libipc.h` invoke these blocking functions and always return `true`.
+`libipc.h` invoke these blocking functions and report the resulting
+status. A convenience wrapper `ipc_recv_t()` polls with a limited
+retry count before returning `IPC_STATUS_TIMEOUT`.
 
 ## Timeout Behavior
 
