@@ -39,3 +39,9 @@ executable('fs_server', fs_srcs,
            c_args : ['-DKERNEL'],
            link_with : libipc)
 
+executable('posix_ipc_demo',
+           'modern/tests/posix_ipc_demo.c',
+           include_directories : include_directories('src-headers'),
+           link_with : libipc,
+           link_args : ['-lrt'])
+

@@ -132,3 +132,47 @@ struct ipc_mailbox *ipc_mailbox_current(void)
 {
     return ipc_mailbox_lookup(getpid());
 }
+
+#include "posix_ipc.h"
+#include <mqueue.h>
+#include <semaphore.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+
+mqd_t cap_mq_open(int dirfd, const char *name, int oflag, mode_t mode,
+                  struct mq_attr *attr)
+{
+    (void)dirfd;
+    return mq_open(name, oflag, mode, attr);
+}
+
+int cap_mq_unlink(int dirfd, const char *name)
+{
+    (void)dirfd;
+    return mq_unlink(name);
+}
+
+sem_t *cap_sem_open(int dirfd, const char *name, int oflag, mode_t mode,
+                    unsigned value)
+{
+    (void)dirfd;
+    return sem_open(name, oflag, mode, value);
+}
+
+int cap_sem_unlink(int dirfd, const char *name)
+{
+    (void)dirfd;
+    return sem_unlink(name);
+}
+
+int cap_shm_open(int dirfd, const char *name, int oflag, mode_t mode)
+{
+    (void)dirfd;
+    return shm_open(name, oflag, mode);
+}
+
+int cap_shm_unlink(int dirfd, const char *name)
+{
+    (void)dirfd;
+    return shm_unlink(name);
+}
