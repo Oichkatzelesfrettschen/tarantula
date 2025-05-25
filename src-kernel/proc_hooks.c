@@ -12,8 +12,10 @@ kern_fork(void)
     struct ipc_message msg = { .type = IPC_MSG_PROC_FORK };
     ipc_queue_send(&kern_ipc_queue, &msg);
     struct ipc_message reply;
-    if (ipc_queue_recv(&kern_ipc_queue, &reply))
-        return (int)reply.a;
+    if (ipc_queue_recv(&kern_ipc_queue, &reply)) {
+        if (reply.type != IPC_MSG_PROC_FORK)
+            return (int)reply.a;
+    }
     return pm_fork();
 }
 
