@@ -785,6 +785,8 @@ NON_LEAF(setrunqueue, STAND_FRAME_SIZE, ra)
 	.mask	0x80000000, (STAND_RA_OFFSET - STAND_FRAME_SIZE)
 	lw	t0, P_BACK(a0)		## firewall: p->p_back must be 0
 	sw	ra, STAND_RA_OFFSET(sp)	##
+        jal     sched_lock_acquire
+        nop
 	beq	t0, zero, 1f		##
 	lbu	t0, P_PRIORITY(a0)	# put on p->p_priority / 4 queue
 	PANIC("setrunqueue")		##
@@ -804,6 +806,8 @@ NON_LEAF(setrunqueue, STAND_FRAME_SIZE, ra)
 	sw	t1, P_BACK(a0)		# p->p_back = qp->ph_rlink
 	sw	a0, P_FORW(t1)		# p->p_back->p_forw = p;
 	sw	a0, P_BACK(t0)		# qp->ph_rlink = p
+        jal     sched_lock_release
+        nop
 	j	ra
 	addu	sp, sp, STAND_FRAME_SIZE
 END(setrunqueue)
@@ -816,6 +820,8 @@ END(setrunqueue)
 NON_LEAF(remrq, STAND_FRAME_SIZE, ra)
 	subu	sp, sp, STAND_FRAME_SIZE
 	.mask	0x80000000, (STAND_RA_OFFSET - STAND_FRAME_SIZE)
+        jal     sched_lock_acquire
+        nop
 	lbu	t0, P_PRIORITY(a0)	# get from p->p_priority / 4 queue
 	li	t1, 1			# compute corresponding bit
 	srl	t0, t0, 2		# compute index into 'whichqs'
@@ -842,7 +848,9 @@ NON_LEAF(remrq, STAND_FRAME_SIZE, ra)
 	sw	t2, whichqs
 2:
 	sw	zero, P_BACK(a0)	## for firewall checking
-	j	ra
+        jal     sched_lock_release
+        nop
+        j       ra
 	addu	sp, sp, STAND_FRAME_SIZE
 END(remrq)
 

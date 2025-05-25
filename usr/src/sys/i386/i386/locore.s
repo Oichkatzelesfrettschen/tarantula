@@ -125,6 +125,7 @@ _atdevphys:	.long	0	# location of device mapping ptes (phys)
 	.globl	_IdlePTD, _KPTphys
 _IdlePTD:	.long	0
 _KPTphys:	.long	0
+        call    _sched_lock_release
 
 	.space 512
 tmpstk:
@@ -1131,6 +1132,7 @@ movl	8(%esp),%eax
  */
 	ALIGN32
 ENTRY(setrunqueue)
+        call    _sched_lock_acquire
 	movl	4(%esp),%eax
 	cmpl	$0,P_BACK(%eax)		# should not be on q already
 	je	set1
@@ -1147,6 +1149,7 @@ set1:
 	movl	%ecx,P_BACK(%eax)
 	movl	%eax,P_BACK(%edx)
 	movl	%eax,P_FORW(%ecx)
+        call    _sched_lock_release
 	ret
 
 set2:	.asciz	"setrunqueue"
@@ -1158,6 +1161,7 @@ set2:	.asciz	"setrunqueue"
  */
 	ALIGN32
 ENTRY(remrq)
+        call    _sched_lock_acquire
 	movl	4(%esp),%eax
 	movzbl	P_PRIORITY(%eax),%edx
 	shrl	$2,%edx
@@ -1182,6 +1186,7 @@ rem1:
 	shrl	$3,%edx			# yes, set bit as still full
 	btsl	%edx,_whichqs
 rem2:
+        call    _sched_lock_release
 	movl	$0,P_BACK(%eax)		# zap reverse link to indicate off list
 	ret
 

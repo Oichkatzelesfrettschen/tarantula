@@ -1,4 +1,4 @@
-OBJS = kern_sched.o
+OBJS = kern_sched.o sched_lock.o
 LIB  = libkern_sched.a
 
 CC ?= cc

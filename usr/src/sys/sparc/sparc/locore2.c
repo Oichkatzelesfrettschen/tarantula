@@ -52,6 +52,7 @@
 #include <sys/param.h>
 #include <sys/proc.h>
 #include <sys/resourcevar.h>
+#include "sched_lock.h"
 
 int	whichqs;
 
@@ -61,11 +62,12 @@ int	whichqs;
  */
 void
 setrunqueue(p)
-	register struct proc *p;
+        register struct proc *p;
 {
-	register struct prochd *q;
-	register struct proc *oldlast;
-	register int which = p->p_priority >> 2;
+        sched_lock_acquire();
+        register struct prochd *q;
+        register struct proc *oldlast;
+        register int which = p->p_priority >> 2;
 
 	if (p->p_back != NULL)
 		panic("setrunqueue");
@@ -73,8 +75,9 @@ setrunqueue(p)
 	whichqs |= 1 << which;
 	p->p_forw = (struct proc *)q;
 	p->p_back = oldlast = q->ph_rlink;
-	q->ph_rlink = p;
-	oldlast->p_forw = p;
+        q->ph_rlink = p;
+        oldlast->p_forw = p;
+        sched_lock_release();
 }
 
 /*
@@ -82,17 +85,19 @@ setrunqueue(p)
  * indicated by its priority.  Calls should be made at splstatclock().
  */
 remrq(p)
-	register struct proc *p;
+        register struct proc *p;
 {
-	register int which = p->p_priority >> 2;
-	register struct prochd *q;
+        sched_lock_acquire();
+        register int which = p->p_priority >> 2;
+        register struct prochd *q;
 
 	if ((whichqs & (1 << which)) == 0)
 		panic("remrq");
 	p->p_forw->p_back = p->p_back;
 	p->p_back->p_forw = p->p_forw;
 	p->p_back = NULL;
-	q = &qs[which];
-	if (q->ph_link == (struct proc *)q)
-		whichqs &= ~(1 << which);
+        q = &qs[which];
+        if (q->ph_link == (struct proc *)q)
+                whichqs &= ~(1 << which);
+        sched_lock_release();
 }

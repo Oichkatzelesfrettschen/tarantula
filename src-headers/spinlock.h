@@ -135,18 +135,14 @@ static inline void spinlock_guard_release(spinlock_guard_t *g)
     spinlock_guard_t name __attribute__((cleanup(spinlock_guard_release))) = { .lock = (lockptr) }; \
     spinlock_lock(name.lock)
 
-#ifndef CONFIG_SMP
-# define CONFIG_SMP 1
-#endif
-
-#if CONFIG_SMP
-# define spin_lock(l)   spinlock_lock(l)
-# define spin_unlock(l) spinlock_unlock(l)
-# define spin_trylock(l) spinlock_trylock(l)
-#else
+#ifdef SPINLOCK_UNIPROCESSOR
 # define spin_lock(l)   ((void)0)
 # define spin_unlock(l) ((void)0)
 # define spin_trylock(l) (1)
+#else
+# define spin_lock(l)   spinlock_lock(l)
+# define spin_unlock(l) spinlock_unlock(l)
+# define spin_trylock(l) spinlock_trylock(l)
 #endif
 
 #endif /* SPINLOCK_H */

@@ -52,6 +52,7 @@
 #endif
 
 #include <machine/cpu.h>
+#include "sched_lock.h"
 
 u_char	curpriority;		/* usrpri of curproc */
 int	lbolt;			/* once a second sleep address */
