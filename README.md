@@ -6,8 +6,10 @@ Downloaded from: ftp://alge.anart.no/pub/BSD/4.4BSD-Lite/4.4BSD-Lite2.tar.gz
 
 For kernel build instructions see [docs/building_kernel.md](docs/building_kernel.md).
 Run `setup.sh` first to install required tools. The script installs `aptitude`
-and fetches **clang**, **bison** and **bmake** with its mk framework. It can
-optionally install **mk-configure** to provide an Autotools-style layer on top.
+and fetches **clang**, **bison** and **bmake** with its mk framework. It can be
+invoked directly or via `.codex/setup.sh` which adds extra packages like the
+Coq proof assistant and TLA+ utilities for CI. It can optionally install
+**mk-configure** to provide an Autotools-style layer on top.
 The tree also ships a minimal **CMake** configuration.  Generate Ninja files
 with:
 
