@@ -378,9 +378,11 @@ fi
 
 # protoc installer (pinned)
 PROTO_VERSION=25.1
-if curl -fsSL "https://raw.githubusercontent.com/protocolbuffers/protobuf/v${PROTO_VERSION}/protoc-${PROTO_VERSION}-linux-x86_64.zip" -o /tmp/protoc.zip; then
-  unzip -d /usr/local /tmp/protoc.zip
-  rm /tmp/protoc.zip
+PROTO_URL="https://raw.githubusercontent.com/protocolbuffers/protobuf/v${PROTO_VERSION}/protoc-${PROTO_VERSION}-linux-x86_64.zip"
+PROTO_ZIP=/tmp/protoc.zip
+if curl -fsSL "$PROTO_URL" -o "$PROTO_ZIP"; then
+  unzip -d /usr/local "$PROTO_ZIP" >/dev/null 2>&1
+  rm "$PROTO_ZIP"
 else
   echo "curl FAILED protoc" >> "$LOG_FILE"
   APT_FAILED+=("protoc")
