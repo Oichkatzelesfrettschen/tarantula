@@ -35,6 +35,7 @@ kern/kern_resource.c	standard
 kern/kern_sig.c		standard
 kern/kern_subr.c	standard
 kern/kern_synch.c	standard
+kern/kern_runq.c	standard
 kern/kern_sysctl.c	standard
 kern/kern_time.c	standard
 kern/kern_xxx.c		standard

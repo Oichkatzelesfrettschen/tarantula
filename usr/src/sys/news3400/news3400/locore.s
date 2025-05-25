@@ -811,6 +811,8 @@ END(copykstack)
  *
  * Call should be made at splclock(), and p->p_stat should be SRUN.
  */
+/* replaced by sys/kern/kern_runq.c lines 15-30 */
+#if 0
 NON_LEAF(setrunqueue, STAND_FRAME_SIZE, ra)
 	subu	sp, sp, STAND_FRAME_SIZE
 	.mask	0x80000000, (STAND_RA_OFFSET - STAND_FRAME_SIZE)
@@ -838,8 +840,11 @@ NON_LEAF(setrunqueue, STAND_FRAME_SIZE, ra)
 	j	ra
 END(setrunqueue)
 
+#endif
 /*
  * Remrq(p)
+/* replaced by sys/kern/kern_runq.c lines 36-50 */
+#if 0
  *
  * Call should be made at splclock().
  */
@@ -872,6 +877,7 @@ NON_LEAF(remrq, STAND_FRAME_SIZE, ra)
 	addu	sp, sp, STAND_FRAME_SIZE
 	j	ra
 END(remrq)
+#endif
 
 /*
  * switch_exit()
