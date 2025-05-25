@@ -52,6 +52,7 @@
 #endif
 
 #include <machine/cpu.h>
+#include "runqueue.h"
 
 u_char	curpriority;		/* usrpri of curproc */
 int	lbolt;			/* once a second sleep address */
