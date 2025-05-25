@@ -3,6 +3,7 @@
 .PHONY: all inventory test
 
 CAPNP ?= 0
+CC ?= clang
 
 CFLAGS ?= -O2 -std=c23 -Wall -Werror
 CXXFLAGS ?= -O2 -std=c++23 -Wall -Werror
@@ -18,7 +19,8 @@ SUBDIRS = \
     src-uland/fs-server \
     src-uland/servers/proc_manager \
     src-uland/init \
-    tests
+    tests \
+    tests/posix
 
 ifeq ($(CAPNP),1)
 SUBDIRS += third_party/libcapnp tools/memserver modern/tests
@@ -26,14 +28,15 @@ endif
 
 all:
 	@for dir in $(SUBDIRS); do \
-	$(MAKE) -C $$dir CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(CFLAGS)" CAPNP="$(CAPNP)"; \
+		$(MAKE) -C $$dir CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(CFLAGS)" CC="$(CC)" CAPNP="$(CAPNP)"; \
 	done
-
+	
 inventory:
 	python3 tools/create_inventory.py
 
 test:
 	$(MAKE) -C tests
+	$(MAKE) -C tests/posix
 ifeq ($(CAPNP),1)
 	$(MAKE) -C modern/tests
 endif
