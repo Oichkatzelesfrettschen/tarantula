@@ -1,3 +1,4 @@
+#pragma once
 #ifndef FS_SERVER_H
 #define FS_SERVER_H
 

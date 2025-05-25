@@ -1,3 +1,4 @@
+#pragma once
 #ifndef LIBIPC_H
 #define LIBIPC_H
 

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef EXOKERNEL_H
 #define EXOKERNEL_H
 

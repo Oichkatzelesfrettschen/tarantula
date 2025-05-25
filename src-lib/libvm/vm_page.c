@@ -293,7 +293,7 @@ vm_page_startup(start, end)
  *	NOTE:  This macro depends on vm_page_bucket_count being a power of 2.
  */
 #define vm_page_hash(object, offset) \
-	(((unsigned long)object+(unsigned long)atop(offset))&vm_page_hash_mask)
+        (((uintptr_t)(object) + (uintptr_t)atop(offset)) & vm_page_hash_mask)
 
 /*
  *	vm_page_insert:		[ internal use only ]

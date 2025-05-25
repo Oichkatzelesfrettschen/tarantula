@@ -1,3 +1,4 @@
+#pragma once
 #ifndef KERN_SCHED_H
 #define KERN_SCHED_H
 

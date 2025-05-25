@@ -1,3 +1,4 @@
+#pragma once
 /*$NetBSD: svr4_machdep.h,v 1.16 2008/04/28 20:23:24 martin Exp $*/
 
 /*-

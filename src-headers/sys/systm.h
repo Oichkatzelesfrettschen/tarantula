@@ -1,3 +1,4 @@
+#pragma once
 /*-
  * Copyright (c) 1982, 1988, 1991, 1993
  *	The Regents of the University of California.  All rights reserved.
@@ -40,6 +41,8 @@
 
 #ifndef _SYS_SYSTM_H_
 #define _SYS_SYSTM_H_
+
+#include <stdnoreturn.h>
 
 /*
  * The `securelevel' variable controls the security level of the system.
@@ -121,11 +124,7 @@ int	seltrue __P((dev_t dev, int which, struct proc *p));
 void	*hashinit __P((int count, int type, u_long *hashmask));
 int	nosys __P((struct proc *, void *, register_t *));
 
-#ifdef __GNUC__
-volatile void	panic __P((const char *, ...));
-#else
-void	panic __P((const char *, ...));
-#endif
+_Noreturn void   panic __P((const char *, ...));
 void	tablefull __P((const char *));
 void	addlog __P((const char *, ...));
 void	log __P((int, const char *, ...));
