@@ -1,4 +1,4 @@
-CC ?= clang
+CC = clang
 CXX ?= clang++
 CFLAGS ?= -O2 -std=c23 -Wall -Werror
 CXXFLAGS ?= -O2 -std=c++23 -Wall -Werror
