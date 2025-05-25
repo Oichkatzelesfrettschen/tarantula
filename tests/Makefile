@@ -1,14 +1,15 @@
 CC ?= clang
 CXX ?= clang++
 CFLAGS ?= -O2 -std=c23 -Wall -Werror
-CXXFLAGS ?= -O2 -std=c++23 -Wall -Werror
+	CXXFLAGS ?= -O2 -std=c++23 -Wall -Werror
 CPPFLAGS = -I../tests/include -I../src-headers -I../src-headers/machine -I../src-kernel
 LIBS = ../src-kernel/libkern_stubs.a ../src-lib/libipc/libipc.a
-
+	
 OBJS = test_kern.o fs_open.o pm_entry.o vm_entry.o sched_stub.o mock_vm.o
 MAILBOX_OBJS = test_mailbox.o
+MAILBOX_TIMEOUT_OBJS = test_mailbox_timeout.o
 
-all: test_kern spinlock_cpp mailbox_test
+all: test_kern spinlock_cpp mailbox_test mailbox_timeout_test
 
 test_kern: $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@
@@ -18,6 +19,9 @@ spinlock_cpp: test_spinlock.o
 
 mailbox_test: $(MAILBOX_OBJS)
 	$(CC) $(CFLAGS) $(MAILBOX_OBJS) $(LIBS) -o $@
+
+mailbox_timeout_test: $(MAILBOX_TIMEOUT_OBJS)
+	$(CC) $(CFLAGS) $(MAILBOX_TIMEOUT_OBJS) $(LIBS) -o $@
 
 fs_open.o: ../src-uland/fs-server/fs_open.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
@@ -35,12 +39,17 @@ sched_stub.o: sched_stub.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 test_mailbox.o: test_mailbox.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	        $(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+test_mailbox_timeout.o: test_mailbox_timeout.c
+	        $(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 test_spinlock.o: test_spinlock.cpp
 	$(CXX) $(CXXFLAGS) -I../src-headers -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(MAILBOX_OBJS) test_kern spinlock_cpp mailbox_test test_spinlock.o
+	        rm -f $(OBJS) $(MAILBOX_OBJS) $(MAILBOX_TIMEOUT_OBJS) \
+	              test_kern spinlock_cpp mailbox_test mailbox_timeout_test \
+              test_spinlock.o
 
 .PHONY: all clean

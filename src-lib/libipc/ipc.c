@@ -1,5 +1,7 @@
+#define _POSIX_C_SOURCE 200809L
 #include "ipc.h"
 #include <unistd.h>
+#include <time.h>
 
 /* Shared queue used by kernel stubs and user-space servers */
 struct ipc_queue kern_ipc_queue;
@@ -109,4 +111,21 @@ struct ipc_mailbox *ipc_mailbox_lookup(int pid)
 struct ipc_mailbox *ipc_mailbox_current(void)
 {
     return ipc_mailbox_lookup(getpid());
+}
+
+ipc_status_t mailbox_recv_t(struct ipc_mailbox **boxes, size_t count,
+                            struct ipc_message *m, unsigned tries,
+                            const struct timespec *ts)
+{
+    ipc_status_t st;
+    while (tries-- > 0) {
+        for (size_t i = 0; i < count; ++i) {
+            st = ipc_queue_recv(&boxes[i]->queue, m);
+            if (st != IPC_STATUS_EMPTY)
+                return st;
+        }
+        if (ts)
+            nanosleep(ts, NULL);
+    }
+    return IPC_STATUS_TIMEOUT;
 }

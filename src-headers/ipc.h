@@ -5,6 +5,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdatomic.h>
+#include <stddef.h>
+#include <time.h>
 #include "spinlock.h"
 
 #define IPC_QUEUE_SIZE 32
@@ -51,7 +53,6 @@ ipc_status_t ipc_queue_send_blocking(struct ipc_queue *q, const struct ipc_messa
 ipc_status_t ipc_queue_recv_blocking(struct ipc_queue *q, struct ipc_message *m);
 ipc_status_t ipc_queue_recv_timed(struct ipc_queue *q, struct ipc_message *m,
                                   unsigned tries);
-
 /* Basic per-process mailbox */
 struct ipc_mailbox {
     int pid;
@@ -61,5 +62,9 @@ struct ipc_mailbox {
 void ipc_mailbox_init(void);
 struct ipc_mailbox *ipc_mailbox_lookup(int pid);
 struct ipc_mailbox *ipc_mailbox_current(void);
+
+ipc_status_t mailbox_recv_t(struct ipc_mailbox **boxes, size_t count,
+                            struct ipc_message *m, unsigned tries,
+                            const struct timespec *ts);
 
 #endif /* IPC_H */

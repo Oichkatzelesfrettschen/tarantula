@@ -84,3 +84,8 @@ return true;
 A future enhancement may add optional timeout parameters to the blocking
 routines, but the current API relies on explicit polling when timing out
 is required.
+
+The helper `mailbox_recv_t()` polls an array of queues and sleeps between
+attempts using `nanosleep(2)`.  The wrapper `ipc_recv_t()` provided by
+`mailbox_t.h` exposes this behavior and returns `IPC_STATUS_TIMEOUT` when
+no queue supplies a message after the given retry budget.
