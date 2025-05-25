@@ -19,41 +19,45 @@ void ipc_queue_init(struct ipc_queue *q)
     spinlock_init(&q->lock);
 }
 
-bool ipc_queue_send(struct ipc_queue *q, const struct ipc_message *m)
+ipc_status_t ipc_queue_send(struct ipc_queue *q, const struct ipc_message *m)
 {
-    bool ok = false;
+    ipc_status_t status = IPC_FULL;
     lock_queue(q);
     uint32_t next = (q->head + 1) % IPC_QUEUE_SIZE;
     if (next != q->tail) {
         q->msgs[q->head] = *m;
         q->head = next;
-        ok = true;
+        status = IPC_OK;
     }
     unlock_queue(q);
-    return ok;
+    return status;
 }
 
-bool ipc_queue_recv(struct ipc_queue *q, struct ipc_message *m)
+ipc_status_t ipc_queue_recv(struct ipc_queue *q, struct ipc_message *m)
 {
-    bool ok = false;
+    ipc_status_t status = IPC_EMPTY;
     lock_queue(q);
     if (q->tail != q->head) {
         *m = q->msgs[q->tail];
         q->tail = (q->tail + 1) % IPC_QUEUE_SIZE;
-        ok = true;
+        status = IPC_OK;
     }
     unlock_queue(q);
-    return ok;
+    return status;
 }
 
-void ipc_queue_send_blocking(struct ipc_queue *q, const struct ipc_message *m)
+ipc_status_t ipc_queue_send_blocking(struct ipc_queue *q, const struct ipc_message *m)
 {
-    while (!ipc_queue_send(q, m))
+    ipc_status_t st;
+    while ((st = ipc_queue_send(q, m)) == IPC_FULL)
         ;
+    return st;
 }
 
-void ipc_queue_recv_blocking(struct ipc_queue *q, struct ipc_message *m)
+ipc_status_t ipc_queue_recv_blocking(struct ipc_queue *q, struct ipc_message *m)
 {
-    while (!ipc_queue_recv(q, m))
+    ipc_status_t st;
+    while ((st = ipc_queue_recv(q, m)) == IPC_EMPTY)
         ;
+    return st;
 }

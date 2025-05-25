@@ -42,7 +42,7 @@ int main(void)
 
     struct ipc_message msg;
     for (;;) {
-        if (ipc_recv(&msg) && msg.type == IPC_MSG_HEARTBEAT) {
+        if (ipc_recv(&msg) == IPC_OK && msg.type == IPC_MSG_HEARTBEAT) {
             for (struct managed *m = managed_servers; m->path; ++m) {
                 if (m->pid == (pid_t)msg.a)
                     m->last_beat = time(NULL);

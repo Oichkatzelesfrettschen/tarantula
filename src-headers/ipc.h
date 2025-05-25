@@ -9,6 +9,14 @@
 
 #define IPC_QUEUE_SIZE 32
 
+/* Status codes for queue operations */
+typedef enum {
+    IPC_OK = 0,
+    IPC_EMPTY,
+    IPC_FULL,
+    IPC_TIMEOUT
+} ipc_status_t;
+
 /* Message types used by kernel hooks */
 enum ipc_msg_type {
     IPC_MSG_SCHED_INIT = 1,
@@ -37,9 +45,9 @@ struct ipc_queue {
 extern struct ipc_queue kern_ipc_queue;
 
 void ipc_queue_init(struct ipc_queue *q);
-bool ipc_queue_send(struct ipc_queue *q, const struct ipc_message *m);
-bool ipc_queue_recv(struct ipc_queue *q, struct ipc_message *m);
-void ipc_queue_send_blocking(struct ipc_queue *q, const struct ipc_message *m);
-void ipc_queue_recv_blocking(struct ipc_queue *q, struct ipc_message *m);
+ipc_status_t ipc_queue_send(struct ipc_queue *q, const struct ipc_message *m);
+ipc_status_t ipc_queue_recv(struct ipc_queue *q, struct ipc_message *m);
+ipc_status_t ipc_queue_send_blocking(struct ipc_queue *q, const struct ipc_message *m);
+ipc_status_t ipc_queue_recv_blocking(struct ipc_queue *q, struct ipc_message *m);
 
 #endif /* IPC_H */
