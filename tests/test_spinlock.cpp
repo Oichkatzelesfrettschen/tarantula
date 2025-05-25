@@ -1,6 +1,6 @@
 #include "spinlock.hpp"
+#include <array>
 #include <thread>
-#include <vector>
 #include <iostream>
 
 SpinLock g_lock;
@@ -8,18 +8,18 @@ int counter = 0;
 
 void worker()
 {
-    for(int i=0;i<1000;i++)
-        with_lock(g_lock, []{ ++counter; });
+    for (int i = 0; i < 1000; ++i)
+        with_lock(g_lock, [] { ++counter; });
 }
 
 int main()
 {
-    std::vector<std::thread> threads;
-    for(int i=0;i<4;i++)
-        threads.emplace_back(worker);
-    for(auto& t : threads)
-        t.join();
-    if(counter != 4000) {
+    {
+        std::array<std::jthread, 4> threads;
+        for (auto& t : threads)
+            t = std::jthread(worker);
+    } // threads join here
+    if (counter != 4000) {
         std::cout << "spinlock failed\n";
         return 1;
     }

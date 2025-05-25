@@ -13,7 +13,9 @@ kern_open(const char *path, int flags)
     };
     ipc_queue_send(&kern_ipc_queue, &msg);
     struct ipc_message reply;
-    if (ipc_queue_recv(&kern_ipc_queue, &reply))
-        return (int)reply.a;
+    if (ipc_queue_recv(&kern_ipc_queue, &reply)) {
+        if (reply.type != IPC_MSG_OPEN)
+            return (int)reply.a;
+    }
     return fs_open(path, flags);
 }

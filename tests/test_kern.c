@@ -35,7 +35,7 @@ int main(void) {
     } else {
         int status; waitpid(pid, &status, 0);
         if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
-            fprintf(stderr, "child failed\n");
+            fprintf(stderr, "child failed: pid=%d status=%d\n", pid, status);
             return 1;
         }
     }

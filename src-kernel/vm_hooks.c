@@ -11,7 +11,9 @@ kern_vm_fault(void *addr)
     ipc_queue_send(&kern_ipc_queue, &msg);
     /* Synchronous reply */
     struct ipc_message reply;
-    if (ipc_queue_recv(&kern_ipc_queue, &reply))
-        return reply.a != 0;
+    if (ipc_queue_recv(&kern_ipc_queue, &reply)) {
+        if (reply.type != IPC_MSG_VM_FAULT)
+            return reply.a != 0;
+    }
     return uland_vm_fault(addr);
 }
