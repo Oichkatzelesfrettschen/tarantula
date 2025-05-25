@@ -8,7 +8,7 @@ For kernel build instructions see [docs/building_kernel.md](docs/building_kernel
 Run `setup.sh` first to install required tools. The script installs `aptitude`
 and fetches **clang**, **bison** and **bmake** with its mk framework. It can be
 invoked directly or via `.codex/setup.sh` which adds extra packages like the
-Coq proof assistant and TLA+ utilities for CI. It can optionally install
+Coq proof assistant, TLA+ utilities, Agda and Isabelle/HOL for CI. It can optionally install
 **mk-configure** to provide an Autotools-style layer on top.
 The tree also ships a minimal **CMake** configuration.  Generate Ninja files
 with:
