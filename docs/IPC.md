@@ -84,3 +84,17 @@ return true;
 A future enhancement may add optional timeout parameters to the blocking
 routines, but the current API relies on explicit polling when timing out
 is required.
+
+## Cap'n Proto Stub
+
+When the build is invoked with `CAPNP=1` a minimal `libcapnp` library is
+compiled under `third_party/libcapnp`.  The stub currently implements only a
+single helper:
+
+```c
+int capnp_parse(const char *buf, size_t len, struct capnp_message *msg);
+```
+
+The `tools/memserver` program links against this stub.  It loads a file into
+memory and prints the parsed message size.  A basic regression test lives under
+`modern/tests` and is built automatically when `CAPNP=1` is supplied to `make`.

@@ -1,5 +1,8 @@
 
+
 .PHONY: all inventory test
+
+CAPNP ?= 0
 
 CFLAGS ?= -O2 -std=c23 -Wall -Werror
 CXXFLAGS ?= -O2 -std=c++23 -Wall -Werror
@@ -17,9 +20,13 @@ SUBDIRS = \
     src-uland/init \
     tests
 
+ifeq ($(CAPNP),1)
+SUBDIRS += third_party/libcapnp tools/memserver modern/tests
+endif
+
 all:
 	@for dir in $(SUBDIRS); do \
-	$(MAKE) -C $$dir CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(CFLAGS)"; \
+	$(MAKE) -C $$dir CPPFLAGS="$(CPPFLAGS)" CFLAGS="$(CFLAGS)" CAPNP="$(CAPNP)"; \
 	done
 
 inventory:
@@ -27,3 +34,6 @@ inventory:
 
 test:
 	$(MAKE) -C tests
+ifeq ($(CAPNP),1)
+	$(MAKE) -C modern/tests
+endif
