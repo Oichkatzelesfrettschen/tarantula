@@ -1,3 +1,4 @@
+#pragma once
 #ifndef _SRC_HEADERS_VNODE_IF_H_
 #define _SRC_HEADERS_VNODE_IF_H_
 /*

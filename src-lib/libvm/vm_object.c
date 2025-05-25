@@ -873,7 +873,7 @@ vm_object_setpager(object, pager, paging_offset,
  */
 
 #define vm_object_hash(pager) \
-	(((unsigned long)pager)%VM_OBJECT_HASH_COUNT)
+        (((uintptr_t)(pager)) % VM_OBJECT_HASH_COUNT)
 
 /*
  *	vm_object_lookup looks in the object cache for an object with the

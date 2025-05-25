@@ -1,3 +1,4 @@
+#pragma once
 #ifndef LIBVM_H
 #define LIBVM_H
 

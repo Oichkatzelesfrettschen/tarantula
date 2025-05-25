@@ -1872,7 +1872,7 @@ vm_map_copy(dst_map, src_map,
 	if (src_map == dst_map) {
 		vm_map_lock(src_map);
 	}
-	else if ((long) src_map < (long) dst_map) {
+	else if ((uintptr_t)src_map < (uintptr_t)dst_map) {
 	 	vm_map_lock(src_map);
 		vm_map_lock(dst_map);
 	} else {
