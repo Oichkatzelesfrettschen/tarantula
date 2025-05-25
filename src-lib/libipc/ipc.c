@@ -8,6 +8,19 @@ struct ipc_queue kern_ipc_queue;
 #define IPC_MAX_MAILBOXES 32
 static struct ipc_mailbox mailboxes[IPC_MAX_MAILBOXES];
 
+/*
+ * Small circular buffer logging the most recent IPC messages. The queue
+ * is used for debugging failed timed receives and is intentionally
+ * separate from the public ipc_mailbox API.
+ */
+#define MAILBOX_BUFSZ 16
+struct mailbox {
+    struct ipc_message buf[MAILBOX_BUFSZ];
+    uint32_t head;
+};
+
+static struct mailbox ipcs;
+
 static void lock_queue(struct ipc_queue *q)
 {
     spinlock_lock(&q->lock);
@@ -70,11 +83,19 @@ exo_ipc_status ipc_queue_recv_blocking(struct ipc_queue *q, struct ipc_message *
 exo_ipc_status ipc_queue_recv_timed(struct ipc_queue *q, struct ipc_message *m,
                                     unsigned tries)
 {
+    static int init_done;
+    if (!init_done) {
+        ipcs.head = 0;
+        init_done = 1;
+    }
     exo_ipc_status st;
     while (tries-- > 0) {
         st = ipc_queue_recv(q, m);
-        if (st != EXO_IPC_EMPTY)
+        if (st != EXO_IPC_EMPTY) {
+            ipcs.buf[ipcs.head] = *m;
+            ipcs.head = (ipcs.head + 1) % MAILBOX_BUFSZ;
             return st;
+        }
         spin_pause();
     }
     return EXO_IPC_TIMEOUT;
