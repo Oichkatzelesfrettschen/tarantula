@@ -10,7 +10,14 @@
 # define SPINLOCK_CACHELINE 64
 #endif
 
-#define SPINLOCK_INITIALIZER { false }
+#ifndef CONFIG_SMP
+# define CONFIG_SMP 1
+#endif
+
+#ifndef USE_TICKET_LOCK
+# define USE_TICKET_LOCK 0
+#endif
+
 
 #if defined(__x86_64__) || defined(__i386__)
 # define spin_pause() __builtin_ia32_pause()
@@ -30,53 +37,6 @@ static inline unsigned spinlock_cacheline_size(void)
     return SPINLOCK_CACHELINE;
 }
 #endif
-
-typedef struct spinlock {
-    atomic_bool locked;
-} spinlock_t __attribute__((aligned(SPINLOCK_CACHELINE)));
-
-#define SPINLOCK_DEFINE(name) \
-    spinlock_t name = SPINLOCK_INITIALIZER
-#define SPINLOCK_DECLARE(name) \
-    extern spinlock_t name
-
-static inline void spinlock_init(spinlock_t *l)
-{
-    atomic_store_explicit(&l->locked, false, memory_order_relaxed);
-}
-
-static inline bool spinlock_is_locked(const spinlock_t *l)
-{
-    return atomic_load_explicit(&l->locked, memory_order_relaxed);
-}
-
-static inline void spinlock_lock(spinlock_t *l)
-{
-    bool expected = false;
-    while (!atomic_compare_exchange_weak_explicit(&l->locked, &expected, true,
-                                                 memory_order_acquire,
-                                                 memory_order_relaxed)) {
-        expected = false;
-        spin_pause();
-    }
-}
-
-static inline int spinlock_trylock(spinlock_t *l)
-{
-    bool expected = false;
-    return atomic_compare_exchange_strong_explicit(&l->locked, &expected, true,
-                                                   memory_order_acquire,
-                                                   memory_order_relaxed);
-}
-
-static inline void spinlock_unlock(spinlock_t *l)
-{
-    atomic_store_explicit(&l->locked, false, memory_order_release);
-}
-
-typedef struct spinlock_guard {
-    spinlock_t *lock;
-} spinlock_guard_t;
 
 /*
  * Optional ticket lock ensuring FIFO fairness. Not used by default
@@ -125,6 +85,115 @@ static inline void ticketlock_unlock(ticketlock_t *l)
     atomic_fetch_add_explicit(&l->owner, 1, memory_order_release);
 }
 
+/* spinlock implementation selection appears below */
+
+#if CONFIG_SMP && USE_TICKET_LOCK
+
+typedef ticketlock_t spinlock_t;
+# undef SPINLOCK_INITIALIZER
+# define SPINLOCK_INITIALIZER TICKETLOCK_INITIALIZER
+
+#define SPINLOCK_DEFINE(name) \
+    spinlock_t name = SPINLOCK_INITIALIZER
+#define SPINLOCK_DECLARE(name) \
+    extern spinlock_t name
+
+static inline void spinlock_init(spinlock_t *l)
+{
+    ticketlock_init(l);
+}
+
+static inline bool spinlock_is_locked(const spinlock_t *l)
+{
+    return atomic_load_explicit(&l->owner, memory_order_relaxed) !=
+           atomic_load_explicit(&l->next, memory_order_relaxed);
+}
+
+static inline void spinlock_lock(spinlock_t *l)
+{
+    ticketlock_lock(l);
+}
+
+static inline int spinlock_trylock(spinlock_t *l)
+{
+    return ticketlock_trylock(l);
+}
+
+static inline void spinlock_unlock(spinlock_t *l)
+{
+    ticketlock_unlock(l);
+}
+
+#elif CONFIG_SMP /* standard spinlock */
+
+typedef struct spinlock {
+    atomic_bool locked;
+} spinlock_t __attribute__((aligned(SPINLOCK_CACHELINE)));
+
+# undef SPINLOCK_INITIALIZER
+# define SPINLOCK_INITIALIZER { false }
+
+#define SPINLOCK_DEFINE(name) \
+    spinlock_t name = SPINLOCK_INITIALIZER
+#define SPINLOCK_DECLARE(name) \
+    extern spinlock_t name
+
+static inline void spinlock_init(spinlock_t *l)
+{
+    atomic_store_explicit(&l->locked, false, memory_order_relaxed);
+}
+
+static inline bool spinlock_is_locked(const spinlock_t *l)
+{
+    return atomic_load_explicit(&l->locked, memory_order_relaxed);
+}
+
+static inline void spinlock_lock(spinlock_t *l)
+{
+    bool expected = false;
+    while (!atomic_compare_exchange_weak_explicit(&l->locked, &expected, true,
+                                                 memory_order_acquire,
+                                                 memory_order_relaxed)) {
+        expected = false;
+        spin_pause();
+    }
+}
+
+static inline int spinlock_trylock(spinlock_t *l)
+{
+    bool expected = false;
+    return atomic_compare_exchange_strong_explicit(&l->locked, &expected, true,
+                                                   memory_order_acquire,
+                                                   memory_order_relaxed);
+}
+
+static inline void spinlock_unlock(spinlock_t *l)
+{
+    atomic_store_explicit(&l->locked, false, memory_order_release);
+}
+
+#else /* !CONFIG_SMP */
+
+typedef struct { } spinlock_t;
+
+#define SPINLOCK_DEFINE(name) \
+    spinlock_t name = { }
+#define SPINLOCK_DECLARE(name) \
+    extern spinlock_t name
+
+static inline void spinlock_init(spinlock_t *l) { (void)l; }
+static inline bool spinlock_is_locked(const spinlock_t *l) { (void)l; return false; }
+static inline void spinlock_lock(spinlock_t *l) { (void)l; }
+static inline int spinlock_trylock(spinlock_t *l) { (void)l; return 1; }
+static inline void spinlock_unlock(spinlock_t *l) { (void)l; }
+
+#endif /* CONFIG_SMP */
+
+typedef struct spinlock_guard {
+    spinlock_t *lock;
+} spinlock_guard_t;
+
+
 static inline void spinlock_guard_release(spinlock_guard_t *g)
 {
     if (g->lock)
@@ -134,10 +203,6 @@ static inline void spinlock_guard_release(spinlock_guard_t *g)
 #define SCOPED_SPINLOCK(name, lockptr) \
     spinlock_guard_t name __attribute__((cleanup(spinlock_guard_release))) = { .lock = (lockptr) }; \
     spinlock_lock(name.lock)
-
-#ifndef CONFIG_SMP
-# define CONFIG_SMP 1
-#endif
 
 #if CONFIG_SMP
 # define spin_lock(l)   spinlock_lock(l)

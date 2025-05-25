@@ -73,3 +73,17 @@ The `tools` directory contains helper scripts. `generate_dependency_graph.py` sc
 All Python utilities require **Python 3**.
 `tools/generate_compiledb.sh` runs `compiledb` to create a `compile_commands.json` database for clang-tidy.
 
+## Spinlock options
+
+The header `src-headers/spinlock.h` exposes two compile-time switches:
+
+* `CONFIG_SMP` — set to `0` to disable spinlocks on uniprocessor builds.
+* `USE_TICKET_LOCK` — set to `1` to use the FIFO ticket lock variant.
+
+Example invocation with **bmake**:
+
+```sh
+bmake CFLAGS="-DCONFIG_SMP=0"      # disable locking
+bmake CFLAGS="-DUSE_TICKET_LOCK=1" # enable ticket locks
+```
+
