@@ -67,6 +67,7 @@
 #include <sys/resourcevar.h>
 #include <sys/buf.h>
 #include <sys/user.h>
+#include "runqueue.h"
 
 #include <vm/vm.h>
 #include <vm/vm_page.h>

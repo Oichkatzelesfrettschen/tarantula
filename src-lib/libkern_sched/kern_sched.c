@@ -47,6 +47,7 @@
 #include <sys/signalvar.h>
 #include <sys/resourcevar.h>
 #include <sys/vmmeter.h>
+#include "runqueue.h"
 #ifdef KTRACE
 #include <sys/ktrace.h>
 #endif
