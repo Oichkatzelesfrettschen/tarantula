@@ -13,9 +13,14 @@ if [ "${1:-}" = "--offline" ]; then
   shift
 fi
 
-# log all successes and failures
+# log all successes and failures with timestamps
 LOG_FILE=/tmp/setup.log
 rm -f "$LOG_FILE"
+
+# basic logging helper
+log_msg(){
+  printf '%(%Y-%m-%dT%H:%M:%S%z)T %s\n' -1 "$1" >> "$LOG_FILE"
+}
 
 # record failing commands without stopping execution
 trap 'rc=$?; echo "FAILED cmd: ${BASH_COMMAND} (exit $rc)" >> "$LOG_FILE"' ERR
@@ -25,6 +30,33 @@ export DEBIAN_FRONTEND=noninteractive
 APT_FAILED=()
 PIP_FAILED=()
 NPM_FAILED=()
+
+# attempt to reinstall any packages that failed during the first pass
+retry_failures(){
+  log_msg "Retrying failed packages if any"
+  local pkg
+  local remaining=()
+  if [ ${#APT_FAILED[@]} -ne 0 ]; then
+    for pkg in "${APT_FAILED[@]}"; do
+      apt_pin_install "$pkg" || install_with_pip "$pkg" || npm_install "$pkg" || remaining+=("$pkg")
+    done
+    APT_FAILED=("${remaining[@]}")
+    remaining=()
+  fi
+  if [ ${#PIP_FAILED[@]} -ne 0 ]; then
+    for pkg in "${PIP_FAILED[@]}"; do
+      install_with_pip "$pkg" || npm_install "$pkg" || remaining+=("$pkg")
+    done
+    PIP_FAILED=("${remaining[@]}")
+    remaining=()
+  fi
+  if [ ${#NPM_FAILED[@]} -ne 0 ]; then
+    for pkg in "${NPM_FAILED[@]}"; do
+      npm_install "$pkg" || remaining+=("$pkg")
+    done
+    NPM_FAILED=("${remaining[@]}")
+  fi
+}
 
 # helper to pin to the repo’s exact version if it exists
 apt_pin_install(){
@@ -36,15 +68,15 @@ apt_pin_install(){
       dpkg -i "$deb" >/dev/null 2>&1
       rc=$?
       if [ $rc -eq 0 ]; then
-        echo "OFFLINE OK $pkg" >> "$LOG_FILE"
+      log_msg "OFFLINE OK $pkg"
         return 0
       else
-        echo "OFFLINE FAIL $pkg" >> "$LOG_FILE"
+        log_msg "OFFLINE FAIL $pkg"
         APT_FAILED+=("$pkg")
         return 1
       fi
     else
-      echo "OFFLINE MISS $pkg" >> "$LOG_FILE"
+      log_msg "OFFLINE MISS $pkg"
       APT_FAILED+=("$pkg")
       return 1
     fi
@@ -54,7 +86,7 @@ apt_pin_install(){
     dpkg -i "$deb" >/dev/null 2>&1
     rc=$?
     if [ $rc -eq 0 ]; then
-      echo "APT OK   $pkg (cached)" >> "$LOG_FILE"
+      log_msg "APT OK   $pkg (cached)"
       return 0
     fi
   fi
@@ -67,11 +99,11 @@ apt_pin_install(){
   fi
   rc=$?
   if [ $rc -ne 0 ]; then
-    echo "APT FAIL $pkg" >> "$LOG_FILE"
+    log_msg "APT FAIL $pkg"
     APT_FAILED+=("$pkg")
     return 1
   else
-    echo "APT OK   $pkg" >> "$LOG_FILE"
+    log_msg "APT OK   $pkg"
     apt-get -y download "$pkg" >/dev/null 2>&1 && \
       mv ${pkg}_*.deb "$APT_CACHE_DIR"/ 2>/dev/null || true
     return 0
@@ -97,7 +129,7 @@ install_with_pip(){
     pip3 install "$wheel" >/dev/null 2>&1
     rc=$?
     if [ $rc -eq 0 ]; then
-      echo "PIP OK   $pkg (cached)" >> "$LOG_FILE"
+      log_msg "PIP OK   $pkg (cached)"
       return 0
     fi
   fi
@@ -107,19 +139,19 @@ install_with_pip(){
     pip3 install "$src" >/dev/null 2>&1
     rc=$?
     if [ $rc -eq 0 ]; then
-      echo "PIP OK   $pkg (cached)" >> "$LOG_FILE"
+      log_msg "PIP OK   $pkg (cached)"
       return 0
     fi
   fi
   pip3 install "$pkg" >/dev/null 2>&1
   rc=$?
   if [ $rc -ne 0 ]; then
-    echo "PIP FAIL $pkg" >> "$LOG_FILE"
+    log_msg "PIP FAIL $pkg"
     PIP_FAILED+=("$pkg")
     return 1
   else
     pip3 download "$pkg" -d "$PIP_CACHE_DIR" >/dev/null 2>&1 || true
-    echo "PIP OK   $pkg" >> "$LOG_FILE"
+    log_msg "PIP OK   $pkg"
     return 0
   fi
 }
@@ -130,11 +162,11 @@ npm_install(){
   npm -g install "$pkg" >/dev/null 2>&1
   rc=$?
   if [ $rc -ne 0 ]; then
-    echo "NPM FAIL $pkg" >> "$LOG_FILE"
+    log_msg "NPM FAIL $pkg"
     NPM_FAILED+=("$pkg")
     return 1
   else
-    echo "NPM OK   $pkg" >> "$LOG_FILE"
+    log_msg "NPM OK   $pkg"
     return 0
   fi
 }
@@ -143,7 +175,7 @@ npm_install(){
 curl_head_check(){
   url="$1"
   if ! curl --head -fsSL "$url" >/dev/null 2>&1; then
-    echo "URL UNREACHABLE $url" >> "$LOG_FILE"
+    log_msg "URL UNREACHABLE $url"
     echo "~~$url~~" >> "$README_PATH"
     return 1
   fi
@@ -157,11 +189,11 @@ aptitude_install(){
     aptitude -y install "$pkg" >/dev/null 2>&1
     rc=$?
     if [ $rc -ne 0 ]; then
-      echo "APTITUDE FAIL $pkg" >> "$LOG_FILE"
+      log_msg "APTITUDE FAIL $pkg"
       APT_FAILED+=("$pkg")
       return 1
     else
-      echo "APTITUDE OK   $pkg" >> "$LOG_FILE"
+      log_msg "APTITUDE OK   $pkg"
       return 0
     fi
   else
@@ -176,16 +208,16 @@ for arch in i386 armel armhf arm64 riscv64 powerpc ppc64el ia64; do
 done
 # update package lists
 if [ $OFFLINE_MODE -eq 0 ]; then
-  apt-get update -y >/dev/null 2>&1 && echo "APT OK   update" >> "$LOG_FILE" || {
-    echo "APT FAIL update" >> "$LOG_FILE"
+  apt-get update -y >/dev/null 2>&1 && log_msg "APT OK   update" || {
+    log_msg "APT FAIL update"
     APT_FAILED+=("update")
   }
-  apt-get dist-upgrade -y >/dev/null 2>&1 && echo "APT OK   dist-upgrade" >> "$LOG_FILE" || {
-    echo "APT FAIL dist-upgrade" >> "$LOG_FILE"
+  apt-get dist-upgrade -y >/dev/null 2>&1 && log_msg "APT OK   dist-upgrade" || {
+    log_msg "APT FAIL dist-upgrade"
     APT_FAILED+=("dist-upgrade")
   }
 else
-  echo "OFFLINE mode - skipping apt-get update" >> "$LOG_FILE"
+  log_msg "OFFLINE mode - skipping apt-get update"
 fi
 # install aptitude (when available)
 apt_pin_install aptitude || install_with_pip aptitude || npm_install aptitude
@@ -237,21 +269,21 @@ for pip_pkg in \
   pip3 install "$pip_pkg" >/dev/null 2>&1
   rc=$?
   if [ $rc -ne 0 ]; then
-    echo "PIP FAIL $pip_pkg" >> "$LOG_FILE"
+    log_msg "PIP FAIL $pip_pkg"
     PIP_FAILED+=("$pip_pkg")
   else
-    echo "PIP OK   $pip_pkg" >> "$LOG_FILE"
+    log_msg "PIP OK   $pip_pkg"
   fi
 done
 
 # set up pre-commit hooks if available
 if command -v pre-commit >/dev/null 2>&1; then
   (cd "$(dirname "$0")" && pre-commit install --install-hooks) || {
-    echo "PIP FAIL pre-commit hook" >> "$LOG_FILE"
+    log_msg "PIP FAIL pre-commit hook"
     PIP_FAILED+=("pre-commit")
   }
 else
-  echo "PIP FAIL pre-commit" >> "$LOG_FILE"
+  log_msg "PIP FAIL pre-commit"
   PIP_FAILED+=("pre-commit")
 fi
 
@@ -260,14 +292,14 @@ for tool in pytest pylint pyfuzz; do
   if command -v "$tool" >/dev/null 2>&1; then
     "$tool" --version >/dev/null 2>&1 || true
   else
-    echo "PIP WARN $tool not in PATH" >> "$LOG_FILE"
+    log_msg "PIP WARN $tool not in PATH"
   fi
 done
 
-python3 - <<'EOF' >/dev/null 2>&1 || echo "PIP WARN pyyaml import failed" >> "$LOG_FILE"
+python3 - <<'EOF' >/dev/null 2>&1 || log_msg "PIP WARN pyyaml import failed"
 import yaml
 EOF
-python3 - <<'EOF' >/dev/null 2>&1 || echo "PIP WARN configuredb import failed" >> "$LOG_FILE"
+python3 - <<'EOF' >/dev/null 2>&1 || log_msg "PIP WARN configuredb import failed"
 import configuredb
 EOF
 
@@ -358,12 +390,12 @@ curl_head_check https://api.github.com/repos/tkchia/gcc-ia16/releases/latest
 IA16_JSON=$(curl -fsSL https://api.github.com/repos/tkchia/gcc-ia16/releases/latest)
 rc=$?
 if [ $rc -ne 0 ] || [ -z "$IA16_JSON" ]; then
-  echo "curl FAILED ia16 version" >> "$LOG_FILE"
+  log_msg "curl FAILED ia16 version"
   APT_FAILED+=("ia16-elf-gcc")
 else
   IA16_VER=$(echo "$IA16_JSON" | awk -F\" '/tag_name/{print $4; exit}')
   if [ -z "$IA16_VER" ]; then
-    echo "curl FAILED ia16 version parse" >> "$LOG_FILE"
+    log_msg "curl FAILED ia16 version parse"
     APT_FAILED+=("ia16-elf-gcc")
   else
     curl_head_check "https://github.com/tkchia/gcc-ia16/releases/download/${IA16_VER}/ia16-elf-gcc-linux64.tar.xz"
@@ -372,7 +404,7 @@ else
       echo 'export PATH=/opt/ia16-elf-gcc/bin:$PATH' > /etc/profile.d/ia16.sh
       export PATH=/opt/ia16-elf-gcc/bin:$PATH
     else
-      echo "curl FAILED ia16-elf-gcc" >> "$LOG_FILE"
+      log_msg "curl FAILED ia16-elf-gcc"
       APT_FAILED+=("ia16-elf-gcc")
     fi
   fi
@@ -387,7 +419,7 @@ if curl -fsSL "$PROTO_URL" -o "$PROTO_ZIP"; then
   unzip -d /usr/local "$PROTO_ZIP" >/dev/null 2>&1
   rm "$PROTO_ZIP"
 else
-  echo "curl FAILED protoc" >> "$LOG_FILE"
+  log_msg "curl FAILED protoc"
   APT_FAILED+=("protoc")
 fi
 
@@ -401,11 +433,14 @@ fi
 apt-get clean
 rm -rf /var/lib/apt/lists/*
 
+# attempt another round for failed packages
+retry_failures
+
 if [ ${#APT_FAILED[@]} -ne 0 ] || [ ${#PIP_FAILED[@]} -ne 0 ] || [ ${#NPM_FAILED[@]} -ne 0 ]; then
-  echo "Some downloads or installations failed. See $LOG_FILE for details." >&2
-  [ ${#APT_FAILED[@]} -ne 0 ] && echo "APT/download failures: ${APT_FAILED[*]}" >&2
-  [ ${#PIP_FAILED[@]} -ne 0 ] && echo "PIP failures: ${PIP_FAILED[*]}" >&2
-  [ ${#NPM_FAILED[@]} -ne 0 ] && echo "NPM failures: ${NPM_FAILED[*]}" >&2
+  log_msg "Some downloads or installations failed"
+  [ ${#APT_FAILED[@]} -ne 0 ] && log_msg "APT failures: ${APT_FAILED[*]}"
+  [ ${#PIP_FAILED[@]} -ne 0 ] && log_msg "PIP failures: ${PIP_FAILED[*]}"
+  [ ${#NPM_FAILED[@]} -ne 0 ] && log_msg "NPM failures: ${NPM_FAILED[*]}"
 fi
 
 exit 0

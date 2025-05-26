@@ -7,6 +7,8 @@ with `set -x` debugging. Packages are installed first via `apt`, then `pip`, and
 finally `npm` if the previous methods fail. Before downloading external files it
 issues `curl --head` to test reachability. Any unreachable URLs are recorded
 below as a Markdown strikethrough entry.
+If any installs fail they are retried automatically at the end of the script and
+logged with timestamps for easier troubleshooting.
 
 # 4.4BSD-Lite2, the last Unix from Berkeley
 
