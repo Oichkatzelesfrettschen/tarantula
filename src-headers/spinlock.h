@@ -50,7 +50,7 @@ static inline unsigned spinlock_cacheline_size(void)
 typedef struct ticketlock {
     atomic_uint next;
     atomic_uint owner;
-} ticketlock_t __attribute__((aligned(SPINLOCK_CACHELINE)));
+} ticketlock_t [[gnu::aligned(SPINLOCK_CACHELINE)]];
 
 #define TICKETLOCK_INITIALIZER { 0, 0 }
 
@@ -133,7 +133,7 @@ static inline void spinlock_unlock(spinlock_t *l)
 
 typedef struct spinlock {
     atomic_bool locked;
-} spinlock_t __attribute__((aligned(SPINLOCK_CACHELINE)));
+} spinlock_t [[gnu::aligned(SPINLOCK_CACHELINE)]];
 
 # undef SPINLOCK_INITIALIZER
 # define SPINLOCK_INITIALIZER { false }
@@ -206,7 +206,7 @@ static inline void spinlock_guard_release(spinlock_guard_t *g)
 }
 
 #define SCOPED_SPINLOCK(name, lockptr) \
-    spinlock_guard_t name __attribute__((cleanup(spinlock_guard_release))) = { .lock = (lockptr) }; \
+    spinlock_guard_t name [[gnu::cleanup(spinlock_guard_release)]] = { .lock = (lockptr) }; \
     spinlock_lock(name.lock)
 
 #if CONFIG_SMP
