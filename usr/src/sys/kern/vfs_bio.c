@@ -47,6 +47,9 @@
 #include <sys/trace.h>
 #include <sys/malloc.h>
 #include <sys/resourcevar.h>
+#if defined(__x86_64__) || defined(__i386__)
+#include <immintrin.h>
+#endif
 
 /*
  * Definitions for the buffer hash lists.
@@ -305,6 +308,38 @@ count_lock_queue()
 }
 
 #ifdef DIAGNOSTIC
+
+#if defined(__x86_64__) || defined(__i386__)
+static inline void
+zero_counts(int *c, size_t len)
+{
+    size_t j = 0;
+#if defined(__AVX2__)
+    if (__builtin_cpu_supports("avx2")) {
+        __m256i z = _mm256_setzero_si256();
+        for (; j + 8 <= len; j += 8)
+            _mm256_storeu_si256((__m256i *)(c + j), z);
+    }
+#endif
+#if defined(__SSE2__)
+    if (j < len && __builtin_cpu_supports("sse2")) {
+        __m128i z = _mm_setzero_si128();
+        for (; j + 4 <= len; j += 4)
+            _mm_storeu_si128((__m128i *)(c + j), z);
+    }
+#endif
+    for (; j < len; j++)
+        c[j] = 0;
+}
+#else
+static inline void
+zero_counts(int *c, size_t len)
+{
+    size_t j;
+    for (j = 0; j < len; j++)
+        c[j] = 0;
+}
+#endif
 /*
  * Print out statistics on the current allocation of the buffer pool.
  * Can be enabled to print out on every ``sync'' by setting "syncprt"
@@ -320,9 +355,8 @@ vfs_bufstats()
 	static char *bname[BQUEUES] = { "LOCKED", "LRU", "AGE", "EMPTY" };
 
 	for (dp = bufqueues, i = 0; dp < &bufqueues[BQUEUES]; dp++, i++) {
-		count = 0;
-		for (j = 0; j <= MAXBSIZE/CLBYTES; j++)
-			counts[j] = 0;
+               count = 0;
+               zero_counts(counts, MAXBSIZE/CLBYTES + 1);
 		s = splbio();
 		for (bp = dp->tqh_first; bp; bp = bp->b_freelist.tqe_next) {
 			counts[bp->b_bufsize/CLBYTES]++;
