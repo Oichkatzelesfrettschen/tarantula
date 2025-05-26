@@ -36,4 +36,6 @@ target_include_directories(fs_server PRIVATE
 target_compile_definitions(fs_server PRIVATE KERNEL)
 target_link_libraries(fs_server PRIVATE ipc)
 
+install(FILES src-headers/arch.h DESTINATION include)
+
 

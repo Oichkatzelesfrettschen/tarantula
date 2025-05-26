@@ -9,6 +9,9 @@ platform specific optimisation.
 
 - Introduce `<src-headers/arch.h>` which exposes `ARCH_BITS` and helper
   macros derived from `__SIZEOF_POINTER__`.
+- The header defines `ARCH_16BIT`, `ARCH_32BIT`, `ARCH_64BIT` and the
+  `ARCH_UNREACHABLE()` helper. Source files include it and perform checks
+  such as `#if ARCH_BITS == 32` when special casing logic.
 - Build common sources with `-std=c2x` and rely on the new header for
   pointer-width checks.
 - Place generic assembly routines under `asm/` with per‑architecture
