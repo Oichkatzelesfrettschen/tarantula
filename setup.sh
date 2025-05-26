@@ -212,6 +212,7 @@ for pkg in \
   libbsd0 libbsd-dev \
   strace ltrace linux-perf systemtap systemtap-sdt-dev crash \
   valgrind kcachegrind trace-cmd kernelshark \
+  llvm-polly llvm-bolt \
   libasan6 libubsan1 likwid hwloc; do
   apt_pin_install "$pkg" || install_with_pip "$pkg" || npm_install "$pkg"
 done
@@ -340,6 +341,15 @@ for pkg in \
   docker.io podman buildah virt-manager libvirt-daemon-system qemu-kvm \
   gdb lldb perf gcovr lcov bcc-tools bpftrace \
   openmpi-bin libopenmpi-dev mpich; do
+  apt_pin_install "$pkg" || install_with_pip "$pkg" || npm_install "$pkg"
+done
+
+# formal verification and documentation utilities
+for pkg in \
+  coq coqide coq-theories \
+  agda agda-stdlib agda-mode \
+  isabelle tlaplus tla-bin \
+  graphviz doxygen python3-sphinx; do
   apt_pin_install "$pkg" || install_with_pip "$pkg" || npm_install "$pkg"
 done
 
