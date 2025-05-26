@@ -9,4 +9,5 @@ Key references:
 - `exokernel_plan.md` – tasks for building an exokernel variant.
 - `file_tree.txt` – snapshot of the original layout.
 - `dependency_graph.dot` – generated with `python3 tools/generate_dependency_graph.py`
+- `makefile_inventory.txt` – produced by `python3 tools/list_makefiles.py`
 No tests are required when editing documentation.
