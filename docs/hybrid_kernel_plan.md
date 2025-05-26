@@ -1,12 +1,12 @@
 # Hybrid Kernel Stubs Plan
 
-This document outlines how the lightweight stub files under `src-kernel/` work alongside the legacy `sys/` kernel sources.  It also summarizes which subsystems continue to build into the monolithic kernel and which ones run in user space.  The details here complement the broader roadmaps in [microkernel_plan.md](microkernel_plan.md) and [exokernel_plan.md](exokernel_plan.md).
+This document outlines how the lightweight stub files under `engine/src-kernel/` work alongside the legacy `sys/` kernel sources.  It also summarizes which subsystems continue to build into the monolithic kernel and which ones run in user space.  The details here complement the broader roadmaps in [microkernel_plan.md](microkernel_plan.md) and [exokernel_plan.md](exokernel_plan.md).
 
 ## Interaction with the Legacy Kernel
 
 The files `proc_hooks.c`, `sched_hooks.c`, `vm_hooks.c` and `vfs_hooks.c` compile into `libkern_stubs.a`.  When linked with the historical kernel tree they override the default system call handlers:
 
-- Each stub packages the original request into an IPC message using the queue defined in `src-headers/ipc.h`.
+- Each stub packages the original request into an IPC message using the queue defined in `engine/src-headers/ipc.h`.
 - The message is sent to a user-space manager (process manager, scheduler, VM library or file server).
 - If the user-space side replies, the stub returns that result.  Should the reply fail, it falls back to the legacy routine still present under `sys/`.
 
@@ -21,7 +21,7 @@ Only a small core stays in the kernel:
 
 Everything else is intended to run in user space or through the stub layer:
 
-- Process management, scheduling and the virtual memory policy live in managers built under `src-uland/`.
+- Process management, scheduling and the virtual memory policy live in managers built under `engine/src-uland/`.
 - File system services and network protocols also move to user-space servers.
 - Additional drivers are compiled as separate tasks that communicate with the kernel using the same IPC scheme.
 

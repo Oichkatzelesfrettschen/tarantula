@@ -91,7 +91,7 @@ This roadmap is intentionally high level. Full conversion of the 4.4BSD-Lite2 tr
   flags when collecting warnings.
 - `usr/src/libpathtrans` now respects `CFLAGS` and `LDFLAGS` so cross-
   architecture builds link correctly.
-- Added a `CSTD` variable to all makefiles under `src-uland/` and
+- Added a `CSTD` variable to all makefiles under `engine/src-uland/` and
   appended it to `CFLAGS` so these components build with C23 by default.
 
 ## Lazy Generation-based Revocation
@@ -114,8 +114,8 @@ Periodic reconciliation walks the CPUs and advances any stale epoch
 counters.  This keeps the per-CPU epochs bounded so old generations do
 not linger indefinitely.
 
-- Created `src-headers/arch.h` with C23 macros to detect 16-, 32- and 64-bit
+- Created `engine/src-headers/arch.h` with C23 macros to detect 16-, 32- and 64-bit
   architectures.
 - Added a new `ports/` tree containing initial Chicken Scheme and Go stubs.
-- Modernized `src-headers/compat/svr4/svr4_machdep.h` with fixed-width types and
+- Modernized `engine/src-headers/compat/svr4/svr4_machdep.h` with fixed-width types and
   a `_Static_assert` to verify register counts.

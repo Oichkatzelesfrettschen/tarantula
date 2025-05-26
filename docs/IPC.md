@@ -2,7 +2,7 @@
 
 This document describes the lightweight mailbox mechanism used by the
 microkernel stubs and user–space servers.  The API lives in
-`src-headers/ipc.h` and is implemented by `src-lib/libipc/ipc.c`.
+`engine/src-headers/ipc.h` and is implemented by `engine/src-lib/libipc/ipc.c`.
 
 ## Mailbox Creation
 

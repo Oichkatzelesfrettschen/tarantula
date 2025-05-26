@@ -39,16 +39,16 @@ servers outside the kernel.
 User-space components implement nearly all traditional BSD services:
 
 - The **process manager** handles fork, exec and signal delivery.  It runs as
-  `proc_manager` in `src-uland/servers`.
+`proc_manager` in `engine/src-uland/servers`.
 - The **file server** (`fs_server`) maintains vnodes and dispatches file
   requests from the `kern_open()` hook.
-- The **scheduler library** and **VM library** in `src-lib/libkern_sched`
-  and `src-lib/libvm` make policy decisions for scheduling and memory
+- The **scheduler library** and **VM library** in `engine/src-lib/libkern_sched`
+  and `engine/src-lib/libvm` make policy decisions for scheduling and memory
   management.
 - Capability management uses `cap_set_security_mode(cap_endpoint, mode)` to
   toggle security levels (`FAST`, `HARDENED` or `PARANOID`) for a running
   service.
-- Additional drivers will appear under `src-uland/servers` as standalone
+- Additional drivers will appear under `engine/src-uland/servers` as standalone
   tasks communicating with the kernel via the IPC layer.
 
 Each server starts at boot time via init scripts and registers with the
@@ -97,7 +97,7 @@ and `ipc_queue_recv()` calls.  Operations now return an `ipc_status_t`
 value where `IPC_EMPTY` and `IPC_FULL` indicate the queue state.  To
 simplify users of the API a lightweight
 the ring buffer is protected by a small spinlock implemented in
-`src-headers/spinlock.h`. Two blocking helpers were added:
+`engine/src-headers/spinlock.h`. Two blocking helpers were added:
 `ipc_queue_send_blocking()` and `ipc_queue_recv_blocking()`.  These functions
 busy-wait until the operation completes.  User-space wrappers `ipc_send()` and
 `ipc_recv()` invoke the blocking variants to guarantee delivery.
@@ -110,7 +110,7 @@ macros like `spin_lock()` become no-ops on uniprocessor builds.
 
 ## C++23 interface
 
-`src-headers/spinlock.hpp` offers a thin RAII wrapper around the
+`engine/src-headers/spinlock.hpp` offers a thin RAII wrapper around the
 spinlock primitives.  It defines `SpinLock` and `LockGuard` classes
 and a `with_lock()` helper that accepts a lambda expression.  This
 lets modern C++ code share the same synchronization mechanism used by

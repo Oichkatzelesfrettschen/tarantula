@@ -17,9 +17,9 @@ This document outlines how to evolve the 4.4BSD-Lite2 sources toward an exokerne
 
 The layout introduced in the microkernel plan remains with slight changes:
 
-- `src-kernel/` – exokernel core providing only protection and low-level resource handling.
-- `src-uland/` – user-level libraries and servers that implement traditional OS functionality.
-- `include/` – headers shared between the exokernel and user components. The
+- `engine/src-kernel/` – exokernel core providing only protection and low-level resource handling.
+- `engine/src-uland/` – user-level libraries and servers that implement traditional OS functionality.
+- `engine/include/` – headers shared between the exokernel and user components. The
   `exokernel.h` header declares stub entry points `kern_sched_init`,
   `kern_open` and `kern_vm_fault`.
 - The specific subsystems being moved are listed in
@@ -35,13 +35,13 @@ Steps from `tools/migrate_to_fhs.sh` still place these directories under `/usr` 
    - Strip existing kernel files to a bare allocator, context switch code and interrupt handlers.
    - Provide system calls for safe access to hardware resources (CPU time slices, memory pages, I/O ports).
 3. **User-Level Resource Managers**
-   - Port the scheduler, virtual memory manager and filesystem logic from `sys/` into libraries under `src-uland/`.
+   - Port the scheduler, virtual memory manager and filesystem logic from `sys/` into libraries under `engine/src-uland/`.
    - Each manager communicates with the exokernel through the new low-level API.
 
 ### tlb_sync() and Platform-Specific Queues
 
-The planned IOMMU domain object (`src-kernel/iommu/domain.c`,
-`include/iommu/domain.h`) implements `tlb_sync()` as a wrapper that
+The planned IOMMU domain object (`engine/src-kernel/iommu/domain.c`,
+`engine/include/iommu/domain.h`) implements `tlb_sync()` as a wrapper that
 expands into architecture specific queue commands:
 
 * **Intel VT-d** &ndash; `tlb_sync()` inserts a queue invalidation descriptor

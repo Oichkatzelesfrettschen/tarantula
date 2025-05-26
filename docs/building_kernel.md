@@ -21,7 +21,7 @@ missing from `apt` are retried with `pip` or `npm`.  When invoked via
 
 All helper scripts expect the environment variables `SRC_ULAND` and
 `SRC_KERNEL` to point to the userland and kernel source directories.  They
-default to `src-uland` and `src-kernel`.
+default to `engine/src-uland` and `engine/src-kernel`.
 =
 ## 1. Build the `config` utility
 ```sh
@@ -50,9 +50,9 @@ Optional Polly and BOLT optimizations can be enabled by passing
 
 ## Building user-space components
 The microkernel and exokernel plans compile user-space services under
-`src-uland/`.  Configure each directory with CMake and build with Ninja:
+`engine/src-uland/`.  Configure each directory with CMake and build with Ninja:
 ```sh
-cmake -S src-uland/servers/fs -B build/fs -G Ninja
+cmake -S engine/src-uland/servers/fs -B build/fs -G Ninja
 cmake --build build/fs
 ```
 Install the resulting binaries under `/usr/libexec` or another suitable

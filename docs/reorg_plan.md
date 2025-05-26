@@ -13,7 +13,7 @@ This document outlines tasks for flattening the 4.4BSD-Lite2 source tree and mod
 ## Implementation Steps
 
 1. Generate an inventory of files using `python3 tools/create_inventory.py`.
-2. Draft new makefiles under `src/`, `include/`, `lib/`, and `tests/`.
+2. Draft new makefiles under `src/`, `engine/include/`, `lib/`, and `tests/`.
 3. Incrementally refactor C sources to ANSI prototypes and replace legacy headers.
 4. Compile each subsystem with modern compilers and run tests.
 5. Document all changes and keep references to original paths for traceability.
@@ -21,9 +21,9 @@ This document outlines tasks for flattening the 4.4BSD-Lite2 source tree and mod
    maintain compatibility symlinks during the transition.
 7. Reorganize kernel and userland sources with
    `tools/migrate_to_src_layout.sh` (or the older `tools/organize_sources.sh`)
-   to move them into `src-kernel`, `src-uland`, `src-headers` and `src-lib`.
-   The `src-lib` directory stores archive libraries separated from the rest of
-   the tree.  These scripts create `src-lib/.gitkeep` automatically so the
+   to move them into `engine/src-kernel`, `engine/src-uland`, `engine/src-headers` and `engine/src-lib`.
+   The `engine/src-lib` directory stores archive libraries separated from the rest of
+   the tree.  These scripts create `engine/src-lib/.gitkeep` automatically so the
    directory remains in version control even when empty.
 
 The combination of `migrate_to_fhs.sh` and `migrate_to_src_layout.sh` forms the

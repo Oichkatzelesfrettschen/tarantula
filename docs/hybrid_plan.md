@@ -17,7 +17,7 @@ symlinks created by `migrate_to_fhs.sh` but moves active development into the
 1. Run `tools/migrate_to_fhs.sh` inside a chroot (use `--force` otherwise) to
    populate `/usr` and create compatibility symlinks.
 2. Immediately follow with `tools/migrate_to_src_layout.sh` to relocate the
-   kernel, userland and libraries under `src-kernel`, `src-uland` and `src-lib`.
+   kernel, userland and libraries under `engine/src-kernel`, `engine/src-uland` and `engine/src-lib`.
    This script supersedes the older `tools/organize_sources.sh` helper.
 3. Update build scripts as described in [reorg_plan.md](reorg_plan.md) so that
    new code references the `src-*` paths while legacy targets continue to work

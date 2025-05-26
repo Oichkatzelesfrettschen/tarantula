@@ -5,11 +5,11 @@ This guide explains how to start the exokernel with only the essential user-leve
 ## Requirements
 
 - `qemu-system-i386` or another x86 emulator
-- The exokernel binary built under `src-kernel`
-- User-level managers (scheduler, memory manager, file server) built under `src-uland`
+- The exokernel binary built under `engine/src-kernel`
+- User-level managers (scheduler, memory manager, file server) built under `engine/src-uland`
 - A bootable disk image containing the managers in `/bin` or `/usr/bin` (use
   `tools/create_exokernel_image.sh` to generate it)
-- The `init` program built under `src-uland/init`
+- The `init` program built under `engine/src-uland/init`
 
 ### Creating the Disk Image
 Run the helper script after building the kernel and managers:
@@ -58,7 +58,7 @@ A small program under `tests/` exercises the exokernel stubs without booting the
 full system. Build and run it after compiling `libkern_stubs.a`:
 
 ```sh
-cmake -S src-kernel -B build/kernel -G Ninja
+cmake -S engine/src-kernel -B build/kernel -G Ninja
 cmake --build build/kernel
 cmake -S tests -B build/tests -G Ninja
 cmake --build build/tests

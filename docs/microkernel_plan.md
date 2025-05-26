@@ -25,7 +25,7 @@ The following components under `sys/kern` and `sys/dev` are early candidates for
 These subsystems will initially build as normal kernel objects.  As the microkernel takes shape they can be compiled into user-space servers or loadable modules.
 
 ## Maintaining historical files
-To keep provenance, the original sources remain under `sys/kern` and `sys/dev`. When a subsystem is extracted copy the files to a new location (`src-kernel/` for kernel code or `servers/`/`drivers/` for user components). Leave the originals intact or rename them with a `.orig` suffix and insert a brief comment pointing to the replacement. This preserves the historical tree for reference.
+To keep provenance, the original sources remain under `sys/kern` and `sys/dev`. When a subsystem is extracted copy the files to a new location (`engine/src-kernel/` for kernel code or `servers/`/`drivers/` for user components). Leave the originals intact or rename them with a `.orig` suffix and insert a brief comment pointing to the replacement. This preserves the historical tree for reference.
 
 
 # Microkernel Refactor Plan
@@ -40,29 +40,29 @@ This document proposes a high level roadmap for converting the current 4.4BSD-Li
 ## Directory Layout
 To keep the historic sources intact while adopting a microkernel approach, new directories are introduced alongside the FHS migration:
 
-- `src-kernel/` – microkernel sources replacing the traditional `sys/` tree.
-- `src-uland/` – user space servers and drivers derived from `usr/src` and `libexec`.
+- `engine/src-kernel/` – microkernel sources replacing the traditional `sys/` tree.
+- `engine/src-uland/` – user space servers and drivers derived from `usr/src` and `libexec`.
 - `src-tools/` – build utilities currently found in `tools/`.
-- `include/` – headers shared between the microkernel and user space components.
+- `engine/include/` – headers shared between the microkernel and user space components.
 
 The steps in `tools/migrate_to_fhs.sh` will be updated so these directories map under `/usr` inside a chroot, e.g. `/usr/src-kernel` and `/usr/src-uland`. Compatibility symlinks from `sys/` and `usr/src/` are kept until the new layout is stable.
 
 ## Refactor Steps and Role Assignments
 1. **Inventory and Preparation**
    - The **Code Auditor** catalogs kernel components and notes dependencies between drivers and core subsystems.
-   - The **Source Librarian** creates the `src-kernel` and `src-uland` directories, copying files from `sys/` and `usr/src/` while generating symlinks for backward compatibility.
+   - The **Source Librarian** creates the `engine/src-kernel` and `engine/src-uland` directories, copying files from `sys/` and `usr/src/` while generating symlinks for backward compatibility.
    - A run of `python3 tools/create_inventory.py` records the baseline tree in `docs/file_inventory.txt`.
 
 2. **Build System Updates**
-   - The **Build System Engineer** drafts makefiles for `src-kernel` and `src-uland` so they build independently.
+   - The **Build System Engineer** drafts makefiles for `engine/src-kernel` and `engine/src-uland` so they build independently.
    - Update `tools/migrate_to_fhs.sh` to place these directories under `/usr` during migration.
-   - Collect required kernel headers in `src-headers/` so user-space
+   - Collect required kernel headers in `engine/src-headers/` so user-space
      servers compile without referencing the entire `sys/` tree.
    - Existing FHS tasks such as verifying symlinks and updating scripts continue to apply, but now reference the new directories.
 
 3. **Microkernel Extraction**
-   - The **Compiler/Toolchain Expert** moves scheduler, VM and IPC code into `src-kernel`.
-   - Device drivers and BSD daemons become user space services under `src-uland/servers` and `src-uland/drivers`.
+   - The **Compiler/Toolchain Expert** moves scheduler, VM and IPC code into `engine/src-kernel`.
+   - Device drivers and BSD daemons become user space services under `engine/src-uland/servers` and `engine/src-uland/drivers`.
    - Introduce `proc_hooks.c` so `kern_fork()` and `kern_exec()` delegate to the
      user-space `proc_manager`.
    - Process requests are forwarded over IPC using `IPC_MSG_FORK` and
@@ -84,7 +84,7 @@ The steps in `tools/migrate_to_fhs.sh` will be updated so these directories map 
 ## Mapping FHS Tasks to the New Layout
 The migration steps listed in [fhs_migration.md](fhs_migration.md) apply to the new directories as follows:
 
-1. `python3 tools/create_inventory.py` records both `src-kernel` and `src-uland` alongside existing paths.
+1. `python3 tools/create_inventory.py` records both `engine/src-kernel` and `engine/src-uland` alongside existing paths.
 2. `tools/migrate_to_fhs.sh --dry-run` previews copying these directories under `/usr` (`/usr/src-kernel`, `/usr/src-uland`).
 3. Running the script without `--dry-run` performs the copy and replaces the old locations with symlinks.
 4. Makefiles and scripts are updated to reference the `/usr` paths, ensuring builds occur in the new structure.
@@ -104,7 +104,7 @@ tools/organize_sources.sh --dry-run
 ```
 
 When executed without `--dry-run`, the script relocates `sys/` into
-`src-kernel/` and `usr/src/` into `src-uland/`, leaving symlinks at the original
+`engine/src-kernel/` and `usr/src/` into `engine/src-uland/`, leaving symlinks at the original
 paths. Running it after the migration scripts ensures the microkernel build
 operates on the consolidated layout referenced throughout this plan.
 

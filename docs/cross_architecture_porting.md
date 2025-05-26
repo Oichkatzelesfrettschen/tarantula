@@ -7,7 +7,7 @@ platform specific optimisation.
 
 ## Strategy
 
-- Introduce `<src-headers/arch.h>` which exposes `ARCH_BITS` and helper
+- Introduce `<engine/src-headers/arch.h>` which exposes `ARCH_BITS` and helper
   macros derived from `__SIZEOF_POINTER__`.
 - Build common sources with `-std=c2x` and rely on the new header for
   pointer-width checks.

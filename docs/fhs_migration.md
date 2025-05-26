@@ -69,9 +69,9 @@ when modernizing historic BSD trees.
    `tools/organize_sources.sh` and supersedes the old
    `tools/post_fhs_cleanup.sh` helper.
 5. Execute `tools/migrate_to_src_layout.sh` (add `--force` when outside the chroot)
-   to relocate the sources. The script moves the kernel into `src-kernel`, user
-   programs into `src-uland`, headers into `src-headers` and collects archive
-   libraries into `src-lib`. The `src-lib` directory keeps these libraries
+   to relocate the sources. The script moves the kernel into `engine/src-kernel`, user
+   programs into `engine/src-uland`, headers into `engine/src-headers` and collects archive
+   libraries into `engine/src-lib`. The `engine/src-lib` directory keeps these libraries
    together so they can be built independently of the rest of the tree.
 6. Verify the new symlinks by running `ls -l` on `bin`, `sbin` and related
    directories.
@@ -97,7 +97,7 @@ libraries into the `src-*` directories. Run it soon after the FHS migration to
 complete the hybrid layout.
 ## Remaining Manual Symlinks
 Some directories are not handled by `migrate_to_fhs.sh` and must be linked manually.
-After running `tools/migrate_to_src_layout.sh` the kernel sources live in `src-kernel`.
+After running `tools/migrate_to_src_layout.sh` the kernel sources live in `engine/src-kernel`.
 Directories that still require manual handling include:
 - `Domestic` - U.S. cryptography sources
 - `Foreign` - externally maintained utilities
@@ -116,10 +116,10 @@ corresponds to a location in the FHS layout after running the migration tools.
 | `usr/`          | `/usr`             | Userland utilities and libraries |
 | `var/`          | `/var`             | Runtime state such as logs |
 | `sys/`          | `/usr/src/sys`     | Historical kernel sources |
-| `src-kernel/`   | `/usr/src-kernel`  | Microkernel or exokernel sources |
-| `src-uland/`    | `/usr/src-uland`   | User-space services and libraries |
-| `src-lib/`      | `/usr/src-lib`     | Archive libraries collected during migration |
-| `include/`      | `/usr/include`     | Headers collected by `src-headers` |
+| `engine/src-kernel/`   | `/usr/src-kernel`  | Microkernel or exokernel sources |
+| `engine/src-uland/`    | `/usr/src-uland`   | User-space services and libraries |
+| `engine/src-lib/`      | `/usr/src-lib`     | Archive libraries collected during migration |
+| `engine/include/`      | `/usr/include`     | Headers collected by `engine/src-headers` |
 | `docs/`         | `/usr/share/doc`   | Build and modernization notes |
 | `tools/`        | `/usr/share/tools` | Helper scripts used during the build |
 | `Domestic/`     | `/usr/src-domestic`| Manual symlink required |
