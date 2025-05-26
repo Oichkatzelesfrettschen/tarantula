@@ -77,7 +77,11 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 APT_CACHE_DIR="$SCRIPT_DIR/third_party/apt"
 PIP_CACHE_DIR="$SCRIPT_DIR/third_party/pip"
 OFFLINE_PKG_DIR="$SCRIPT_DIR/offline_packages"
-mkdir -p "$APT_CACHE_DIR" "$PIP_CACHE_DIR" "$OFFLINE_PKG_DIR"
+EXTRA_DIR="${EXTRA_DIR:-/usr/local}"
+EXTRA_URLS=(
+  "https://capnproto.org/capnproto-c++-0.10.4.tar.gz"
+)
+mkdir -p "$APT_CACHE_DIR" "$PIP_CACHE_DIR" "$OFFLINE_PKG_DIR" "$EXTRA_DIR"
 
 # fallback installer using pip3 when apt fails
 install_with_pip(){
@@ -342,6 +346,29 @@ else
   echo "curl FAILED protoc" >> "$LOG_FILE"
   APT_FAILED+=("protoc")
 fi
+
+# extra tool archives
+for url in "${EXTRA_URLS[@]}"; do
+  fname=$(basename "$url")
+  dest="/tmp/$fname"
+  if command -v curl >/dev/null 2>&1; then
+    curl -fL "$url" -o "$dest" >/dev/null 2>&1
+  else
+    wget -nv "$url" -O "$dest" >/dev/null 2>&1
+  fi
+  if [ $? -ne 0 ]; then
+    echo "EXTRA FAIL $url" >> "$LOG_FILE"
+    continue
+  fi
+  case "$fname" in
+    *.tar.gz|*.tgz) tar -xzf "$dest" -C "$EXTRA_DIR" >/dev/null 2>&1 ;;
+    *.tar.xz|*.txz) tar -xJf "$dest" -C "$EXTRA_DIR" >/dev/null 2>&1 ;;
+    *.zip) unzip -q "$dest" -d "$EXTRA_DIR" >/dev/null 2>&1 ;;
+    *) echo "EXTRA WARN unknown archive $fname" >> "$LOG_FILE" ;;
+  esac
+  echo "EXTRA OK   $url" >> "$LOG_FILE"
+  rm -f "$dest"
+done
 
 
 # ensure yacc points to bison

@@ -39,6 +39,10 @@ Populate these directories with `apt-get download <pkg>` and
 For a fully offline installation, place `.deb` files under
 `offline_packages/` and invoke `setup.sh --offline` to install them
 using `dpkg -i`.
+`setup.sh` also defines an `EXTRA_URLS` list for additional archives.
+Each URL is downloaded with `curl` (falling back to `wget`) and extracted
+under `/usr/local`. Failures are appended to `/tmp/setup.log` without
+interrupting the remainder of the installation.
 You can verify which commands are available at any time by running
 `tools/check_build_env.sh`. It lists missing build tools and exits
 non-zero when any are absent.
