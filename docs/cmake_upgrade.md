@@ -23,10 +23,11 @@ project(example C)
 add_library(example STATIC example.c)
 ```
 
-Invoke the compiler explicitly with clang when configuring:
+Configure the project with CMake. Clang is the only supported compiler
+and is selected automatically:
 
 ```sh
-CC=clang cmake -S . -B build -G Ninja
+cmake -S . -B build -G Ninja
 cmake --build build
 ```
 

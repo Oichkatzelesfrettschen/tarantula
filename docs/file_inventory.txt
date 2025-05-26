@@ -3,11 +3,6 @@
 .codex/setup.sh
 .cshrc
 .github/AGENTS.md
-.github/codeql/codeql-config.yml
-.github/workflows/AGENTS.md
-.github/workflows/build.yml
-.github/workflows/codeql-analysis.yml
-.github/workflows/reviewdog.yml
 .gitignore
 .pre-commit-config.yaml
 .profile
@@ -145,9 +140,9 @@ dev/MAKEDEV
 dev/MAKEDEV.hpux
 dev/MAKEDEV.local
 docs/AGENTS.md
+docs/agents_overview.md
 docs/IPC.md
 docs/building_kernel.md
-docs/ci_workflows.md
 docs/cmake_upgrade.md
 docs/codex_bootstrap.md
 docs/cross_architecture_porting.md

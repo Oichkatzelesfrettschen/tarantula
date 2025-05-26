@@ -1,4 +1,5 @@
 # GitHub Configuration
 
-Continuous integration workflows live in `workflows/`.
-`build.yml` compiles the tree with GCC and Clang using the C23 standard.
+This directory previously contained CI workflows and CodeQL setup.
+All YAML files were removed. Builds rely solely on **clang** and the
+C23 standard.

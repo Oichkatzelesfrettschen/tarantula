@@ -1,3 +1,0 @@
-name: custom codeql config
-paths-ignore:
-  - third_party/**
