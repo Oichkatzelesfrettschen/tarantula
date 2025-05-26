@@ -8,4 +8,5 @@ Key references:
 - `refactor_c23_tasks.md` – ongoing task list.
 - `exokernel_plan.md` – tasks for building an exokernel variant.
 - `file_tree.txt` – snapshot of the original layout.
+- `dependency_graph.dot` – generated with `python3 tools/generate_dependency_graph.py`
 No tests are required when editing documentation.

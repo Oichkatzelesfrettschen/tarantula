@@ -101,7 +101,7 @@ variants for message passing.
 
 ## Tools
 
-The `tools` directory contains helper scripts. `generate_dependency_graph.py` scans the source tree to build a DOT file of include dependencies and syscall implementations. Run `python3 tools/generate_dependency_graph.py` to produce `dependency_graph.dot`. Use `--include-prefix` to add header search prefixes or `--ignore-unresolved-includes` to drop missing headers. Pass `--include-calls` to add a simple call graph. The `dependency_graph.dot` file tracked in this repository was generated using this command and can be regenerated at any time with `python3 tools/generate_dependency_graph.py`.
+The `tools` directory contains helper scripts. `generate_dependency_graph.py` scans the source tree to build a DOT file of include dependencies and syscall implementations. Run `python3 tools/generate_dependency_graph.py` to produce `docs/dependency_graph.dot`. Use `--include-prefix` to add header search prefixes or `--ignore-unresolved-includes` to drop missing headers. Pass `--include-calls` to add a simple call graph. The `docs/dependency_graph.dot` file tracked in this repository was generated using this command and can be regenerated at any time with `python3 tools/generate_dependency_graph.py`.
 All Python utilities require **Python 3**.
 `tools/generate_compiledb.sh` runs `compiledb` to create a `compile_commands.json` database for clang-tidy.
 

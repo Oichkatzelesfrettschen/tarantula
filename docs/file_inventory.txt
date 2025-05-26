@@ -137,7 +137,7 @@ Foreign/src/telnetd/utility.c
 Makefile
 README.md
 SOURCE_TREE_OVERVIEW.md
-dependency_graph.dot
+docs/dependency_graph.dot
 dev/AGENTS.md
 dev/MAKEDEV
 dev/MAKEDEV.hpux
