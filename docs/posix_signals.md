@@ -10,5 +10,5 @@ int posix_sigprocmask(int how, const sigset_t *set, sigset_t *oldset);
 int posix_killpg(int pgrp, int sig);
 ```
 
-The program `modern/tests/posix_signal_demo.c` demonstrates installing a
+The program `tests/modern/posix_signal_demo.c` demonstrates installing a
 custom handler and sending a signal to the current process group.

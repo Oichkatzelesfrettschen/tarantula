@@ -55,7 +55,7 @@ executable('fs_server', fs_srcs,
            link_with : [libipc, libkern_sched])
 
 executable('posix_ipc_demo',
-           'modern/tests/posix_ipc_demo.c',
+           'tests/modern/posix_ipc_demo.c',
            include_directories : include_directories('src-headers'),
            link_with : libipc,
            link_args : ['-lrt'])

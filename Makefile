@@ -25,7 +25,7 @@ SUBDIRS = \
     tests/posix
 
 ifeq ($(CAPNP),1)
-SUBDIRS += third_party/libcapnp tools/memserver modern/tests
+SUBDIRS += third_party/libcapnp tools/memserver tests/modern
 endif
 
 all:
@@ -40,5 +40,5 @@ test:
 	$(MAKE) -C tests
 	$(MAKE) -C tests/posix
 ifeq ($(CAPNP),1)
-	$(MAKE) -C modern/tests
+	$(MAKE) -C tests/modern
 endif
