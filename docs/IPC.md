@@ -98,7 +98,7 @@ int capnp_parse(const char *buf, size_t len, struct capnp_message *msg);
 
 The `tools/memserver` program links against this stub.  It loads a file into
 memory and prints the parsed message size.  A basic regression test lives under
-`modern/tests` and is built automatically when `CAPNP=1` is supplied to `make`.
+`tests/modern` and is built automatically when `CAPNP=1` is supplied to `make`.
 
 ## POSIX IPC Wrappers
 
@@ -121,5 +121,5 @@ int cap_shm_open(int dirfd, const char *name, int oflag, mode_t mode);
 int cap_shm_unlink(int dirfd, const char *name);
 ```
 
-The program `modern/tests/posix_ipc_demo.c` demonstrates basic usage of
+The program `tests/modern/posix_ipc_demo.c` demonstrates basic usage of
 these helpers.
