@@ -1,5 +1,7 @@
 */obj/
+*/obj
 *.o
 *.a
 *.log
 compile/
+usr/src/**/obj
