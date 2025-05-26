@@ -47,6 +47,9 @@ Populate these directories with `apt-get download <pkg>` and
 For a fully offline installation, place `.deb` files under
 `offline_packages/` and invoke `setup.sh --offline` to install them
 using `dpkg -i`.
+When run without the flag, `setup.sh` now tests network access with
+`apt-get update` and automatically enables offline mode if the command
+fails.
 You can verify which commands are available at any time by running
 `tools/check_build_env.sh`. It lists missing build tools and exits
 non-zero when any are absent.

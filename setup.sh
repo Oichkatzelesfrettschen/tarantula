@@ -13,6 +13,8 @@ if [ "${1:-}" = "--offline" ]; then
   shift
 fi
 
+# automatically switch to offline mode when network access is unavailable
+
 # log all successes and failures with timestamps
 LOG_FILE=/tmp/setup.log
 rm -f "$LOG_FILE"
@@ -30,6 +32,16 @@ export DEBIAN_FRONTEND=noninteractive
 APT_FAILED=()
 PIP_FAILED=()
 NPM_FAILED=()
+
+# automatically switch to offline mode when network access is unavailable
+if [ $OFFLINE_MODE -eq 0 ]; then
+  if ! apt-get update -y >/dev/null 2>&1; then
+    OFFLINE_MODE=1
+    log_msg "Network unavailable, enabling offline mode"
+  else
+    log_msg "APT OK   initial update"
+  fi
+fi
 
 # attempt to reinstall any packages that failed during the first pass
 retry_failures(){
