@@ -69,6 +69,8 @@
 #include <sys/user.h>
 #include "runqueue.h"
 
+#include <arch.h>
+
 #include <vm/vm.h>
 #include <vm/vm_page.h>
 #include <vm/vm_kern.h>
@@ -198,7 +200,7 @@ vm_fork(p1, p2, isvfork)
 	register struct user *up;
 	vm_offset_t addr;
 
-#ifdef i386
+#if ARCH_BITS == 32
 	/*
 	 * avoid copying any of the parent's pagetables or other per-process
 	 * objects that reside in the map by marking all of them non-inheritable
@@ -213,7 +215,7 @@ vm_fork(p1, p2, isvfork)
 		shmfork(p1, p2, isvfork);
 #endif
 
-#ifndef	i386
+#if ARCH_BITS != 32
 	/*
 	 * Allocate a wired-down (for now) pcb and kernel stack for the process
 	 */
@@ -248,7 +250,7 @@ not yet clear, yet it does... */
 	    ((caddr_t)&up->u_stats.pstat_endcopy -
 	     (caddr_t)&up->u_stats.pstat_startcopy));
 
-#ifdef i386
+#if ARCH_BITS == 32
 	{ u_int addr = UPT_MIN_ADDRESS - UPAGES*NBPG; struct vm_map *vp;
 
 	vp = &p2->p_vmspace->vm_map;
@@ -514,7 +516,7 @@ swapout(p)
 		}
 	}
 #endif
-#ifndef	i386 /* temporary measure till we find spontaineous unwire of kstack */
+#if ARCH_BITS != 32 /* temporary measure till we find spontaineous unwire of kstack */
 	vm_map_pageable(kernel_map, addr, addr+size, TRUE);
 	pmap_collect(vm_map_pmap(&p->p_vmspace->vm_map));
 #endif

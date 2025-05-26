@@ -10,27 +10,14 @@
 
 #include <stdint.h>
 
-#if defined(__SIZEOF_POINTER__)
-#  if __SIZEOF_POINTER__ == 2
-#    define ARCH_16BIT 1
-#  elif __SIZEOF_POINTER__ == 4
-#    define ARCH_32BIT 1
-#  elif __SIZEOF_POINTER__ == 8
-#    define ARCH_64BIT 1
-#  else
-#    error "Unsupported pointer width"
-#  endif
-#else
-#  error "__SIZEOF_POINTER__ not defined"
+#ifndef __SIZEOF_POINTER__
+#  error "compiler must define __SIZEOF_POINTER__"
 #endif
 
-#if defined(ARCH_64BIT)
-#  define ARCH_BITS 64
-#elif defined(ARCH_32BIT)
-#  define ARCH_BITS 32
-#else
-#  define ARCH_BITS 16
-#endif
+#define ARCH_BITS (__SIZEOF_POINTER__ * 8)
+#define ARCH_16BIT (ARCH_BITS == 16)
+#define ARCH_32BIT (ARCH_BITS == 32)
+#define ARCH_64BIT (ARCH_BITS == 64)
 
 #if __STDC_VERSION__ >= 202000L
 #  define ARCH_UNREACHABLE() __builtin_unreachable()

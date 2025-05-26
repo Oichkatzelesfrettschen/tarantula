@@ -69,6 +69,7 @@
 
 #include <sys/param.h>
 #include <sys/systm.h>
+#include <arch.h>
 
 #include <vm/vm.h>
 #include <vm/vm_page.h>
@@ -260,17 +261,17 @@ vm_page_startup(start, end)
 		m->flags = 0;
 		m->object = NULL;
 		m->phys_addr = pa;
-#ifdef i386
-		if (pmap_isvalidphys(m->phys_addr)) {
-			TAILQ_INSERT_TAIL(&vm_page_queue_free, m, pageq);
-		} else {
-			/* perhaps iomem needs it's own type, or dev pager? */
-			m->flags |= PG_FICTITIOUS | PG_BUSY;
-			cnt.v_free_count--;
-		}
-#else /* i386 */
-		TAILQ_INSERT_TAIL(&vm_page_queue_free, m, pageq);
-#endif /* i386 */
+#if ARCH_BITS == 32
+        if (pmap_isvalidphys(m->phys_addr)) {
+                TAILQ_INSERT_TAIL(&vm_page_queue_free, m, pageq);
+        } else {
+                /* perhaps iomem needs it's own type, or dev pager? */
+                m->flags |= PG_FICTITIOUS | PG_BUSY;
+                cnt.v_free_count--;
+        }
+#else /* ARCH_BITS == 32 */
+        TAILQ_INSERT_TAIL(&vm_page_queue_free, m, pageq);
+#endif /* ARCH_BITS == 32 */
 		m++;
 		pa += PAGE_SIZE;
 	}
