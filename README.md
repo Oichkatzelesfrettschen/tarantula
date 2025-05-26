@@ -1,8 +1,12 @@
 # BSD/Tarantula: A Modern Microkernelization Attempt of 4.4BSD-Lite2: The Final Unix from Berkeley. 
 #Placeholder about the original project and the design goals with a specific tiny, high-performance "exokernel like" layer hybridized or chimera'd with a microkernel design with a monolithic-like or microkernel-like hybrid userspace. 
 
-## Update the environment setup script to test each URL at launch and if dead then notate that by commenting out the line with markdown crossout lines (name of those??) 
-
+# `setup.sh` features
+The environment setup script logs every command to `/tmp/setup.log` and runs
+with `set -x` debugging. Packages are installed first via `apt`, then `pip`, and
+finally `npm` if the previous methods fail. Before downloading external files it
+issues `curl --head` to test reachability. Any unreachable URLs are recorded
+below as a Markdown strikethrough entry.
 
 # 4.4BSD-Lite2, the last Unix from Berkeley
 

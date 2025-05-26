@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# Enable tracing and fail-fast behaviors. All output is logged to
+# /tmp/setup.log. Packages are installed via apt, pip and finally npm.
+# Each URL is checked with a curl --head request first. Unreachable URLs
+# are recorded in README.md using Markdown strikethrough.
+set -x
 set -u -o pipefail
 
 # optional offline mode
@@ -19,6 +24,7 @@ export DEBIAN_FRONTEND=noninteractive
 # collect failures rather than exiting on the first error
 APT_FAILED=()
 PIP_FAILED=()
+NPM_FAILED=()
 
 # helper to pin to the repo’s exact version if it exists
 apt_pin_install(){
@@ -77,7 +83,10 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 APT_CACHE_DIR="$SCRIPT_DIR/third_party/apt"
 PIP_CACHE_DIR="$SCRIPT_DIR/third_party/pip"
 OFFLINE_PKG_DIR="$SCRIPT_DIR/offline_packages"
+README_PATH="$SCRIPT_DIR/README.md"
 mkdir -p "$APT_CACHE_DIR" "$PIP_CACHE_DIR" "$OFFLINE_PKG_DIR"
+
+# README path for URL failure notes
 
 # fallback installer using pip3 when apt fails
 install_with_pip(){
@@ -113,6 +122,32 @@ install_with_pip(){
     echo "PIP OK   $pkg" >> "$LOG_FILE"
     return 0
   fi
+}
+
+# fallback installer using npm when both apt and pip fail
+npm_install(){
+  pkg="$1"
+  npm -g install "$pkg" >/dev/null 2>&1
+  rc=$?
+  if [ $rc -ne 0 ]; then
+    echo "NPM FAIL $pkg" >> "$LOG_FILE"
+    NPM_FAILED+=("$pkg")
+    return 1
+  else
+    echo "NPM OK   $pkg" >> "$LOG_FILE"
+    return 0
+  fi
+}
+
+# check URL reachability; log and mark README when unreachable
+curl_head_check(){
+  url="$1"
+  if ! curl --head -fsSL "$url" >/dev/null 2>&1; then
+    echo "URL UNREACHABLE $url" >> "$LOG_FILE"
+    echo "~~$url~~" >> "$README_PATH"
+    return 1
+  fi
+  return 0
 }
 
 # use aptitude to install a package when available
@@ -153,18 +188,18 @@ else
   echo "OFFLINE mode - skipping apt-get update" >> "$LOG_FILE"
 fi
 # install aptitude (when available)
-apt_pin_install aptitude || install_with_pip aptitude
+apt_pin_install aptitude || install_with_pip aptitude || npm_install aptitude
 if command -v aptitude >/dev/null 2>&1; then
   aptitude update >/dev/null 2>&1 || true
 fi
-apt_pin_install bison || install_with_pip bison
-apt_pin_install byacc || install_with_pip byacc
+apt_pin_install bison || install_with_pip bison || npm_install bison
+apt_pin_install byacc || install_with_pip byacc || npm_install byacc
 if command -v bison >/dev/null 2>&1; then
   export YACC="bison -y"
   echo 'export YACC="bison -y"' > /etc/profile.d/yacc.sh
 fi
-apt_pin_install shellcheck || install_with_pip shellcheck
-apt_pin_install codespell || install_with_pip codespell
+apt_pin_install shellcheck || install_with_pip shellcheck || npm_install shellcheck
+apt_pin_install codespell || install_with_pip codespell || npm_install codespell
 
 # core build tools, formatters, analysis, science libs
 for pkg in \
@@ -178,7 +213,7 @@ for pkg in \
   strace ltrace linux-perf systemtap systemtap-sdt-dev crash \
   valgrind kcachegrind trace-cmd kernelshark \
   libasan6 libubsan1 likwid hwloc; do
-  apt_pin_install "$pkg" || install_with_pip "$pkg"
+  apt_pin_install "$pkg" || install_with_pip "$pkg" || npm_install "$pkg"
 done
 
 # Python & deep-learning / MLOps
@@ -188,7 +223,7 @@ for pkg in \
   python3-matplotlib python3-scikit-learn \
   python3-torch python3-torchvision python3-torchaudio \
   python3-onnx python3-onnxruntime; do
-  apt_pin_install "$pkg" || install_with_pip "$pkg"
+  apt_pin_install "$pkg" || install_with_pip "$pkg" || npm_install "$pkg"
 done
 
 
@@ -240,7 +275,7 @@ for pkg in \
   qemu-user-static \
   qemu-system-x86 qemu-system-arm qemu-system-aarch64 \
   qemu-system-riscv64 qemu-system-ppc qemu-system-ppc64 qemu-utils; do
-  apt_pin_install "$pkg" || install_with_pip "$pkg"
+  apt_pin_install "$pkg" || install_with_pip "$pkg" || npm_install "$pkg"
 done
 
 # multi-arch cross-compilers
@@ -262,7 +297,7 @@ for pkg in \
   gcc-mipsel-linux-gnu g++-mipsel-linux-gnu \
   gcc-mips64-linux-gnuabi64 g++-mips64-linux-gnuabi64 \
   gcc-mips64el-linux-gnuabi64 g++-mips64el-linux-gnuabi64; do
-  apt_pin_install "$pkg" || install_with_pip "$pkg"
+  apt_pin_install "$pkg" || install_with_pip "$pkg" || npm_install "$pkg"
 done
 
 # high-level language runtimes and tools
@@ -279,7 +314,7 @@ for pkg in \
   ruby ruby-dev gem bundler php-cli php-dev composer phpunit \
   r-base r-base-dev dart flutter gnat gprbuild gfortran gnucobol \
   fpc lazarus zig nim nimble crystal shards gforth; do
-  apt_pin_install "$pkg" || install_with_pip "$pkg"
+  apt_pin_install "$pkg" || install_with_pip "$pkg" || npm_install "$pkg"
 done
 
 if ! command -v swift >/dev/null 2>&1; then
@@ -297,7 +332,7 @@ for pkg in \
   libwxgtk3.0-dev libwxgtk3.0-gtk3-dev \
   libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev \
   libglfw3-dev libglew-dev; do
-  apt_pin_install "$pkg" || install_with_pip "$pkg"
+  apt_pin_install "$pkg" || install_with_pip "$pkg" || npm_install "$pkg"
 done
 
 # containers, virtualization, HPC, debug
@@ -305,10 +340,11 @@ for pkg in \
   docker.io podman buildah virt-manager libvirt-daemon-system qemu-kvm \
   gdb lldb perf gcovr lcov bcc-tools bpftrace \
   openmpi-bin libopenmpi-dev mpich; do
-  apt_pin_install "$pkg" || install_with_pip "$pkg"
+  apt_pin_install "$pkg" || install_with_pip "$pkg" || npm_install "$pkg"
 done
 
 # IA-16 (8086/286) cross-compiler
+curl_head_check https://api.github.com/repos/tkchia/gcc-ia16/releases/latest
 IA16_JSON=$(curl -fsSL https://api.github.com/repos/tkchia/gcc-ia16/releases/latest)
 rc=$?
 if [ $rc -ne 0 ] || [ -z "$IA16_JSON" ]; then
@@ -320,6 +356,7 @@ else
     echo "curl FAILED ia16 version parse" >> "$LOG_FILE"
     APT_FAILED+=("ia16-elf-gcc")
   else
+    curl_head_check "https://github.com/tkchia/gcc-ia16/releases/download/${IA16_VER}/ia16-elf-gcc-linux64.tar.xz"
     if curl -fsSL "https://github.com/tkchia/gcc-ia16/releases/download/${IA16_VER}/ia16-elf-gcc-linux64.tar.xz" -o /tmp/ia16.tar.xz; then
       tar -Jx -f /tmp/ia16.tar.xz -C /opt
       echo 'export PATH=/opt/ia16-elf-gcc/bin:$PATH' > /etc/profile.d/ia16.sh
@@ -335,6 +372,7 @@ fi
 PROTO_VERSION=25.1
 PROTO_URL="https://raw.githubusercontent.com/protocolbuffers/protobuf/v${PROTO_VERSION}/protoc-${PROTO_VERSION}-linux-x86_64.zip"
 PROTO_ZIP=/tmp/protoc.zip
+curl_head_check "$PROTO_URL"
 if curl -fsSL "$PROTO_URL" -o "$PROTO_ZIP"; then
   unzip -d /usr/local "$PROTO_ZIP" >/dev/null 2>&1
   rm "$PROTO_ZIP"
@@ -353,10 +391,11 @@ fi
 apt-get clean
 rm -rf /var/lib/apt/lists/*
 
-if [ ${#APT_FAILED[@]} -ne 0 ] || [ ${#PIP_FAILED[@]} -ne 0 ]; then
+if [ ${#APT_FAILED[@]} -ne 0 ] || [ ${#PIP_FAILED[@]} -ne 0 ] || [ ${#NPM_FAILED[@]} -ne 0 ]; then
   echo "Some downloads or installations failed. See $LOG_FILE for details." >&2
   [ ${#APT_FAILED[@]} -ne 0 ] && echo "APT/download failures: ${APT_FAILED[*]}" >&2
   [ ${#PIP_FAILED[@]} -ne 0 ] && echo "PIP failures: ${PIP_FAILED[*]}" >&2
+  [ ${#NPM_FAILED[@]} -ne 0 ] && echo "NPM failures: ${NPM_FAILED[*]}" >&2
 fi
 
 exit 0
