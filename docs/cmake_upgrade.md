@@ -1,6 +1,6 @@
 # Transitioning from bmake to CMake
 
-This guide outlines a gradual approach to replace the historical `bmake` build system with a modern CMake workflow that leverages **clang** and **bison**.  The steps can be applied directory by directory so that existing makefiles continue to work during the migration.
+This guide originally described a gradual approach to replace the historical `bmake` build system with a modern CMake workflow that leverages **clang** and **bison**.  The repository has now completed this transition and no longer relies on `bmake`.
 
 ## 1. Prepare the environment
 
@@ -46,5 +46,5 @@ Convert each subdirectory in the tree and add it with `add_subdirectory()` from 
 
 ## 5. Remove bmake when no longer needed
 
-Once every module builds via CMake, the legacy makefiles can be deleted and references to `bmake` in the documentation removed.  The build instructions in [building_kernel.md](building_kernel.md) already show how to invoke CMake.
+All remaining Makefiles have been deleted and the documentation reflects a pure CMake workflow.  Future contributions should use CMake and Ninja exclusively.
 

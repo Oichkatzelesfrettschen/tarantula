@@ -6,7 +6,7 @@ Downloaded from: ftp://alge.anart.no/pub/BSD/4.4BSD-Lite/4.4BSD-Lite2.tar.gz
 
 For kernel build instructions see [docs/building_kernel.md](docs/building_kernel.md).
 Run `setup.sh` first to install required tools. The script installs `aptitude`
-and fetches **clang**, **bison** and **bmake** with its mk framework. It can be
+and fetches **clang**, **bison**, **cmake** and **ninja**. It can be
 invoked directly or via `.codex/setup.sh` which adds extra packages like the
 Coq proof assistant, TLA+ utilities, Agda and Isabelle/HOL for CI. The wrapper
 automatically switches to `--offline` when network access is unavailable. It can optionally install
@@ -23,7 +23,9 @@ CC=clang cmake --build build
 `find_package(BISON)` checks that **bison** is available.  An example
 `meson.build` offers the same layout for Meson users.  See
 [docs/cmake_upgrade.md](docs/cmake_upgrade.md) for a gradual migration guide
-from the historic `bmake` system to CMake.
+from the historic `bmake` system to CMake.  The default configuration builds
+with `CC=clang`, targets C23, enables `-O3` optimizations, link-time
+optimization and LLVM Polly/BOLT passes.
 `setup.sh` also checks `third_party/apt` for local `.deb` files and
 `third_party/pip` for Python wheels before contacting the network.
 Populate these directories with `apt-get download <pkg>` and
@@ -104,10 +106,10 @@ The header `src-headers/spinlock.h` exposes two compile-time switches:
 * `CONFIG_SMP` — set to `0` to disable spinlocks on uniprocessor builds.
 * `USE_TICKET_LOCK` — set to `1` to use the FIFO ticket lock variant.
 
-Example invocation with **bmake**:
+When using CMake simply pass the defines via `CFLAGS` when configuring:
 
 ```sh
-bmake CFLAGS="-DCONFIG_SMP=0"      # disable locking
-bmake CFLAGS="-DUSE_TICKET_LOCK=1" # enable ticket locks
+cmake -S . -B build -G Ninja -DCMAKE_C_FLAGS="-DCONFIG_SMP=0"
+ninja -C build
 ```
 
