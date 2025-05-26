@@ -46,5 +46,7 @@ Convert each subdirectory in the tree and add it with `add_subdirectory()` from 
 
 ## 5. Remove bmake when no longer needed
 
-All remaining Makefiles have been deleted and the documentation reflects a pure CMake workflow.  Future contributions should use CMake and Ninja exclusively.
+Most makefiles have now been deleted. A few remain while their CMake
+equivalents are validated. Future contributions should use CMake and
+Ninja exclusively.
 
