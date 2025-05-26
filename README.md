@@ -32,14 +32,13 @@ with:
 
 ```sh
 cmake -S . -B build -G Ninja
-CC=clang cmake --build build
+cmake --build build
 ```
-`find_package(BISON)` checks that **bison** is available.  An example
-`meson.build` offers the same layout for Meson users.  See
+`find_package(BISON)` checks that **bison** is available.  See
 [docs/cmake_upgrade.md](docs/cmake_upgrade.md) for a gradual migration guide
-from the historic `bmake` system to CMake.  The default configuration builds
-with `CC=clang`, targets C23, enables `-O3` optimizations, link-time
-optimization and LLVM Polly/BOLT passes.
+from the historic `bmake` system to CMake.  The build system always uses
+**clang** and targets C23 with `-O3`, link-time optimization and optional
+LLVM Polly/BOLT passes.
 `setup.sh` also checks `third_party/apt` for local `.deb` files and
 `third_party/pip` for Python wheels before contacting the network.
 Populate these directories with `apt-get download <pkg>` and
@@ -53,7 +52,6 @@ fails.
 You can verify which commands are available at any time by running
 `tools/check_build_env.sh`. It lists missing build tools and exits
 non-zero when any are absent.
-For GitHub CI examples see [docs/ci_workflows.md](docs/ci_workflows.md).
 For FHS migration steps see [docs/fhs_migration.md](docs/fhs_migration.md).
 For microkernel tasks see [docs/microkernel_plan.md](docs/microkernel_plan.md)
 and the functional overview in

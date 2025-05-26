@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
+set(CMAKE_C_COMPILER clang)
+set(CMAKE_CXX_COMPILER clang++)
 project(tarantula C)
-
+set(CMAKE_C_STANDARD 23)
 find_package(BISON)
 if(BISON_FOUND)
   message(STATUS "Bison found: ${BISON_EXECUTABLE}")
