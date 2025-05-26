@@ -128,29 +128,23 @@ These snippets should be placed in `.github/workflows/` to enable deterministic 
 
 ## Kernel Test Job
 
-The `build.yml` workflow also compiles and runs `tests/test_kern`. This job
-builds the microkernel stubs and the test program using `bmake` and GCC, then
-executes the binary. The test output and resulting executable are uploaded as
-artifacts for later inspection.
-
-A simplified example of the steps is:
+The `build.yml` workflow also compiles and runs `tests/test_kern`. This job builds the microkernel stubs and the test program using `clang` and CMake. The test output and resulting executable are uploaded as artifacts for later inspection.
 
 ```yaml
 test-kern:
   runs-on: ubuntu-latest
   steps:
     - uses: actions/checkout@v3
-    - name: Install GCC and bmake
+    - name: Install clang and CMake
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential gcc-multilib aptitude
-        sudo apt-get install -y bmake
-    - name: Build test binary
+        sudo apt-get install -y clang cmake ninja-build
+    - name: Configure
+      run: cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang
+    - name: Build and test
       run: |
-        bmake -C src-kernel CC=gcc
-        bmake test CC=gcc
-    - name: Run test_kern
-      run: ./tests/test_kern > test_kern.log
+        cmake --build build
+        ./tests/test_kern > test_kern.log
     - uses: actions/upload-artifact@v3
       with:
         name: test_kern_results
