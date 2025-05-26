@@ -13,7 +13,7 @@ This document outlines tasks for agents to continue migrating the 4.4BSD-Lite2 t
   - [x] Ensure `tools/migrate_to_fhs.sh` updates symlinks when rerun
 - [x] **Inventory Remaining Legacy Files**
   - [x] Use `python3 tools/create_inventory.py` to produce an updated file list
-  - [x] Mark files that are deprecated or replaced in the modern layout
+ - [x] Mark files that are deprecated or replaced in the modern layout
 ## Mid-Term Goals
 
 1. **Library Consolidation**
@@ -25,6 +25,9 @@ This document outlines tasks for agents to continue migrating the 4.4BSD-Lite2 t
 3. **CI Integration**
    - Expand the existing workflow to test both the historical and restructured layouts.
    - Record build metrics and warnings for each configuration.
+4. **Header Tree Unification**
+   - Use `tools/sync_sys_headers.sh` to copy kernel headers into `src-headers/sys`.
+   - Replace `usr/src/sys/sys` with a symlink pointing at the unified directory.
 
 ## Long-Term Goals
 
