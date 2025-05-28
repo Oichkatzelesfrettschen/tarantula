@@ -5,8 +5,8 @@ SPINLOCK_DEFINE(sched_lock);
 void sched_lock_acquire(void) {}
 void sched_lock_release(void) {}
 
-int runin = 0;
-int runout = 0;
+_BitInt(32) runin = 0;
+_BitInt(32) runout = 0;
 void sched_increment_runin(void) { runin++; }
 void sched_increment_runout(void) { runout++; }
 
