@@ -27,18 +27,23 @@ switches to `--offline` when network access is unavailable. It can optionally
 install **mk-configure** to provide an Autotools-style layer on top.
 See `docs/codex_bootstrap.md` for automating this process with a systemd unit
 that runs Codex at boot.
-The tree also ships a minimal **CMake** configuration.  Generate Ninja files
-with:
+The tree also ships a minimal **CMake** configuration.  Configure the build
+with **clang** and **Ninja** using C23 and full optimizations:
 
 ```sh
-cmake -S . -B build -G Ninja
-cmake --build build
+cmake -S . -B build -G Ninja \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_C_STANDARD=23 \
+      -DCMAKE_C_FLAGS='-O3' \
+      -DLLVM_ENABLE_LTO=ON
+ninja -C build
 ```
 `find_package(BISON)` checks that **bison** is available.  See
 [docs/cmake_upgrade.md](docs/cmake_upgrade.md) for a gradual migration guide
 from the historic `bmake` system to CMake.  The build system always uses
-**clang** and targets C23 with `-O3`, link-time optimization and optional
-LLVM Polly/BOLT passes.
+**clang** with optional Polly and BOLT passes enabled by
+`-DLLVM_ENABLE_POLLY=ON` and post-processing the resulting binaries with
+`llvm-bolt`.
 `setup.sh` also checks `third_party/apt` for local `.deb` files and
 `third_party/pip` for Python wheels before contacting the network.
 Populate these directories with `apt-get download <pkg>` and

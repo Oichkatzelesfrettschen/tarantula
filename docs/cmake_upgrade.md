@@ -1,6 +1,6 @@
 # Transitioning from bmake to CMake
 
-This guide originally described a gradual approach to replace the historical `bmake` build system with a modern CMake workflow that leverages **clang** and **bison**.  The repository has now completed this transition and no longer relies on `bmake`.
+This guide originally described a gradual approach to replace the historical `bmake` build system with a modern CMake workflow that leverages **clang** and **bison**.  The repository has now completed this transition and all remaining Makefiles have been removed.
 
 ## 1. Prepare the environment
 
@@ -43,11 +43,8 @@ add_library(parser STATIC ${BISON_parser_OUTPUTS})
 
 ## 4. Incrementally convert subdirectories
 
-Convert each subdirectory in the tree and add it with `add_subdirectory()` from the top-level `CMakeLists.txt`.  Retain the existing makefiles until everything builds with CMake.
-
-## 5. Remove bmake when no longer needed
-
-Most makefiles have now been deleted. A few remain while their CMake
-equivalents are validated. Future contributions should use CMake and
-Ninja exclusively.
+Originally each subdirectory was ported one at a time using
+`add_subdirectory()` while the old makefiles remained.  The conversion is
+now complete and every target builds with CMake.  Future contributions
+should rely solely on CMake and Ninja.
 

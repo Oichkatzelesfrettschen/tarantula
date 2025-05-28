@@ -10,19 +10,13 @@ If `bison` is missing, install it and rerun `setup.sh`. The script now sets
 `YACC="bison -y"` automatically using `/etc/profile.d/yacc.sh`. Then proceed
 with the steps below.
 
-The repository also includes a simple **CMake** build. After installing the
-dependencies you can configure the entire tree using Ninja:
-
-Before building, ensure the root script `setup.sh` is run as as root to configure the environment.  The script installs all required
-packages using `apt-get update && apt-get dist-upgrade` followed by
-installation of **clang**, **bison**, **cmake** and **ninja**.  Packages that are
-missing from `apt` are retried with `pip` or `npm`.  When invoked via
-`.codex/setup.sh` the wrapper passes `--offline` if the network is unreachable.
+The repository uses **CMake** and **Ninja** exclusively.  After running
+`setup.sh` to install **clang**, **bison** and the rest of the toolchain you can
+configure the entire tree as follows:
 
 All helper scripts expect the environment variables `SRC_ULAND` and
 `SRC_KERNEL` to point to the userland and kernel source directories.  They
 default to `src-uland` and `src-kernel`.
-=
 ## 1. Build the `config` utility
 ```sh
 cmake -S ${SRC_ULAND:-usr/src}/usr.sbin/config -B build/config -G Ninja

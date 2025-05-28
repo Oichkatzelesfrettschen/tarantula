@@ -1,6 +1,6 @@
 # Booting the Exokernel with Minimal Managers
 
-This guide explains how to start the exokernel with only the essential user-level managers and verify that low-level resource allocation works. It assumes the exokernel and user managers have been built as described in [building_kernel.md](building_kernel.md).
+This guide explains how to start the exokernel with only the essential user-level managers and verify that low-level resource allocation works. Build all components using **CMake** and **Ninja** as outlined in [building_kernel.md](building_kernel.md).
 
 ## Requirements
 
