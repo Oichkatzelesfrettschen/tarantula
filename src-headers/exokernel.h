@@ -15,8 +15,8 @@ void sched_lock_release(void);
  * Counters tracking the number of processes swapped in and out.
  * Derived from historic BSD scheduler variables.
  */
-extern int runin;
-extern int runout;
+extern _BitInt(32) runin;
+extern _BitInt(32) runout;
 
 void sched_increment_runin(void);
 void sched_increment_runout(void);
