@@ -8,9 +8,11 @@ This document outlines tasks for agents to continue migrating the 4.4BSD-Lite2 t
 - [x] **Finalize FHS Mapping**
   - [x] Document any remaining directories that require manual symlink creation
   - [x] Verify that all top-level directories are mapped to their FHS equivalents
-- [ ] **Update Build Scripts**
-  - [ ] Adjust makefiles under `usr/src` to reference the new paths created during the migration
+- [x] **Update Build Scripts**
+  - [x] Adjust makefiles under `usr/src` to reference the new paths created during the migration
   - [x] Ensure `tools/migrate_to_fhs.sh` updates symlinks when rerun
+  - The `libpathtrans` library now installs to `src-lib/libpathtrans` and example
+    makefiles link against that location.
 - [x] **Inventory Remaining Legacy Files**
   - [x] Use `python3 tools/create_inventory.py` to produce an updated file list
  - [x] Mark files that are deprecated or replaced in the modern layout

@@ -1,6 +1,8 @@
 CC=gcc
 CFLAGS=-Wall -O2
-LDLIBS=-L.. -Wl,-rpath=.. -lpathtrans -pthread -ldl
+CPPFLAGS=-I../../../src-headers -I../include
+LIBDIR?=../../../../src-lib/libpathtrans
+LDLIBS=-L$(LIBDIR) -Wl,-rpath=$(LIBDIR) -lpathtrans -pthread -ldl
 
 all: demo
 
