@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 3.16)
-set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_COMPILER clang++)
+
+# Default to clang if no compiler was specified at configure time so callers
+# can override these via -DCMAKE_C_COMPILER and -DCMAKE_CXX_COMPILER.
+if(NOT DEFINED CMAKE_C_COMPILER)
+  set(CMAKE_C_COMPILER clang)
+endif()
+if(NOT DEFINED CMAKE_CXX_COMPILER)
+  set(CMAKE_CXX_COMPILER clang++)
+endif()
+
 project(tarantula C)
 set(CMAKE_C_STANDARD 23)
 find_package(BISON)
