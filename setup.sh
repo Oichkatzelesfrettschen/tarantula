@@ -24,6 +24,22 @@ log_msg(){
   printf '%(%Y-%m-%dT%H:%M:%S%z)T %s\n' -1 "$1" >> "$LOG_FILE"
 }
 
+
+# install pinned version of protoc
+install_protoc(){
+  PROTO_VERSION=25.1
+  PROTO_URL="https://raw.githubusercontent.com/protocolbuffers/protobuf/v${PROTO_VERSION}/protoc-${PROTO_VERSION}-linux-x86_64.zip"
+  PROTO_ZIP=/tmp/protoc.zip
+  curl_head_check "$PROTO_URL"
+  if curl -fsSL "$PROTO_URL" -o "$PROTO_ZIP"; then
+    unzip -d /usr/local "$PROTO_ZIP" >/dev/null 2>&1
+    rm "$PROTO_ZIP"
+  else
+    log_msg "curl FAILED protoc"
+    APT_FAILED+=("protoc")
+  fi
+}
+
 # record failing commands without stopping execution
 trap 'rc=$?; echo "FAILED cmd: ${BASH_COMMAND} (exit $rc)" >> "$LOG_FILE"' ERR
 export DEBIAN_FRONTEND=noninteractive
@@ -423,17 +439,7 @@ else
 fi
 
 # protoc installer (pinned)
-PROTO_VERSION=25.1
-PROTO_URL="https://raw.githubusercontent.com/protocolbuffers/protobuf/v${PROTO_VERSION}/protoc-${PROTO_VERSION}-linux-x86_64.zip"
-PROTO_ZIP=/tmp/protoc.zip
-curl_head_check "$PROTO_URL"
-if curl -fsSL "$PROTO_URL" -o "$PROTO_ZIP"; then
-  unzip -d /usr/local "$PROTO_ZIP" >/dev/null 2>&1
-  rm "$PROTO_ZIP"
-else
-  log_msg "curl FAILED protoc"
-  APT_FAILED+=("protoc")
-fi
+install_protoc
 
 
 # ensure yacc points to bison
