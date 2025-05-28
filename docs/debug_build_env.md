@@ -5,9 +5,9 @@ without network access. The script failed to install many packages, leaving
 several build tools missing. The `/tmp/setup.log` file showed `APT FAIL` and
 `PIP FAIL` entries for the following programs:
 
-- `aptitude`, `bmake`, `mk-configure`
+- `aptitude` and the **clang/llvm** toolchain
+- `cmake` and `ninja`
 - `bison`, `byacc`, `flex`
-- `clang`, `clang-format`, `clang-tidy`, `lld`, `llvm`
 - `meson`, `autoconf`, `automake`, `libtool`, `m4`
 - `uncrustify`, `astyle`, `editorconfig`, `pre-commit`
 - math libraries such as `libopenblas-dev`, `liblapack-dev`, `libeigen3-dev`
