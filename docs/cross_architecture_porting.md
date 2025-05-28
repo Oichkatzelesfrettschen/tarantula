@@ -20,6 +20,24 @@ platform specific optimisation.
 - Prefer compiler intrinsics over handwritten assembly except where
   specific tuning is required.
 
+### Example usage
+
+Include the header and branch on the pointer width when implementing
+architecture specific code:
+
+```c
+#include <arch.h>
+
+#if ARCH_64BIT
+    /* 64-bit optimised path */
+#else
+    /* generic fallback */
+#endif
+```
+
+The CMake build installs `arch.h` under `${CMAKE_INSTALL_PREFIX}/include`
+so out-of-tree projects can rely on it as well.
+
 ## Next Steps
 
 1. Audit existing `.s` files and move them into the `asm/` hierarchy.

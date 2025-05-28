@@ -48,7 +48,8 @@
 #include <sys/trace.h>
 #include <sys/malloc.h>
 #include <sys/resourcevar.h>
-#if defined(__x86_64__) || defined(__i386__)
+#include <arch.h>
+#if ARCH_32BIT || ARCH_64BIT
 #include <immintrin.h>
 #endif
 #include <sys/time.h>
@@ -312,7 +313,7 @@ count_lock_queue()
 
 #ifdef DIAGNOSTIC
 
-#if defined(__x86_64__) || defined(__i386__)
+#if ARCH_32BIT || ARCH_64BIT
 static inline void
 zero_counts(int *c, size_t len)
 {
