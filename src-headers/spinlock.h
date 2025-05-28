@@ -5,6 +5,7 @@
 #include <stdatomic.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <arch.h>
 
 
 #ifndef SPINLOCK_CACHELINE
