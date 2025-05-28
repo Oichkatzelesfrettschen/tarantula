@@ -80,9 +80,9 @@ This roadmap is intentionally high level. Full conversion of the 4.4BSD-Lite2 tr
 ## Recent Progress
 
 - Added a `CSTD` variable to `share/mk/sys.mk` so builds can pass `CSTD=-std=c2x`.
-- `sys/sys/cdefs.h` now maps `_Static_assert` to the `static_assert`
-  keyword when building with C23 and retains a typedef-based fallback for
-  pre-C11 compilers.
+- `sys/sys/cdefs.h` detects the active C standard and uses `static_assert`
+  directly for C23 builds.  Older dialects fall back to `_Static_assert` or a
+  typedef trick when no compile-time assertion keyword is available.
 - Created a workflow in `.github/workflows/build.yml` to build the tree with
   both GCC and Clang using the C23 standard flag.
 - New script `tools/build_collect_warnings.sh` builds the tree and captures

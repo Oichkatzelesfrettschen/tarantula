@@ -121,18 +121,16 @@
 /*
  * Portable compile-time assertions.
  *
- * C23 introduces the `static_assert` keyword.  Map `_Static_assert` to it
- * so existing code continues to build.  Older dialects either provide the
- * C11 `_Static_assert` keyword or fall back to a typedef trick.
+ * Use the standard `static_assert` keyword when compiling as C23 or later.
+ * Earlier dialects may only provide the C11 `_Static_assert` keyword.
+ * For even older compilers, emulate the behavior with a typedef trick.
  */
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
-#ifndef _Static_assert
-#define _Static_assert static_assert
-#endif
-#elif !defined(_Static_assert)
-#if defined(__STDC_VERSION__) && __STDC_VERSION__ < 201112L
-#define _Static_assert(expr, msg) typedef char __static_assert_t[(expr) ? 1 : -1]
-#endif
+#define __static_assert static_assert
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#define __static_assert _Static_assert
+#else
+#define __static_assert(expr, msg) typedef char __static_assert_t[(expr) ? 1 : -1]
 #endif
 #endif
 
