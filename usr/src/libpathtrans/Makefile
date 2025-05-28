@@ -14,7 +14,8 @@ INCLUDE_DIR = include
 TEST_DIR = tests
 TOOL_DIR = tools
 
-LIB = libpathtrans.so
+LIB_DIR ?= ../../../src-lib/libpathtrans
+LIB = $(LIB_DIR)/libpathtrans.so
 
 SRCS = $(wildcard $(SRC_DIR)/*.c)
 OBJS = $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRCS))
@@ -22,7 +23,7 @@ OBJS = $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRCS))
 all: directories $(LIB) tools tests
 
 directories:
-	mkdir -p $(BUILD_DIR)
+	mkdir -p $(BUILD_DIR) $(LIB_DIR)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@

@@ -1,6 +1,8 @@
 CC = gcc
 CFLAGS = -Wall -O2
-LDLIBS = -L.. -Wl,-rpath=.. -lpathtrans -pthread -ldl
+CPPFLAGS = -I../../../src-headers -I../include
+LIBDIR?=../../../../src-lib/libpathtrans
+LDLIBS = -L$(LIBDIR) -Wl,-rpath=$(LIBDIR) -lpathtrans -pthread -ldl
 
 TARGETS = test_translation test_path_database test_disable_env \
           test_link_unlink test_chdir_getcwd test_execve
