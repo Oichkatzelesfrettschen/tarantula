@@ -94,19 +94,20 @@ Following this plan will separate kernel responsibilities into a microkernel whi
 
 ## Organizing Sources Under `src-*`
 
-After completing the FHS migration steps (running `migrate_to_fhs.sh` and
-`post_fhs_cleanup.sh` as described in [fhs_migration.md](fhs_migration.md)), the
-repository can be reorganized so that code lives under the `src-*` directories.
-Use `tools/organize_sources.sh` to perform this move. Preview the changes with:
+After completing the FHS migration steps (running `migrate_to_fhs.sh` as
+outlined in [fhs_migration.md](fhs_migration.md)), **immediately** run
+`tools/migrate_to_src_layout.sh` (or `tools/organize_sources.sh`) to reorganize
+the sources under the `src-*` directories. Preview the changes with:
 
 ```sh
-tools/organize_sources.sh --dry-run
+tools/migrate_to_src_layout.sh --dry-run
 ```
 
 When executed without `--dry-run`, the script relocates `sys/` into
-`src-kernel/` and `usr/src/` into `src-uland/`, leaving symlinks at the original
-paths. Running it after the migration scripts ensures the microkernel build
-operates on the consolidated layout referenced throughout this plan.
+`src-kernel/`, moves `usr/src/` into `src-uland/`, gathers headers under
+`src-headers/` and collects archive libraries under `src-lib/`. Symlinks are
+left at the old paths so the build continues to operate on the consolidated
+layout referenced throughout this plan.
 
 ## Reincarnation Server
 
