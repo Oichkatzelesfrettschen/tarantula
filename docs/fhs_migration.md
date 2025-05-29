@@ -64,11 +64,11 @@ when modernizing historic BSD trees.
    `tools/migrate_to_fhs.sh --dry-run` to review the planned actions.
 3. Execute `tools/migrate_to_fhs.sh` without `--dry-run` to copy directories
    under `/usr` and replace the originals with symlinks.
-4. Run `tools/migrate_to_src_layout.sh --dry-run` to preview how the source tree
-   will be reorganized. The script performs the same moves as
+4. **Immediately** run `tools/migrate_to_src_layout.sh --dry-run` to preview how
+   the source tree will be reorganized. The script performs the same moves as
    `tools/organize_sources.sh` and supersedes the old
    `tools/post_fhs_cleanup.sh` helper.
-5. Execute `tools/migrate_to_src_layout.sh` (add `--force` when outside the chroot)
+5. Run `tools/migrate_to_src_layout.sh` (add `--force` when outside the chroot)
    to relocate the sources. The script moves the kernel into `src-kernel`, user
    programs into `src-uland`, headers into `src-headers` and collects archive
    libraries into `src-lib`. The `src-lib` directory keeps these libraries
