@@ -1,0 +1,10 @@
+PROJECT_NAME = "tarantula"
+OUTPUT_DIRECTORY = docs/api
+INPUT = src-kernel src-lib sys usr/src include src-headers
+RECURSIVE = YES
+EXTRACT_ALL = YES
+FILE_PATTERNS = *.c *.h
+WARN_IF_UNDOCUMENTED = YES
+WARN_IF_DOC_ERROR = YES
+GENERATE_HTML = NO
+GENERATE_LATEX = NO

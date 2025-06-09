@@ -37,23 +37,24 @@ static char sccsid[] = "@(#)bcmp.c	8.1 (Berkeley) 6/4/93";
 
 #include <string.h>
 
-/*
- * bcmp -- vax cmpc3 instruction
+/**
+ * @brief Compare two memory regions.
+ *
+ * @param b1 First buffer.
+ * @param b2 Second buffer.
+ * @param length Number of bytes to compare.
+ * @return Zero if equal, non-zero otherwise.
  */
-int
-bcmp(b1, b2, length)
-	const void *b1, *b2;
-	register size_t length;
-{
-	register char *p1, *p2;
+int bcmp(const void *b1, const void *b2, register size_t length) {
+    register char *p1, *p2;
 
-	if (length == 0)
-		return(0);
-	p1 = (char *)b1;
-	p2 = (char *)b2;
-	do
-		if (*p1++ != *p2++)
-			break;
-	while (--length);
-	return(length);
+    if (length == 0)
+        return (0);
+    p1 = (char *)b1;
+    p2 = (char *)b2;
+    do
+        if (*p1++ != *p2++)
+            break;
+    while (--length);
+    return (length);
 }

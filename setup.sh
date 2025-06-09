@@ -261,7 +261,7 @@ fi
 apt_pin_install shellcheck || install_with_pip shellcheck || npm_install shellcheck
 apt_pin_install codespell || install_with_pip codespell || npm_install codespell
 
-# core build tools, formatters, analysis, science libs
+# core build tools, formatters, documentation, analysis, science libs
 for pkg in \
   build-essential gcc g++ clang lld llvm \
   clang-format clang-tidy uncrustify astyle editorconfig pre-commit shellcheck codespell \
@@ -273,7 +273,8 @@ for pkg in \
   strace ltrace linux-perf systemtap systemtap-sdt-dev crash \
   valgrind kcachegrind trace-cmd kernelshark \
   llvm-polly llvm-bolt \
-  libasan6 libubsan1 likwid hwloc; do
+  libasan6 libubsan1 likwid hwloc \
+  graphviz doxygen python3-sphinx; do
   apt_pin_install "$pkg" || install_with_pip "$pkg" || npm_install "$pkg"
 done
 
@@ -408,8 +409,7 @@ done
 for pkg in \
   coq coqide coq-theories \
   agda agda-stdlib agda-mode \
-  isabelle tlaplus tla-bin \
-  graphviz doxygen python3-sphinx; do
+  isabelle tlaplus tla-bin; do
   apt_pin_install "$pkg" || install_with_pip "$pkg" || npm_install "$pkg"
 done
 

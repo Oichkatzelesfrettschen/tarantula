@@ -38,18 +38,21 @@
 static char sccsid[] = "@(#)strcmp.c	8.1 (Berkeley) 6/4/93";
 #endif /* LIBC_SCCS and not lint */
 
-#include <sys/cdefs.h>
 #include <string.h>
+#include <sys/cdefs.h>
 
-/*
- * Compare strings.
+/**
+ * @brief Compare two C strings.
+ *
+ * @param s1 First string.
+ * @param s2 Second string.
+ * @return Negative, zero or positive according to lexicographic order.
  */
-int
-strcmp(s1, s2)
-	register const char *s1, *s2;
+int strcmp(s1, s2)
+register const char *s1, *s2;
 {
-	while (*s1 == *s2++)
-		if (*s1++ == 0)
-			return (0);
-	return (*(unsigned char *)s1 - *(unsigned char *)--s2);
+    while (*s1 == *s2++)
+        if (*s1++ == 0)
+            return (0);
+    return (*(unsigned char *)s1 - *(unsigned char *)--s2);
 }
