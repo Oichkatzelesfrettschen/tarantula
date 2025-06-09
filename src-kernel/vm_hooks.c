@@ -1,14 +1,21 @@
+#include "exo_ipc.h"
 #include "exokernel.h"
-#include <stdbool.h>
 #include "ipc.h"
-#include <exo_ipc.h>
+#include <stdbool.h>
 /* Stubs delegating to user-space VM library */
 extern bool uland_vm_fault(void *addr);
 
-bool
-kern_vm_fault(void *addr)
-{
-    struct ipc_message msg = { .type = IPC_MSG_VM_FAULT, .a = (uintptr_t)addr };
+/**
+ * @brief Handle a virtual memory fault in user space.
+ *
+ * Dispatches an IPC message to the VM library and waits for a reply.
+ * If the reply is missing the local handler is used as a fallback.
+ *
+ * @param addr Faulting address.
+ * @return true if the fault was handled successfully.
+ */
+bool kern_vm_fault(void *addr) {
+    struct ipc_message msg = {.type = IPC_MSG_VM_FAULT, .a = (uintptr_t)addr};
     (void)ipc_queue_send(&kern_ipc_queue, &msg);
     /* Synchronous reply */
     struct ipc_message reply;

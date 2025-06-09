@@ -37,18 +37,18 @@ static char sccsid[] = "@(#)ffs.c	8.1 (Berkeley) 6/4/93";
 
 #include <string.h>
 
-/*
- * ffs -- vax ffs instruction
+/**
+ * @brief Find first set bit.
+ *
+ * @param mask Value to test.
+ * @return Index of least significant 1 bit starting at 1, or 0 if none.
  */
-int
-ffs(mask)
-	register int mask;
-{
-	register int bit;
+int ffs(register int mask) {
+    register int bit;
 
-	if (mask == 0)
-		return(0);
-	for (bit = 1; !(mask & 1); bit++)
-		mask >>= 1;
-	return(bit);
+    if (mask == 0)
+        return (0);
+    for (bit = 1; !(mask & 1); bit++)
+        mask >>= 1;
+    return (bit);
 }

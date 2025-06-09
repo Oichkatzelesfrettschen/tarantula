@@ -35,16 +35,23 @@
 static char sccsid[] = "@(#)strcpy.c	8.1 (Berkeley) 6/4/93";
 #endif /* LIBC_SCCS and not lint */
 
-#include <sys/cdefs.h>
 #include <string.h>
+#include <sys/cdefs.h>
 
-char *
-strcpy(to, from)
-	register char *to;
-	register const char *from;
+/**
+ * @brief Copy a C string.
+ *
+ * @param to   Destination buffer.
+ * @param from Source string.
+ * @return Pointer to the destination buffer.
+ */
+char *strcpy(to, from)
+register char *to;
+register const char *from;
 {
-	char *save = to;
+    char *save = to;
 
-	for (; *to = *from; ++from, ++to);
-	return(save);
+    for (; *to = *from; ++from, ++to)
+        ;
+    return (save);
 }

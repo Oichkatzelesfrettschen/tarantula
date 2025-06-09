@@ -1,16 +1,22 @@
-#include <stdio.h>
+#include "exo_ipc.h"
 #include "exokernel.h"
 #include "ipc.h"
-#include <exo_ipc.h>
+#include <stdio.h>
 /* Stubs delegating to user-space process manager */
 extern int pm_fork(void);
 extern int pm_exec(const char *path, char *const argv[]);
 
-int
-kern_fork(void)
-{
+/**
+ * @brief Request the user-space process manager to fork.
+ *
+ * Sends an IPC message to the manager and waits for a reply. If no
+ * response is received the local fallback implementation is used.
+ *
+ * @return child PID on success or a negative error code.
+ */
+int kern_fork(void) {
 
-    struct ipc_message msg = { .type = IPC_MSG_PROC_FORK };
+    struct ipc_message msg = {.type = IPC_MSG_PROC_FORK};
     (void)ipc_queue_send(&kern_ipc_queue, &msg);
     struct ipc_message reply;
     struct ipc_mailbox *mb = ipc_mailbox_current();
@@ -21,14 +27,16 @@ kern_fork(void)
     return pm_fork();
 }
 
-int
-kern_exec(const char *path, char *const argv[])
-{
+/**
+ * @brief Execute a program via the process manager.
+ *
+ * @param path Path to the binary to run.
+ * @param argv Argument vector for the new process.
+ * @return 0 on success or a negative error code.
+ */
+int kern_exec(const char *path, char *const argv[]) {
     struct ipc_message msg = {
-        .type = IPC_MSG_PROC_EXEC,
-        .a = (uintptr_t)path,
-        .b = (uintptr_t)argv
-    };
+        .type = IPC_MSG_PROC_EXEC, .a = (uintptr_t)path, .b = (uintptr_t)argv};
     (void)ipc_queue_send(&kern_ipc_queue, &msg);
     struct ipc_message reply;
     struct ipc_mailbox *mb2 = ipc_mailbox_current();
@@ -36,4 +44,3 @@ kern_exec(const char *path, char *const argv[])
         return (int)reply.a;
     return pm_exec(path, argv);
 }
-
