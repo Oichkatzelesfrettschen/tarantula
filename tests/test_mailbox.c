@@ -16,7 +16,7 @@ int main(void) {
         return 1;
     }
 
-    ipc_queue_send(&b->queue, &msg);
+    ipc_queue_send_yield(&b->queue, &msg);
     if (ipc_queue_recv_timed(&b->queue, &msg, 5) != EXO_IPC_OK) {
         printf("recv failed\n");
         return 1;

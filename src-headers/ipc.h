@@ -48,6 +48,14 @@ exo_ipc_status ipc_queue_recv(struct ipc_queue *q, struct ipc_message *m);
 /** Send, waiting if the queue is full */
 exo_ipc_status ipc_queue_send_blocking(struct ipc_queue *q,
                                        const struct ipc_message *m);
+/**
+ * @brief Send a message and immediately yield the processor.
+ *
+ * Useful for RPC-style exchanges where the caller wishes to
+ * hand execution to the receiving thread after enqueueing.
+ */
+exo_ipc_status ipc_queue_send_yield(struct ipc_queue *q,
+                                    const struct ipc_message *m);
 /** Receive, blocking until a message is available */
 exo_ipc_status ipc_queue_recv_blocking(struct ipc_queue *q,
                                        struct ipc_message *m);
