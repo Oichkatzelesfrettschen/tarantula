@@ -1,6 +1,7 @@
 #include "ipc.h"
 #include "exo_ipc.h"
 #include <unistd.h>
+#include <sched.h>
 
 /** Shared queue used by kernel stubs and user-space servers. */
 struct ipc_queue kern_ipc_queue;
@@ -89,6 +90,19 @@ exo_ipc_status ipc_queue_send_blocking(struct ipc_queue *q,
     exo_ipc_status st;
     while ((st = ipc_queue_send(q, m)) == EXO_IPC_FULL)
         ;
+    return st;
+}
+
+/**
+ * @brief Send a message and yield the CPU.
+ *
+ * The caller yields after enqueueing to allow the receiver to run
+ * immediately, enabling low-latency RPC patterns.
+ */
+exo_ipc_status ipc_queue_send_yield(struct ipc_queue *q,
+                                    const struct ipc_message *m) {
+    exo_ipc_status st = ipc_queue_send(q, m);
+    sched_yield();
     return st;
 }
 
