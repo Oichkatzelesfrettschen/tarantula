@@ -262,6 +262,7 @@ apt_pin_install shellcheck || install_with_pip shellcheck || npm_install shellch
 apt_pin_install codespell || install_with_pip codespell || npm_install codespell
 
 # core build tools, formatters, documentation, analysis, science libs
+  # includes cloc, cscope, and cflow for repository metrics
 for pkg in \
   build-essential gcc g++ clang lld llvm \
   clang-format clang-tidy uncrustify astyle editorconfig pre-commit shellcheck codespell \
@@ -274,7 +275,7 @@ for pkg in \
   valgrind kcachegrind trace-cmd kernelshark \
   llvm-polly llvm-bolt \
   libasan6 libubsan1 likwid hwloc \
-  graphviz doxygen python3-sphinx; do
+  graphviz doxygen python3-sphinx cloc cscope cflow plantuml; do
   apt_pin_install "$pkg" || install_with_pip "$pkg" || npm_install "$pkg"
 done
 
@@ -289,8 +290,9 @@ for pkg in \
 done
 
 
+# pip packages include lizard and gprof2dot for complexity metrics
 for pip_pkg in \
-  tensorflow-cpu jax jaxlib \
+  tensorflow-cpu jax jaxlib lizard gprof2dot \
   tensorflow-model-optimization mlflow onnxruntime-tools \
   meson ninja cmake pre-commit compiledb codespell \
   configuredb pytest pyyaml pylint pyfuzz \
