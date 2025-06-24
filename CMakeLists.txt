@@ -11,6 +11,18 @@ endif()
 
 project(tarantula C)
 set(CMAKE_C_STANDARD 23)
+
+# Target the baseline x86-64-v1 CPU. SSE2 and MMX are
+# enabled explicitly to ensure predictable SIMD support on
+# all build hosts. The floating-point math unit is also set
+# to use SSE instructions for consistency.
+add_compile_options(-march=x86-64-v1 -msse2 -mmmx -mfpmath=sse)
+
+# Favor LLVM's lld linker and high optimization.  Additional
+# flags can be appended by callers but these defaults
+# provide a performant out-of-the-box build.
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -fuse-ld=lld")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -fuse-ld=lld")
 find_package(BISON)
 if(BISON_FOUND)
   message(STATUS "Bison found: ${BISON_EXECUTABLE}")

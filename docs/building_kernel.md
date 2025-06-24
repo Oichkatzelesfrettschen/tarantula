@@ -13,6 +13,11 @@ with the steps below.
 The repository also includes a simple **CMake** build. After installing the
 dependencies you can configure the entire tree using Ninja:
 
+The toolchain targets the baseline **x86-64-v1** CPU so that the resulting
+binaries run on a wide range of 64‑bit hardware.  Clang is invoked with
+`-march=x86-64-v1`, `-msse2`, `-mmmx` and `-mfpmath=sse`; linking defaults to
+`lld` with `-O3` optimization.
+
 Before building, ensure the root script `setup.sh` is run as as root to configure the environment.  The script installs all required
 packages using `apt-get update && apt-get dist-upgrade` followed by
 installation of **clang**, **bison**, **cmake** and **ninja**.  Packages that are
@@ -41,7 +46,9 @@ This creates a directory such as `../compile/GENERIC.i386`.
 ```sh
 cmake -S ../compile/GENERIC.i386 -B build/kernel -G Ninja \
       -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_C_STANDARD=23 -DCMAKE_C_FLAGS='-O3' \
+      -DCMAKE_C_STANDARD=23 \
+      -DCMAKE_C_FLAGS='-O3 -fuse-ld=lld' \
+      -DCMAKE_CXX_FLAGS='-O3 -fuse-ld=lld' \
       -DLLVM_ENABLE_LTO=ON
 ninja -C build/kernel
 ```
