@@ -5,3 +5,11 @@
 *.log
 compile/
 usr/src/**/obj
+
+# Compiled binaries
+*.so
+*.dylib
+*.ko
+*.exe
+*.elf
+*.bin
