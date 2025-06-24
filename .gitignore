@@ -5,3 +5,4 @@
 *.log
 compile/
 usr/src/**/obj
+build/
