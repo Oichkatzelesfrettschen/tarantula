@@ -110,18 +110,18 @@ target_include_directories(fs_server PRIVATE
   ${CMAKE_SOURCE_DIR}/sys/i386/include
 )
 target_compile_definitions(fs_server PRIVATE KERNEL)
-if(CMAKE_C_COMPILER_ID MATCHES "Clang")
-  # Enable vector instruction sets when building with clang.
-  # GCC's older versions mis-handle these flags on some targets.
-  target_compile_options(fs_server PRIVATE -msse -mavx2)
-endif()
 target_link_libraries(fs_server PRIVATE ipc)
 target_compile_options(fs_server PRIVATE ${BASE_CFLAGS})
+if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+  # Enable additional SIMD support when building with Clang
+  target_compile_options(fs_server PRIVATE -msse -mavx2)
+endif()
 
 # ────────────────────────────────────────────────────────────────────────────
-# Installation
+# Installation & Subdirectories
 # ────────────────────────────────────────────────────────────────────────────
-install(FILES
-  src-headers/arch.h
-  DESTINATION include
-)
+install(FILES src-headers/arch.h DESTINATION include)
+
+# Build userland servers converted from historical Makefiles
+add_subdirectory(src-uland/servers/proc_manager)
+add_subdirectory(src-uland/servers/reincarnation)
