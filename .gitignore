@@ -1,7 +1,20 @@
-*/obj/
-*/obj
-*.o
-*.a
-*.log
-compile/
-usr/src/**/obj
+###############################################################################
+#  .gitignore — compiled artifacts and historical build directories
+###############################################################################
+
+# ── 1. Object directories ────────────────────────────────────────────────────
+**/obj/                        # any “obj” folder at any depth
+compile/                      # legacy compile output directory
+
+# ── 2. Compiled files ───────────────────────────────────────────────────────
+**/*.o                        # object files
+**/*.a                        # static libraries
+
+# ── 3. Executables & logs ────────────────────────────────────────────────────
+*.out                         # generic executables
+*.log                         # log files
+
+# ── 4. Legacy source-tree artifacts ─────────────────────────────────────────
+usr/src/**/obj/               # historical obj dirs in usr/src
+usr/src/**/*.o                # object files under usr/src
+usr/src/**/*.a                # archives under usr/src
