@@ -46,7 +46,6 @@ target_include_directories(fs_server PRIVATE
   ${CMAKE_SOURCE_DIR}/sys
   ${CMAKE_SOURCE_DIR}/sys/sys
   ${CMAKE_SOURCE_DIR}/sys/i386/include)
-target_compile_definitions(fs_server PRIVATE KERNEL)
 target_link_libraries(fs_server PRIVATE ipc)
 
 install(FILES src-headers/arch.h DESTINATION include)

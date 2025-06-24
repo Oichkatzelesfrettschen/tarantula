@@ -1,6 +1,7 @@
 /* Simple wrapper used by the exokernel file hook. */
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/types.h>
 #include "fs_server.h"
 
 int
