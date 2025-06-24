@@ -18,7 +18,7 @@ binaries run on a wide range of 64‑bit hardware.  Clang is invoked with
 `-march=x86-64-v1`, `-msse2`, `-mmmx` and `-mfpmath=sse`; linking defaults to
 `lld` with `-O3` optimization.
 
-Before building, ensure the root script `setup.sh` is run as as root to configure the environment.  The script installs all required
+Before building, ensure the root script `setup.sh` is run as root to configure the environment.  The script installs all required
 packages using `apt-get update && apt-get dist-upgrade` followed by
 installation of **clang**, **bison**, **cmake** and **ninja**.  Packages that are
 missing from `apt` are retried with `pip` or `npm`.  When invoked via
