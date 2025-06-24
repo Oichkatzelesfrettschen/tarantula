@@ -49,6 +49,15 @@ using `dpkg -i`.
 When run without the flag, `setup.sh` now tests network access with
 `apt-get update` and automatically enables offline mode if the command
 fails.
+Package groups can be selected with command-line flags:
+
+```sh
+./setup.sh --core      # install build tools and GUI frameworks
+./setup.sh --langs     # install language runtimes
+./setup.sh --cross     # install cross-compilers
+./setup.sh --all       # install everything
+```
+If no flags are provided the script behaves as `--all`.
 You can verify which commands are available at any time by running
 `tools/check_build_env.sh`. It lists missing build tools and exits
 non-zero when any are absent.
