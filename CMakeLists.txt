@@ -11,6 +11,15 @@ endif()
 
 project(tarantula C)
 set(CMAKE_C_STANDARD 23)
+
+# When using Clang, compile for a baseline x86 CPU and enable
+# SSE2/MMX support.  The baseline can be overridden with
+# -DBASELINE_CPU=<arch> at configure time.
+if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+  set(BASELINE_CPU "x86-64-v1" CACHE STRING "Architecture passed to -march")
+  set(BASE_CFLAGS -march=${BASELINE_CPU} -msse2 -mmmx -mfpmath=sse -O3)
+  set(BASE_LDFLAGS -fuse-ld=lld)
+endif()
 find_package(BISON)
 if(BISON_FOUND)
   message(STATUS "Bison found: ${BISON_EXECUTABLE}")
@@ -50,5 +59,14 @@ target_compile_definitions(fs_server PRIVATE KERNEL)
 target_link_libraries(fs_server PRIVATE ipc)
 
 install(FILES src-headers/arch.h DESTINATION include)
+
+# Apply baseline compile and link options to all targets when using Clang.
+if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+  set(ALL_TARANTULA_TARGETS ipc posix kern_stubs fs_server)
+  foreach(t ${ALL_TARANTULA_TARGETS})
+    target_compile_options(${t} PRIVATE ${BASE_CFLAGS})
+    target_link_options(${t} PRIVATE ${BASE_LDFLAGS})
+  endforeach()
+endif()
 
 
