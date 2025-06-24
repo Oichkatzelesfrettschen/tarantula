@@ -4,11 +4,13 @@
 
 # ── 1. Build & object directories ────────────────────────────────────────────
 **/obj/                        # any “obj” folder at any depth
-compile/                      # legacy compile output directory
+compile/                       # legacy compile output directory
+build/                         # top-level build output
+**/build/                      # per-module build dirs
 
 # ── 2. Compiled files ───────────────────────────────────────────────────────
-**/*.o                        # object files
-**/*.a                        # static libraries
+**/*.o                         # object files
+**/*.a                         # static libraries
 
 # ── 3. Binaries & libraries ─────────────────────────────────────────────────
 *.out                         # executables
@@ -23,6 +25,6 @@ compile/                      # legacy compile output directory
 *.log                         # log files
 
 # ── 5. Legacy source-tree artifacts ─────────────────────────────────────────
-usr/src/**/obj/               # historical obj dirs in usr/src
+usr/src/**/obj/               # historical obj dirs under usr/src
 usr/src/**/*.o                # object files under usr/src
 usr/src/**/*.a                # archives under usr/src
