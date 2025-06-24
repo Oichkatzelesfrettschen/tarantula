@@ -47,6 +47,7 @@
 #include <sys/namei.h>
 #include <sys/errno.h>
 #include <sys/malloc.h>
+#include <sys/types.h>
 
 /*
  * Name caching works as follows:
