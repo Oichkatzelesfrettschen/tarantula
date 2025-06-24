@@ -1,12 +1,12 @@
 ````markdown
 # Building the 4.4BSD-Lite2 Kernel with a Modern CMake Toolchain
 
-This guide shows how to compile the historic 4.4BSD-Lite2 sources on an x86_64 (or i386 via `-m32`) Linux host using **Clang**, **CMake**, and **Ninja**. It assumes you have root access to install toolchains and that the repository includes the following helper scripts:
+This guide shows how to compile the historic **4.4BSD-Lite2** sources on an **x86_64** (or **i386** with `-m32`) Linux host using **Clang**, **CMake**, and **Ninja**. It assumes you have root privileges to install toolchains and that your repository includes:
 
-- `setup.sh` (installs dependencies, logs to `/tmp/setup.log`)
-- `.codex/setup.sh` (CI wrapper, supports `--offline`)
+- **setup.sh** — installs Clang, Bison, CMake, Ninja, etc., and logs to `/tmp/setup.log`
+- **.codex/setup.sh** — CI wrapper (accepts `--offline`)
 
-All helper scripts respect the environment variables:
+All helper scripts respect:
 
 - `SRC_ULAND` → user-land sources (default: `src-uland` or `usr/src/usr.sbin/config`)
 - `SRC_KERNEL` → kernel sources (default: `src-kernel` or `usr/src/sys/i386`)
@@ -20,11 +20,11 @@ All helper scripts respect the environment variables:
    sudo ./setup.sh
 ````
 
-* Installs **clang**, **bison**, **cmake**, **ninja**, and other packages.
-* If `bison` is missing, the script will warn you; install it manually and rerun.
+* Installs **clang**, **bison**, **cmake**, **ninja**, etc.
+* If `bison` is missing, install it manually and rerun.
 * On CI, use `.codex/setup.sh --offline` for air-gapped environments.
 
-2. **Verify your environment**:
+2. **Verify toolchain**:
 
    ```bash
    clang --version
@@ -33,22 +33,27 @@ All helper scripts respect the environment variables:
    ninja --version
    ```
 
-3. **Ensure** `SRC_ULAND` and `SRC_KERNEL` point where your source trees live:
+3. **Set source‐tree env vars** (if you live outside the defaults):
 
    ```bash
    export SRC_ULAND=${SRC_ULAND:-src-uland}
    export SRC_KERNEL=${SRC_KERNEL:-src-kernel}
    ```
 
-4. **Baseline toolchain flags**
-   The CMake toolchain unconditionally applies:
+4. **Baseline CPU override**
+   By default we compile with:
 
-   ```text
-   -march=x86-64-v1 -msse2 -mmmx -mfpmath=sse
-   -O3 -fuse-ld=lld
+   ```
+   -march=x86-64-v1 -msse2 -mmmx -mfpmath=sse -O3 -fuse-ld=lld
    ```
 
-   for maximum compatibility and performance on modern 64-bit hardware.
+   To override:
+
+   ```bash
+   cmake … -DBASELINE_CPU=x86-64    # or another arch string
+   ```
+
+   This controls the `-march=` flag in your CMakeLists.
 
 ---
 
@@ -63,19 +68,18 @@ cmake \
 cmake --build build/config
 ```
 
-* Produces `build/config/config`
-* This binary generates the per-kernel-variant build directories.
+* Produces `build/config/config`, which generates per‐variant compile directories.
 
 ---
 
-## 2 · Generate the Kernel Configuration
+## 2 · Generate Kernel Build Directory
 
 ```bash
 cd ${SRC_KERNEL}/sys/i386/conf
 ../../build/config/config GENERIC.i386
 ```
 
-* Creates `../compile/GENERIC.i386` (or similar) with all `Makefile` fragments in place.
+* Creates `../compile/GENERIC.i386` (or a similar variant directory).
 
 ---
 
@@ -88,20 +92,21 @@ cmake \
   -G Ninja \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_C_STANDARD=23 \
-  -DCMAKE_C_FLAGS='-O3 -fuse-ld=lld' \
-  -DCMAKE_CXX_FLAGS='-O3 -fuse-ld=lld' \
-  -DLLVM_ENABLE_LTO=ON
+  -DCMAKE_C_FLAGS="-O3 -fuse-ld=lld" \
+  -DCMAKE_CXX_FLAGS="-O3 -fuse-ld=lld" \
+  -DLLVM_ENABLE_LTO=ON \
+  -DBASELINE_CPU=${BASELINE_CPU}
 
 ninja -C build/kernel
 ```
 
-* **Optional**: add `-DLLVM_ENABLE_POLLY=ON` or run `llvm-bolt` on the resulting kernel binary for advanced profile-guided or polyhedral optimizations.
+* **Optional**: add `-DLLVM_ENABLE_POLLY=ON` or post-process with `llvm-bolt` for PGO/POLLY.
 
 ---
 
-## 4 · Build User-Space Components
+## 4 · Build User-Space Services
 
-Each service under `${SRC_ULAND}` gets its own CMake directory:
+Each service under `${SRC_ULAND}` has its own CMake stanza:
 
 ```bash
 cmake \
@@ -112,13 +117,15 @@ cmake \
 cmake --build build/fs
 ```
 
-* Install with `cmake --install build/fs --prefix /usr/libexec` or your preferred root.
+* You can then install with:
+
+  ```bash
+  cmake --install build/fs --prefix /usr/libexec
+  ```
 
 ---
 
 ## 5 · Run Kernel Self-Tests
-
-A lightweight test suite exercises kernel stubs without needing to boot:
 
 ```bash
 cmake \
@@ -128,22 +135,22 @@ cmake \
 
 cmake --build build/tests
 
-./build/tests/test_kern  # should print “all ok”
+./build/tests/test_kern    # should print “all ok”
 ```
 
 ---
 
 ## 6 · Legacy Makefile Support
 
-The repository still includes a classic `Makefile` in `tests/`. To use it:
+If you prefer the classic Make in `tests/`:
 
-1. **Build the static libs** via CMake:
+1. **Build the static libs** first:
 
    ```bash
    cmake -S . -B build -G Ninja
    cmake --build build --target ipc posix kern_stubs
    ```
-2. **Invoke the legacy Make**:
+2. **Run the Makefile**:
 
    ```bash
    make -C tests
@@ -153,19 +160,12 @@ The repository still includes a classic `Makefile` in `tests/`. To use it:
 
 ## 7 · Cleaning Up
 
-Before committing, remove all generated build artifacts:
+Before committing, purge all generated artifacts:
 
 ```bash
-# remove all Ninja/CMake build trees
-rm -rf build/
-
-# remove any per-variant directories generated by config
-rm -rf ${SRC_KERNEL}/sys/i386/compile/*
-
-# confirm with Git
-git clean -fdx
+rm -rf build/                                    # CMake/Ninja outputs
+rm -rf ${SRC_KERNEL}/sys/i386/compile/*          # variant compile dirs
+git clean -fdx                                   # double-check nothing left
 ```
 
-Keeping the repository free of temporary files prevents merge conflicts and ensures patches remain concise.
-
----
+Keeping the tree free of build outputs prevents merge conflicts and keeps patches concise.
