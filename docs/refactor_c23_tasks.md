@@ -83,8 +83,8 @@ This roadmap is intentionally high level. Full conversion of the 4.4BSD-Lite2 tr
 - `sys/sys/cdefs.h` detects the active C standard and uses `static_assert`
   directly for C23 builds.  Older dialects fall back to `_Static_assert` or a
   typedef trick when no compile-time assertion keyword is available.
-- Created a workflow in `.github/workflows/build.yml` to build the tree with
-  both GCC and Clang using the C23 standard flag.
+- Initially created a workflow in `.github/workflows/build.yml` to build the tree with
+  both GCC and Clang using the C23 standard flag (later removed).
 - New script `tools/build_collect_warnings.sh` builds the tree and captures
   compiler warnings for later cleanup.
 - CI now builds for both `x86_64` and `i686` using `-m64` and `-m32` flags.

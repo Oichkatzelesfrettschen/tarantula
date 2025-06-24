@@ -48,6 +48,7 @@
 #include <sys/trace.h>
 #include <sys/malloc.h>
 #include <sys/resourcevar.h>
+#include <sys/types.h>
 #include <arch.h>
 #if ARCH_32BIT || ARCH_64BIT
 #include <immintrin.h>
