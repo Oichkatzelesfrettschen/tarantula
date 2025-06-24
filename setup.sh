@@ -257,6 +257,9 @@ apt_pin_install byacc || install_with_pip byacc || npm_install byacc
 if command -v bison >/dev/null 2>&1; then
   export YACC="bison -y"
   echo 'export YACC="bison -y"' > /etc/profile.d/yacc.sh
+else
+  echo "ERROR: bison not found after installation attempts" >&2
+  exit 1
 fi
 apt_pin_install shellcheck || install_with_pip shellcheck || npm_install shellcheck
 apt_pin_install codespell || install_with_pip codespell || npm_install codespell
@@ -447,6 +450,9 @@ install_protoc
 # ensure yacc points to bison
 if command -v bison >/dev/null 2>&1; then
   ln -sf "$(command -v bison)" /usr/local/bin/yacc
+else
+  echo "ERROR: bison not found in PATH" >&2
+  exit 1
 fi
 
 # clean up

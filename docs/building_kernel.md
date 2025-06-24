@@ -7,8 +7,12 @@ CMake toolchain.  The commands assume an x86_64 host but work on i386 when using
 Before building, run the repository's `setup.sh` script as root to install all required toolchains. Codex CI calls `.codex/setup.sh`, which passes `--offline` when needed. The script installs **clang**, **bison**, `cmake` and related packages, logging to `/tmp/setup.log`.
 
 If `bison` is missing, install it and rerun `setup.sh`. The script now sets
-`YACC="bison -y"` automatically using `/etc/profile.d/yacc.sh`. Then proceed
-with the steps below.
+`YACC="bison -y"` automatically using `/etc/profile.d/yacc.sh`.
+Before continuing, verify `bison` is available by running:
+```sh
+command -v bison
+```
+Then proceed with the steps below.
 
 The repository also includes a simple **CMake** build. After installing the
 dependencies you can configure the entire tree using Ninja:
