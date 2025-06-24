@@ -252,7 +252,17 @@ apt_pin_install aptitude || install_with_pip aptitude || npm_install aptitude
 if command -v aptitude >/dev/null 2>&1; then
   aptitude update >/dev/null 2>&1 || true
 fi
-apt_pin_install bison || install_with_pip bison || npm_install bison
+if [ $OFFLINE_MODE -eq 0 ]; then
+  if apt-get install -y bison >/dev/null 2>&1; then
+    log_msg "APT OK   bison"
+  else
+    log_msg "APT FAIL bison"
+    APT_FAILED+=("bison")
+    apt_pin_install bison || install_with_pip bison || npm_install bison
+  fi
+else
+  apt_pin_install bison || install_with_pip bison || npm_install bison
+fi
 apt_pin_install byacc || install_with_pip byacc || npm_install byacc
 if command -v bison >/dev/null 2>&1; then
   export YACC="bison -y"

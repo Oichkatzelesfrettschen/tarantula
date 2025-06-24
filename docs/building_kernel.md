@@ -4,11 +4,11 @@ This guide explains how to build the historic 4.4BSD-Lite2 sources with a modern
 CMake toolchain.  The commands assume an x86_64 host but work on i386 when using
 `-m32` flags.
 
-Before building, run the repository's `setup.sh` script as root to install all required toolchains. Codex CI calls `.codex/setup.sh`, which passes `--offline` when needed. The script installs **clang**, **bison**, `cmake` and related packages, logging to `/tmp/setup.log`.
+Before building, run the repository's `setup.sh` script as root to install all required toolchains. Codex CI calls `.codex/setup.sh`, which passes `--offline` when needed. The script installs **clang**, **bison** via `apt`, `cmake` and related packages, logging to `/tmp/setup.log`.
 
-If `bison` is missing, install it and rerun `setup.sh`. The script now sets
-`YACC="bison -y"` automatically using `/etc/profile.d/yacc.sh`. Then proceed
-with the steps below.
+If `bison` is missing, install it and rerun `setup.sh`. The script exports
+`YACC="bison -y"` via `/etc/profile.d/yacc.sh` so that traditional makefiles
+pick up the correct parser. Then proceed with the steps below.
 
 The repository also includes a simple **CMake** build. After installing the
 dependencies you can configure the entire tree using Ninja:
