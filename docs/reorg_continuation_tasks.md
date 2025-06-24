@@ -27,7 +27,7 @@ This document outlines tasks for agents to continue migrating the 4.4BSD-Lite2 t
    - Move architecture-specific kernel code under `sys/arch`.
    - Introduce a hardware abstraction layer stub for future expansion.
 3. **CI Integration**
-   - Expand the existing workflow to test both the historical and restructured layouts.
+   - Reintroduce a CI workflow when needed to test both the historical and restructured layouts.
    - Record build metrics and warnings for each configuration.
 4. **Header Tree Unification**
    - Use `tools/sync_sys_headers.sh` to copy kernel headers into `src-headers/sys`.
