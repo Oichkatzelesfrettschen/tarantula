@@ -67,3 +67,9 @@ cmake --build build/tests
 ./build/tests/test_kern
 ```
 It prints `all ok` when the stubs behave correctly.
+
+## Cleaning Build Outputs
+Before committing changes, ensure that any `build/` directories or generated
+artifacts are removed from the tree. Keeping the repository free of temporary
+files prevents merge conflicts and keeps patches concise. Use `git clean -fd
+build` or `rm -rf build` along with manual deletion of other transient outputs.
