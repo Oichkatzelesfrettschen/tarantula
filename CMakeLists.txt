@@ -51,4 +51,8 @@ target_link_libraries(fs_server PRIVATE ipc)
 
 install(FILES src-headers/arch.h DESTINATION include)
 
+# Build userland servers converted from historical makefiles.
+add_subdirectory(src-uland/servers/proc_manager)
+add_subdirectory(src-uland/servers/reincarnation)
+
 
