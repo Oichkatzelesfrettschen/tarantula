@@ -3,13 +3,14 @@
 
 This guide shows how to compile the historic **4.4BSD-Lite2** sources on an **x86_64** (or **i386** with `-m32`) Linux host using **Clang**, **CMake**, and **Ninja**. It assumes you have root privileges to install toolchains and that your repository includes:
 
-- **setup.sh** — installs Clang, Bison, CMake, Ninja, etc., and logs to `/tmp/setup.log`
-- **.codex/setup.sh** — CI wrapper (accepts `--offline`)
+- **setup.sh** — installs Clang, Bison, CMake, Ninja, etc., logging to `/tmp/setup.log`  
+- **.codex/setup.sh** — CI wrapper (accepts `--offline`)  
+- **tools/check_build_env.sh** — will fail unless `$YACC` is set to `bison -y`
 
 All helper scripts respect:
 
-- `SRC_ULAND` → user-land sources (default: `src-uland` or `usr/src/usr.sbin/config`)
-- `SRC_KERNEL` → kernel sources (default: `src-kernel` or `usr/src/sys/i386`)
+- `SRC_ULAND` → user-land sources (default: `src-uland` or `usr/src/usr.sbin/config`)  
+- `SRC_KERNEL` → kernel sources (default: `src-kernel` or `usr/src/sys/i386`)  
 
 ---
 
@@ -21,10 +22,16 @@ All helper scripts respect:
 ````
 
 * Installs **clang**, **bison**, **cmake**, **ninja**, etc.
-* If `bison` is missing, install it manually and rerun.
-* On CI, use `.codex/setup.sh --offline` for air-gapped environments.
+* If `bison` is missing, install it manually, then rerun.
+* The script sets
 
-2. **Verify toolchain**:
+  ```bash
+  export YACC="bison -y"
+  ```
+
+  and `tools/check_build_env.sh` will enforce that.
+
+2. **Verify your toolchain**:
 
    ```bash
    clang --version
@@ -33,7 +40,7 @@ All helper scripts respect:
    ninja --version
    ```
 
-3. **Set source‐tree env vars** (if you live outside the defaults):
+3. **Set source‐tree environment variables** (if nonstandard):
 
    ```bash
    export SRC_ULAND=${SRC_ULAND:-src-uland}
@@ -50,10 +57,10 @@ All helper scripts respect:
    To override:
 
    ```bash
-   cmake … -DBASELINE_CPU=x86-64    # or another arch string
+   cmake … -DBASELINE_CPU=x86-64    # or another architecture string
    ```
 
-   This controls the `-march=` flag in your CMakeLists.
+   This controls the `-march=` flag in the CMakeLists.
 
 ---
 
@@ -61,25 +68,25 @@ All helper scripts respect:
 
 ```bash
 cmake \
-  -S ${SRC_ULAND}/usr.sbin/config \
+  -S "${SRC_ULAND}/usr.sbin/config" \
   -B build/config \
   -G Ninja
 
 cmake --build build/config
 ```
 
-* Produces `build/config/config`, which generates per‐variant compile directories.
+* Produces `build/config/config`, which generates per-variant compile directories.
 
 ---
 
-## 2 · Generate Kernel Build Directory
+## 2 · Generate the Kernel Build Directory
 
 ```bash
-cd ${SRC_KERNEL}/sys/i386/conf
+cd "${SRC_KERNEL}/sys/i386/conf"
 ../../build/config/config GENERIC.i386
 ```
 
-* Creates `../compile/GENERIC.i386` (or a similar variant directory).
+* Creates `../compile/GENERIC.i386` containing all `Makefile` fragments.
 
 ---
 
@@ -87,7 +94,7 @@ cd ${SRC_KERNEL}/sys/i386/conf
 
 ```bash
 cmake \
-  -S ${SRC_KERNEL}/compile/GENERIC.i386 \
+  -S "${SRC_KERNEL}/compile/GENERIC.i386" \
   -B build/kernel \
   -G Ninja \
   -DCMAKE_BUILD_TYPE=Release \
@@ -95,29 +102,29 @@ cmake \
   -DCMAKE_C_FLAGS="-O3 -fuse-ld=lld" \
   -DCMAKE_CXX_FLAGS="-O3 -fuse-ld=lld" \
   -DLLVM_ENABLE_LTO=ON \
-  -DBASELINE_CPU=${BASELINE_CPU}
+  -DBASELINE_CPU="${BASELINE_CPU}"
 
 ninja -C build/kernel
 ```
 
-* **Optional**: add `-DLLVM_ENABLE_POLLY=ON` or post-process with `llvm-bolt` for PGO/POLLY.
+* **Optional**: add `-DLLVM_ENABLE_POLLY=ON` or post-process with `llvm-bolt` for advanced PGO/Polly optimizations.
 
 ---
 
 ## 4 · Build User-Space Services
 
-Each service under `${SRC_ULAND}` has its own CMake stanza:
+Each service under `${SRC_ULAND}` uses its own CMake directory:
 
 ```bash
 cmake \
-  -S ${SRC_ULAND}/servers/fs \
+  -S "${SRC_ULAND}/servers/fs" \
   -B build/fs \
   -G Ninja
 
 cmake --build build/fs
 ```
 
-* You can then install with:
+* Install with:
 
   ```bash
   cmake --install build/fs --prefix /usr/libexec
@@ -135,22 +142,22 @@ cmake \
 
 cmake --build build/tests
 
-./build/tests/test_kern    # should print “all ok”
+./build/tests/test_kern   # should print "all ok"
 ```
 
 ---
 
 ## 6 · Legacy Makefile Support
 
-If you prefer the classic Make in `tests/`:
+If you prefer the classic `Makefile` in `tests/`:
 
-1. **Build the static libs** first:
+1. **Build the static libraries** first:
 
    ```bash
    cmake -S . -B build -G Ninja
    cmake --build build --target ipc posix kern_stubs
    ```
-2. **Run the Makefile**:
+2. **Run the legacy Make**:
 
    ```bash
    make -C tests
@@ -158,14 +165,14 @@ If you prefer the classic Make in `tests/`:
 
 ---
 
-## 7 · Cleaning Up
+## 7 · Cleaning Build Outputs
 
-Before committing, purge all generated artifacts:
+Before committing, remove all generated artifacts to keep the tree clean:
 
 ```bash
-rm -rf build/                                    # CMake/Ninja outputs
-rm -rf ${SRC_KERNEL}/sys/i386/compile/*          # variant compile dirs
-git clean -fdx                                   # double-check nothing left
+rm -rf build/                                 # CMake/Ninja outputs
+rm -rf "${SRC_KERNEL}/sys/i386/compile/"*     # per-variant dirs
+git clean -fdx                                # purge any untracked files
 ```
 
-Keeping the tree free of build outputs prevents merge conflicts and keeps patches concise.
+Keeping the repository free of temporary files prevents merge conflicts and ensures patches remain concise.
