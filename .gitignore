@@ -5,3 +5,7 @@
 *.log
 compile/
 usr/src/**/obj
+
+# Ignore object and output files
+*.o
+*.out
