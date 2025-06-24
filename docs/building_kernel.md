@@ -8,7 +8,8 @@ Before building, run the repository's `setup.sh` script as root to install all r
 
 If `bison` is missing, install it and rerun `setup.sh`. The script now sets
 `YACC="bison -y"` automatically using `/etc/profile.d/yacc.sh`. Then proceed
-with the steps below.
+with the steps below. The helper script `tools/check_build_env.sh` fails unless
+`$YACC` equals `bison -y`.
 
 The repository also includes a simple **CMake** build. After installing the
 dependencies you can configure the entire tree using Ninja:
