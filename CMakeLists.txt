@@ -11,6 +11,8 @@ endif()
 
 project(tarantula C)
 set(CMAKE_C_STANDARD 23)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -march=x86-64-v1 -mfpmath=sse -msse")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -march=x86-64-v1 -mfpmath=sse -msse")
 find_package(BISON)
 if(BISON_FOUND)
   message(STATUS "Bison found: ${BISON_EXECUTABLE}")

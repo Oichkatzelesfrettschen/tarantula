@@ -65,8 +65,8 @@ fi
 cat <<'ENV' | sudo tee /etc/profile.d/tarantula.sh >/dev/null
 export CC=clang
 export CXX=clang++
-export CFLAGS="-O3 -march=native"
-export CXXFLAGS="-O3 -march=native"
+export CFLAGS="-O3 -march=x86-64-v1 -mfpmath=sse -msse"
+export CXXFLAGS="-O3 -march=x86-64-v1 -mfpmath=sse -msse"
 export LDFLAGS="-fuse-ld=lld"
 ENV
 
