@@ -40,9 +40,7 @@ For a summary of directory mappings during the reorganization see
 - Categorize drivers by interface type and update them to use the HAL.
 
 ## Phase 6: Integration and Validation
-- Establish continuous integration builds for i686 and x86_64 targets.
-  The GitHub workflow now compiles each architecture with GCC and Clang using
-  `-m32` or `-m64` flags.
+- A GitHub workflow briefly compiled each architecture with GCC and Clang using `-m32` or `-m64` flags. That setup has since been removed, so builds must be run manually.
 
 - Update library makefiles to honor `CFLAGS`/`LDFLAGS` so both architectures
   link properly.
