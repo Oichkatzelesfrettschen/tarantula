@@ -11,6 +11,7 @@ endif()
 
 project(tarantula C)
 set(CMAKE_C_STANDARD 23)
+add_compile_options(-march=x86-64 -msse -mno-avx)
 find_package(BISON)
 if(BISON_FOUND)
   message(STATUS "Bison found: ${BISON_EXECUTABLE}")

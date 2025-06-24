@@ -41,10 +41,13 @@ This creates a directory such as `../compile/GENERIC.i386`.
 ```sh
 cmake -S ../compile/GENERIC.i386 -B build/kernel -G Ninja \
       -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_C_STANDARD=23 -DCMAKE_C_FLAGS='-O3' \
+      -DCMAKE_C_STANDARD=23 \
+      -DCMAKE_C_FLAGS='-O3 -march=x86-64 -msse -mno-avx' \
       -DLLVM_ENABLE_LTO=ON
 ninja -C build/kernel
 ```
+The top-level `CMakeLists.txt` enables `-march=x86-64 -msse -mno-avx` for all
+targets. Adjust these options when compiling for different processors.
 Optional Polly and BOLT optimizations can be enabled by passing
 `-DLLVM_ENABLE_POLLY=ON` and post-processing the binary with `llvm-bolt`.
 
