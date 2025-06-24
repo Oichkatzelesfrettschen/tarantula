@@ -67,3 +67,14 @@ cmake --build build/tests
 ./build/tests/test_kern
 ```
 It prints `all ok` when the stubs behave correctly.
+
+The historical makefile in `tests/` still works, but it expects the
+static libraries from the main CMake build.  Run the root build first
+to produce `libipc.a`, `libposix.a` and `libkern_stubs.a` under
+`build/`, then invoke `make`:
+
+```sh
+cmake -S . -B build -G Ninja
+cmake --build build --target ipc posix kern_stubs
+make -C tests
+```
