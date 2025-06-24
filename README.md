@@ -39,6 +39,11 @@ cmake --build build
 from the historic `bmake` system to CMake.  The build system always uses
 **clang** and targets C23 with `-O3`, link-time optimization and optional
 LLVM Polly/BOLT passes.
+When configuring on x86‑64 hosts, the build automatically enables the
+`ENABLE_NATIVE_OPT` option, appending `-march=x86-64 -mmmx -msse -msse2`
+to the default compiler flags.  This provides conservative SIMD support
+that works on all modern 64‑bit processors.  Disable it with
+`-DENABLE_NATIVE_OPT=OFF` or by setting your own `CMAKE_C_FLAGS`.
 `setup.sh` also checks `third_party/apt` for local `.deb` files and
 `third_party/pip` for Python wheels before contacting the network.
 Populate these directories with `apt-get download <pkg>` and

@@ -11,6 +11,18 @@ endif()
 
 project(tarantula C)
 set(CMAKE_C_STANDARD 23)
+
+# Optionally enable x86-64 specific optimizations. These flags target
+# baseline 64-bit CPUs with SSE2 and MMX support. The option defaults to
+# ON so users get reasonable performance out of the box, but it can be
+# disabled or overridden by specifying custom CMAKE_C_FLAGS/CMAKE_CXX_FLAGS.
+option(ENABLE_NATIVE_OPT "Use x86-64 SSE2 optimizations" ON)
+
+if(ENABLE_NATIVE_OPT AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64|AMD64)$")
+  set(_NATIVE_FLAGS "-march=x86-64 -mmmx -msse -msse2")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${_NATIVE_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${_NATIVE_FLAGS}")
+endif()
 find_package(BISON)
 if(BISON_FOUND)
   message(STATUS "Bison found: ${BISON_EXECUTABLE}")
