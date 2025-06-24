@@ -3,5 +3,9 @@
 *.o
 *.a
 *.log
-compile/
 usr/src/**/obj
+
+# Build directories
+build/
+*/build/
+compile/
