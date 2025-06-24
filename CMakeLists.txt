@@ -47,6 +47,11 @@ target_include_directories(fs_server PRIVATE
   ${CMAKE_SOURCE_DIR}/sys/sys
   ${CMAKE_SOURCE_DIR}/sys/i386/include)
 target_compile_definitions(fs_server PRIVATE KERNEL)
+if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+  # Enable vector instruction sets when building with clang.
+  # GCC's older versions mis-handle these flags on some targets.
+  target_compile_options(fs_server PRIVATE -msse -mavx2)
+endif()
 target_link_libraries(fs_server PRIVATE ipc)
 
 install(FILES src-headers/arch.h DESTINATION include)
