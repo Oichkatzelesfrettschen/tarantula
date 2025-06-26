@@ -4,18 +4,17 @@ cmake_minimum_required(VERSION 3.16)
 # Project definition and language
 # ────────────────────────────────────────────────────────────────────────────
 project(tarantula LANGUAGES C)
-set(CMAKE_C_STANDARD 23)
+
+# Require C23, no compiler‐specific extensions
+set(CMAKE_C_STANDARD        23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_C_EXTENSIONS OFF)
+set(CMAKE_C_EXTENSIONS      OFF)
 
 # ────────────────────────────────────────────────────────────────────────────
 # Default compiler selection (overrideable via -DCMAKE_C_COMPILER)
 # ────────────────────────────────────────────────────────────────────────────
 if(NOT DEFINED CMAKE_C_COMPILER)
   set(CMAKE_C_COMPILER clang)
-endif()
-if(NOT DEFINED CMAKE_CXX_COMPILER)
-  set(CMAKE_CXX_COMPILER clang++)
 endif()
 
 # ────────────────────────────────────────────────────────────────────────────
@@ -37,13 +36,14 @@ if(ENABLE_NATIVE_OPT AND CMAKE_C_COMPILER_ID STREQUAL "Clang")
       -fuse-ld=lld
   )
 else()
-  message(STATUS "Native optimizations disabled or non-Clang compiler detected")
+  message(STATUS "Native optimizations disabled or non–Clang compiler detected; using -O3 only")
   set(BASE_CFLAGS -O3)
   set(BASE_LDFLAGS -fuse-ld=lld)
 endif()
 
-# Apply fallback linker flags globally
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${BASE_LDFLAGS}")
+# Apply flags globally to all C targets
+string(APPEND CMAKE_C_FLAGS            " ${BASE_CFLAGS}")
+string(APPEND CMAKE_EXE_LINKER_FLAGS   " ${BASE_LDFLAGS}")
 
 # ────────────────────────────────────────────────────────────────────────────
 # Bison detection
@@ -112,9 +112,13 @@ target_include_directories(fs_server PRIVATE
 target_compile_definitions(fs_server PRIVATE KERNEL)
 target_link_libraries(fs_server PRIVATE ipc)
 target_compile_options(fs_server PRIVATE ${BASE_CFLAGS})
+
 if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
   # Enable additional SIMD support when building with Clang
-  target_compile_options(fs_server PRIVATE -msse -mavx2)
+  target_compile_options(fs_server PRIVATE
+    -msse
+    -mavx2
+  )
 endif()
 
 # ────────────────────────────────────────────────────────────────────────────
