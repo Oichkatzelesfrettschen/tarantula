@@ -2,6 +2,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/types.h>
 #include "fs_server.h"
 
 int

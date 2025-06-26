@@ -41,19 +41,13 @@ else()
   set(BASE_LDFLAGS -fuse-ld=lld)
 endif()
 
-<<<<<<< eirikr/add-and-document-compilation-flags-in-cmake
-project(tarantula C)
-set(CMAKE_C_STANDARD 23)
-add_compile_options(-march=x86-64 -msse -mno-avx)
-=======
 # Apply flags globally to all C targets
-string(APPEND CMAKE_C_FLAGS            " ${BASE_CFLAGS}")
-string(APPEND CMAKE_EXE_LINKER_FLAGS   " ${BASE_LDFLAGS}")
+string(APPEND CMAKE_C_FLAGS          " ${BASE_CFLAGS}")
+string(APPEND CMAKE_EXE_LINKER_FLAGS " ${BASE_LDFLAGS}")
 
 # ────────────────────────────────────────────────────────────────────────────
 # Bison detection
 # ────────────────────────────────────────────────────────────────────────────
->>>>>>> master
 find_package(BISON)
 if(BISON_FOUND)
   message(STATUS "Bison found: ${BISON_EXECUTABLE}")
