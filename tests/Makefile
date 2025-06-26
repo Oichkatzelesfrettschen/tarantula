@@ -2,9 +2,9 @@ CC = clang
 CXX ?= clang++
 CFLAGS ?= -O2 -std=c23 -Wall -Werror
 CXXFLAGS ?= -O2 -std=c++23 -Wall -Werror
+CXXFLAGS += -D_Static_assert=static_assert
 	CPPFLAGS = -I../tests/include -I../src-headers -I../src-headers/machine -I../src-kernel -I../include
-LIBS = ../src-kernel/libkern_stubs.a ../src-lib/libipc/libipc.a \
-	       ../src-lib/libposix/libposix.a
+LIBS = ../build/libkern_stubs.a ../build/libipc.a ../build/libposix.a
 	
 OBJS = test_kern.o fs_open.o pm_entry.o vm_entry.o sched_stub.o mock_vm.o
 FIFO_OBJS = fifo_test.o

@@ -1,4 +1,5 @@
 /* Simple wrapper used by the exokernel file hook. */
+#include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>

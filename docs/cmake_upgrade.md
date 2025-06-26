@@ -10,6 +10,12 @@ Run `setup.sh` to install clang, bison and the other toolchain components.  Code
 sudo ./setup.sh
 ```
 
+By default the top-level `CMakeLists.txt` enables a modest set of
+SSE2-related optimizations when configuring on x86‑64.  These flags
+(`-march=x86-64 -mmmx -msse -msse2`) provide a baseline that works on
+all 64‑bit processors.  Pass `-DENABLE_NATIVE_OPT=OFF` if you need to
+disable them or supply custom `CMAKE_C_FLAGS` values.
+
 ## 2. Create CMakeLists.txt next to each Makefile
 
 Start by introducing small `CMakeLists.txt` files beside the existing makefiles.  Mirror the source lists and include paths from the makefiles.  Use `add_library()` or `add_executable()` targets with the same output names.
