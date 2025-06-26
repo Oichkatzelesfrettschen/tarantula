@@ -3,7 +3,6 @@
 .codex/setup.sh
 .cshrc
 .github/AGENTS.md
-.github/workflows/build.yml
 .gitignore
 .profile
 AGENTS.md

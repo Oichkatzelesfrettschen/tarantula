@@ -1,69 +1,175 @@
-# Building the 4.4BSD-Lite2 kernel
+````markdown
+# Building the 4.4BSD-Lite2 Kernel
 
-This guide explains how to build the historic 4.4BSD-Lite2 sources with a modern
-CMake toolchain.  The commands assume an x86_64 host but work on i386 when using
-`-m32` flags.
+This guide explains how to compile the historic **4.4BSD-Lite2** sources on an **x86_64** (or **i386** with `-m32`) Linux host using **Clang**, **CMake**, and **Ninja**. It assumes you have root privileges to install toolchains and that your repository includes:
 
-Before building, run the repository's `setup.sh` script as root to install all required toolchains. Codex CI calls `.codex/setup.sh`, which passes `--offline` when needed. The script installs **clang**, **bison**, `cmake` and related packages, logging to `/tmp/setup.log`.
+- `setup.sh`                  – installs clang, bison, cmake, ninja, etc. (logs to `/tmp/setup.log`)  
+- `.codex/setup.sh`           – CI wrapper (accepts `--offline`)  
+- `tools/check_build_env.sh`  – will fail unless `$YACC` is set to `bison -y`  
 
-If `bison` is missing, install it and rerun `setup.sh`. The script now sets
-`YACC="bison -y"` automatically using `/etc/profile.d/yacc.sh`. Then proceed
-with the steps below.
+All helper scripts respect:
 
-The repository also includes a simple **CMake** build. After installing the
-dependencies you can configure the entire tree using Ninja:
+- `SRC_ULAND`  → userland sources (default: `src-uland` or `usr/src/usr.sbin/config`)  
+- `SRC_KERNEL` → kernel sources (default: `src-kernel` or `usr/src/sys/i386`)  
 
-Before building, ensure the root script `setup.sh` is run as as root to configure the environment.  The script installs all required
-packages using `apt-get update && apt-get dist-upgrade` followed by
-installation of **clang**, **bison**, **cmake** and **ninja**.  Packages that are
-missing from `apt` are retried with `pip` or `npm`.  When invoked via
-`.codex/setup.sh` the wrapper passes `--offline` if the network is unreachable.
+---
 
-All helper scripts expect the environment variables `SRC_ULAND` and
-`SRC_KERNEL` to point to the userland and kernel source directories.  They
-default to `src-uland` and `src-kernel`.
-=
-## 1. Build the `config` utility
-```sh
-cmake -S ${SRC_ULAND:-usr/src}/usr.sbin/config -B build/config -G Ninja
+## 1. Install & Verify Dependencies
+
+1. **Run setup** as root:
+   ```bash
+   sudo ./setup.sh
+````
+
+or in CI:
+
+```bash
+./.codex/setup.sh --offline
+```
+
+2. **Ensure** `$YACC` is correct:
+
+   ```bash
+   source /etc/profile.d/yacc.sh       # sets YACC="bison -y"
+   tools/check_build_env.sh            # enforces YACC value
+   ```
+
+3. **Verify** required tools:
+
+   ```bash
+   command -v clang    # should print the clang path
+   command -v bison    # should print the bison path
+   command -v cmake    # should print the cmake path
+   command -v ninja    # should print the ninja path
+   ```
+
+4. **Set source‐tree variables** (if nonstandard):
+
+   ```bash
+   export SRC_ULAND=${SRC_ULAND:-src-uland}
+   export SRC_KERNEL=${SRC_KERNEL:-src-kernel}
+   ```
+
+---
+
+## 2. Baseline CPU Flags
+
+By default we target **x86-64-v1** with SSE2/MMX:
+
+```text
+-march=x86-64-v1 -msse2 -mmmx -mfpmath=sse -O3 -fuse-ld=lld
+```
+
+To override:
+
+```bash
+cmake … -DBASELINE_CPU=x86-64    # or another architecture string
+```
+
+---
+
+## 3. Build the `config` Utility
+
+```bash
+cmake \
+  -S "${SRC_ULAND}/usr.sbin/config" \
+  -B build/config \
+  -G Ninja
+
 cmake --build build/config
 ```
-The resulting binary generates kernel build directories.
 
-## 2. Run `config`
-```sh
-cd sys/i386/conf
+* Produces `build/config/config`, which generates per-variant compile directories.
+
+---
+
+## 4. Generate the Kernel Build Directory
+
+```bash
+cd "${SRC_KERNEL}/sys/i386/conf"
 ../../build/config/config GENERIC.i386
 ```
-This creates a directory such as `../compile/GENERIC.i386`.
 
-## 3. Configure and build the kernel
-```sh
-cmake -S ../compile/GENERIC.i386 -B build/kernel -G Ninja \
-      -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_C_STANDARD=23 -DCMAKE_C_FLAGS='-O3' \
-      -DLLVM_ENABLE_LTO=ON
+* Creates `../compile/GENERIC.i386` with all Makefile fragments.
+
+---
+
+## 5. Configure & Build the Kernel
+
+```bash
+cmake \
+  -S "${SRC_KERNEL}/compile/GENERIC.i386" \
+  -B build/kernel \
+  -G Ninja \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_STANDARD=23 \
+  -DCMAKE_C_FLAGS="-O3 -fuse-ld=lld" \
+  -DCMAKE_CXX_FLAGS="-O3 -fuse-ld=lld" \
+  -DLLVM_ENABLE_LTO=ON \
+  -DBASELINE_CPU="${BASELINE_CPU}"
+
 ninja -C build/kernel
 ```
-Optional Polly and BOLT optimizations can be enabled by passing
-`-DLLVM_ENABLE_POLLY=ON` and post-processing the binary with `llvm-bolt`.
 
-## Building user-space components
-The microkernel and exokernel plans compile user-space services under
-`src-uland/`.  Configure each directory with CMake and build with Ninja:
-```sh
-cmake -S src-uland/servers/fs -B build/fs -G Ninja
+> **Optional:**
+>
+> * Enable Polly: `-DLLVM_ENABLE_POLLY=ON`
+> * Post-process with `llvm-bolt` for PGO/BOLT optimizations.
+
+---
+
+## 6. Build User-Space Services
+
+Each service under `${SRC_ULAND}` has its own CMake directory:
+
+```bash
+cmake \
+  -S "${SRC_ULAND}/servers/fs" \
+  -B build/fs \
+  -G Ninja
+
 cmake --build build/fs
 ```
-Install the resulting binaries under `/usr/libexec` or another suitable
-location.
 
-## Running Kernel Self-Tests
-A small program under `tests/` exercises the kernel stubs without booting the
-system:
-```sh
-cmake -S tests -B build/tests -G Ninja
-cmake --build build/tests
-./build/tests/test_kern
+Install with:
+
+```bash
+cmake --install build/fs --prefix /usr/libexec
 ```
-It prints `all ok` when the stubs behave correctly.
+
+---
+
+## 7. Run Kernel Self-Tests
+
+```bash
+cmake \
+  -S tests \
+  -B build/tests \
+  -G Ninja
+
+cmake --build build/tests
+
+./build/tests/test_kern   # should print "all ok"
+```
+
+---
+
+## 8. Legacy Makefile Support
+
+```bash
+cmake -S . -B build -G Ninja
+cmake --build build --target ipc posix kern_stubs
+make -C tests
+```
+
+---
+
+## 9. Cleaning Up
+
+```bash
+rm -rf build/                                # CMake/Ninja outputs
+rm -rf "${SRC_KERNEL}/sys/i386/compile/"*    # per-variant dirs
+git clean -fdx                               # purge untracked files
+```
+
+Keeping the repository free of temporary files prevents merge conflicts and keeps patches concise.
