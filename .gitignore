@@ -5,9 +5,7 @@
 # ── 1. Build & object directories ────────────────────────────────────────────
 **/obj/                        # any “obj” folder at any depth
 compile/                       # legacy compile output directory
-build/                         # top-level build output
-**/build/                      # per-module build dirs
-build_*/                       # numbered build directories
+build*/                        # any build directory (e.g., build, build_42)
 builds/                        # aggregated build outputs
 */CMakeFiles/                  # CMake intermediate files
 
