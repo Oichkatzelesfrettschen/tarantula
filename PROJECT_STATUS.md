@@ -3,6 +3,7 @@
 ## Recent Updates
 - Added compatibility typedef for run counters in `src-headers/exokernel.h`.
 - Included `<stdio.h>` and `<math.h>` in `src-headers/sys/systm.h` to avoid warnings.
-- Updated `.gitignore` to exclude `build_*`, `builds/`, and `*/CMakeFiles/` directories.
-- Removed the temporary `build/` directory.
+- Consolidated build directory ignore patterns.
+- `.gitignore` now ignores `build*/`, `builds/`, and `*/CMakeFiles/`.
+- Verified the repository contains no residual build directories.
 
