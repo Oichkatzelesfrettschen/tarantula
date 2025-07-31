@@ -43,6 +43,8 @@
 #define _SYS_SYSTM_H_
 
 #include <stdnoreturn.h>
+#include <stdio.h>   /* for printf prototype */
+#include <math.h>    /* for log prototype */
 
 /*
  * The `securelevel' variable controls the security level of the system.
