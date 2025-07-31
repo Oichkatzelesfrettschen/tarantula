@@ -7,6 +7,9 @@
 compile/                       # legacy compile output directory
 build/                         # top-level build output
 **/build/                      # per-module build dirs
+build_*/                       # numbered build directories
+builds/                        # aggregated build outputs
+*/CMakeFiles/                  # CMake intermediate files
 
 # ── 2. Compiled files ───────────────────────────────────────────────────────
 **/*.o                         # object files
