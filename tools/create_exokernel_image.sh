@@ -26,6 +26,8 @@ dd if=/dev/zero of="$IMAGE" bs=1 count=0 seek=$SIZE
 mke2fs -q "$IMAGE"
 
 MNT=$(mktemp -d)
+# Ensure the mount point is dismantled even on premature exit.
+trap 'umount "$MNT" && rmdir "$MNT"' EXIT
 mount -o loop "$IMAGE" "$MNT"
 
 mkdir -p "$MNT/boot" "$MNT/bin" "$MNT/sbin"
@@ -35,7 +37,5 @@ cp "$FS_SERVER_BIN" "$MNT/bin/"
 cp "$PROC_MGR_BIN" "$MNT/bin/"
 
 sync
-umount "$MNT"
-rmdir "$MNT"
 
 echo "Created $IMAGE"
