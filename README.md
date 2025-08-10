@@ -17,8 +17,10 @@ The story: https://en.wikipedia.org/wiki/History_of_the_Berkeley_Software_Distri
 Downloaded from: ftp://alge.anart.no/pub/BSD/4.4BSD-Lite/4.4BSD-Lite2.tar.gz
 
 For kernel build instructions see [docs/building_kernel.md](docs/building_kernel.md).
-Run `setup.sh` first to install required tools. The script installs `aptitude`
-and fetches **clang**, **bison**, **cmake**, **ninja** and linters such as
+Run `setup.sh` first to install required tools. After it completes, install
+the repository's git hooks with `pre-commit install --install-hooks` as
+described in [docs/precommit.md](docs/precommit.md). The script installs
+`aptitude` and fetches **clang**, **bison**, **cmake**, **ninja** and linters such as
 `shellcheck` and `codespell`. It can be invoked directly or via
 `.codex/setup.sh` which also installs the Coq proof assistant, TLA+ utilities,
 Agda and Isabelle/HOL for CI. The root script additionally pulls in Graphviz,
