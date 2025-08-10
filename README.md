@@ -1,5 +1,15 @@
 # BSD/Tarantula: A Modern Microkernelization Attempt of 4.4BSD-Lite2: The Final Unix from Berkeley. 
-#Placeholder about the original project and the design goals with a specific tiny, high-performance "exokernel like" layer hybridized or chimera'd with a microkernel design with a monolithic-like or microkernel-like hybrid userspace. 
+
+BSD/Tarantula modernizes the historic 4.4BSD-Lite2 codebase by carving out a
+minimal microkernel that retains only scheduling, memory and IPC hooks. Device
+drivers, filesystems and networking stacks migrate into user-space servers to
+exercise a modular architecture. An accompanying exokernel track goes further
+by exposing hardware resources through a thin protection layer so libraries can
+implement their own policies. See
+[docs/microkernel_plan.md](docs/microkernel_plan.md) and
+[docs/microkernel_functional_model.md](docs/microkernel_functional_model.md)
+for microkernel details, and
+[docs/exokernel_plan.md](docs/exokernel_plan.md) for the exokernel roadmap.
 
 # `setup.sh` features
 The environment setup script logs every command to `/tmp/setup.log` and runs
