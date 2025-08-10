@@ -66,6 +66,42 @@ If no flags are provided the script behaves as `--all`.
 You can verify which commands are available at any time by running
 `tools/check_build_env.sh`. It lists missing build tools and exits
 non-zero when any are absent.
+
+## Running Tests
+
+Run `./setup.sh --core` first to provision the toolchain. The core bucket
+installs **clang**, **cmake**, **ninja**, **bison** and other utilities
+required to compile the test suite.
+
+### Makefile targets
+
+The historical `tests/Makefile` builds four self-contained binaries:
+
+```sh
+make -C tests          # builds test_kern, spinlock_cpp, mailbox_test, fifo_test
+make -C tests clean    # removes objects and binaries
+```
+
+Execute the resulting programs directly, for example:
+
+```sh
+./tests/test_kern
+./tests/mailbox_test
+```
+
+### CMake option
+
+An experimental CMake configuration can also generate the test
+executables:
+
+```sh
+cmake -S tests -B build/tests -G Ninja
+cmake --build build/tests
+./build/tests/test_kern   # should print "all ok"
+```
+
+Refer to [docs/building_kernel.md](docs/building_kernel.md) for a more
+detailed walkthrough.
 For FHS migration steps see [docs/fhs_migration.md](docs/fhs_migration.md).
 For microkernel tasks see [docs/microkernel_plan.md](docs/microkernel_plan.md)
 and the functional overview in
