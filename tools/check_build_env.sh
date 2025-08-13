@@ -9,7 +9,7 @@ for cmd in cmake ninja meson clang bison flex clang-format clang-tidy; do
   fi
 done
 
-# YACC must be explicitly set to "bison -y" after running setup.sh
+# YACC must be explicitly set to "bison -y" after provisioning
 if [ "${YACC:-}" != "bison -y" ]; then
   missing+=("YACC=\"bison -y\"")
 fi

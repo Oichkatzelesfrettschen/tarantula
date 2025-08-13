@@ -4,11 +4,9 @@ The project now uses a modern CMake build system with **clang** and **bison**.  
 
 ## 1. Prepare the environment
 
-Run `setup.sh` to install clang, bison and the other toolchain components.  Codex environments may call `.codex/setup.sh`, which wraps this script and installs extra verification tools.  CMake will detect these automatically.  Ensure `YACC="bison -y"` is exported in your shell.
-
-```sh
-sudo ./setup.sh
-```
+Install the toolchain as described in [setup_guide.md](setup_guide.md). CMake
+will detect these tools automatically. Ensure `YACC="bison -y"` is exported in
+your shell.
 
 By default the top-level `CMakeLists.txt` enables a modest set of
 SSE2-related optimizations when configuring on x86‑64.  These flags

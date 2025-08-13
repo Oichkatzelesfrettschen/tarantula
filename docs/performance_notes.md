@@ -13,7 +13,7 @@ The AVX2 path offers a small win over the scalar implementation. Systems without
 
 ## Default Optimization Flags
 
-The build system now defaults to SSE-backed math operations for consistent floating-point semantics on modern hardware. Both `.codex/setup.sh` and the top-level `CMakeLists.txt` export the following baseline flags:
+The build system now defaults to SSE-backed math operations for consistent floating-point semantics on modern hardware. The top-level `CMakeLists.txt` exports the following baseline flags:
 
 ```sh
 -O3 -march=x86-64-v1 -mfpmath=sse -msse2 -mmmx

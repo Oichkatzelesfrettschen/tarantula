@@ -3,9 +3,8 @@
 
 This guide shows how to compile the historic **4.4BSD-Lite2** sources on an **x86_64** (or **i386** with `-m32`) Linux host using **Clang**, **CMake**, and **Ninja**. It assumes you have root privileges to install toolchains and that your repo includes:
 
-- `setup.sh`                  – installs clang, bison, cmake, ninja, etc. (logs to `/tmp/setup.log`)  
-- `.codex/setup.sh`           – CI wrapper (accepts `--offline`)  
-- `tools/check_build_env.sh`  – enforces `$YACC="bison -y"`  
+- `docs/setup_guide.md`       – outlines required packages and environment variables
+- `tools/check_build_env.sh`  – enforces `$YACC="bison -y"`
 
 All helper scripts respect:
 
@@ -18,16 +17,16 @@ export SRC_KERNEL=${SRC_KERNEL:-src-kernel} # kernel sources
 
 ## 1 · Install & Verify Dependencies
 
-1. **Run the setup script** as root:
+1. **Install the toolchain** using your system package manager:
 
    ```bash
-   sudo ./setup.sh
-   ```
-
-   Or in CI environments:
-
-   ```bash
-   ./.codex/setup.sh --offline
+   sudo apt-get update
+   sudo apt-get install -y \
+     build-essential cmake ninja-build \
+     clang lld lldb llvm \
+     bison byacc flex \
+     bear ccache gdb ripgrep \
+     clang-format clang-tidy pre-commit
    ```
 2. **Ensure** `$YACC` is correct for legacy Makefiles:
 

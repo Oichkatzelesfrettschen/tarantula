@@ -7,9 +7,8 @@ It mirrors a BSD root filesystem layout.
 - `SOURCE_TREE_OVERVIEW.md` gives a summary of the top-level directories.
 - The `docs/` directory holds build instructions and modernization plans.
 
-The optional document `docs/codex_bootstrap.md` explains how to run the
-OpenAI Codex CLI at boot so `setup.sh` stays up to date even on hosts that
-drop network connectivity shortly after start.
+`docs/setup_guide.md` outlines the manual steps for installing the toolchain
+and analysis utilities.
 
 Each major subdirectory includes its own `AGENTS.md` describing that area.
 

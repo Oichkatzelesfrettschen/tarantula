@@ -11,14 +11,12 @@ implement their own policies. See
 for microkernel details, and
 [docs/exokernel_plan.md](docs/exokernel_plan.md) for the exokernel roadmap.
 
-# `setup.sh` features
-The environment setup script logs every command to `/tmp/setup.log` and runs
-with `set -x` debugging. Packages are installed first via `apt`, then `pip`, and
-finally `npm` if the previous methods fail. Before downloading external files it
-issues `curl --head` to test reachability. Any unreachable URLs are recorded
-below as a Markdown strikethrough entry.
-If any installs fail they are retried automatically at the end of the script and
-logged with timestamps for easier troubleshooting.
+# Environment provisioning
+Install prerequisites using the commands in
+[docs/setup_guide.md](docs/setup_guide.md). The guide replaces the former
+`setup.sh` script and enumerates every tool required to build and analyze the
+tree.
+For per-tool configuration guidance see [docs/tool_config.md](docs/tool_config.md); sample outputs appear in [docs/tool_reports.md](docs/tool_reports.md).
 
 # 4.4BSD-Lite2, the last Unix from Berkeley
 
@@ -27,18 +25,10 @@ The story: https://en.wikipedia.org/wiki/History_of_the_Berkeley_Software_Distri
 Downloaded from: ftp://alge.anart.no/pub/BSD/4.4BSD-Lite/4.4BSD-Lite2.tar.gz
 
 For kernel build instructions see [docs/building_kernel.md](docs/building_kernel.md).
-Run `setup.sh` first to install required tools. After it completes, install
-the repository's git hooks with `pre-commit install --install-hooks` as
-described in [docs/precommit.md](docs/precommit.md). The script installs
-`aptitude` and fetches **clang**, **bison**, **cmake**, **ninja** and linters such as
-`shellcheck` and `codespell`. It can be invoked directly or via
-`.codex/setup.sh` which also installs the Coq proof assistant, TLA+ utilities,
-Agda and Isabelle/HOL for CI. The root script additionally pulls in Graphviz,
-Doxygen and Sphinx for automatic documentation. The wrapper automatically
-switches to `--offline` when network access is unavailable. It can optionally
-install **mk-configure** to provide an Autotools-style layer on top.
-See `docs/codex_bootstrap.md` for automating this process with a systemd unit
-that runs Codex at boot.
+Install the toolchain using the commands in
+[docs/setup_guide.md](docs/setup_guide.md). After provisioning, set up the
+repository's git hooks with `pre-commit install --install-hooks` as described in
+[docs/precommit.md](docs/precommit.md).
 The tree also ships a minimal **CMake** configuration.  Generate Ninja files
 with:
 
@@ -56,34 +46,17 @@ When configuring on x86‑64 hosts, the build automatically enables the
 to the default compiler flags.  This provides conservative SIMD support
 that works on all modern 64‑bit processors.  Disable it with
 `-DENABLE_NATIVE_OPT=OFF` or by setting your own `CMAKE_C_FLAGS`.
-`setup.sh` also checks `third_party/apt` for local `.deb` files and
-`third_party/pip` for Python wheels before contacting the network.
-Populate these directories with `apt-get download <pkg>` and
-`pip download <pkg>` while online to enable offline runs.
-For a fully offline installation, place `.deb` files under
-`offline_packages/` and invoke `setup.sh --offline` to install them
-using `dpkg -i`.
-When run without the flag, `setup.sh` now tests network access with
-`apt-get update` and automatically enables offline mode if the command
-fails.
-Package groups can be selected with command-line flags:
-
-```sh
-./setup.sh --core      # install build tools and GUI frameworks
-./setup.sh --langs     # install language runtimes
-./setup.sh --cross     # install cross-compilers
-./setup.sh --all       # install everything
-```
-If no flags are provided the script behaves as `--all`.
-You can verify which commands are available at any time by running
-`tools/check_build_env.sh`. It lists missing build tools and exits
-non-zero when any are absent.
+For offline work, pre-download `.deb` packages into `third_party/apt` and Python
+wheels into `third_party/pip` using `apt-get download <pkg>` and `pip download
+<pkg>`. Copy those archives into `offline_packages/` and install them with
+`dpkg -i` when the network is unavailable. You can verify which commands are
+available at any time by running `tools/check_build_env.sh`; it lists missing
+tools and exits non-zero when any are absent.
 
 ## Running Tests
 
-Run `./setup.sh --core` first to provision the toolchain. The core bucket
-installs **clang**, **cmake**, **ninja**, **bison** and other utilities
-required to compile the test suite.
+Ensure the toolchain from [docs/setup_guide.md](docs/setup_guide.md) is
+installed before running the tests.
 
 ### Makefile targets
 

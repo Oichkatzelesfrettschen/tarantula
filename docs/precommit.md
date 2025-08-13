@@ -2,17 +2,10 @@
 
 This repository provides a `.pre-commit-config.yaml` with hooks for
 `clang-format`, `clang-tidy`, `shellcheck` and `codespell`. After cloning the
-repository run `pre-commit install --install-hooks` to set up the local git
-hooks. Running `setup.sh` installs the `pre-commit` tool via both `apt` and
-`pip`, installs `codespell`, and Codex automation calls `.codex/setup.sh` to
-ensure these tools are present in CI.
-The wrapper also installs additional theorem provers such as Agda and Isabelle/HOL to
-support formal verification tasks and automatically configures the git hooks.
-The script also installs `shellcheck` using `apt_pin_install` with a fallback to `pip`. Additional Python
-tools such as `configuredb`, `pytest`, `pyyaml`, `pylint` and `pyfuzz` are
-installed through `pip` as well. After executing
-the script no manual steps are needed, but you can re-install the hooks any
-time:
+repository install `pre-commit` and related utilities as described in
+[`docs/setup_guide.md`](setup_guide.md), then run `pre-commit install
+--install-hooks` to set up the local git hooks. You can re-install the hooks at
+any time:
 
 ```sh
 pre-commit install --install-hooks
