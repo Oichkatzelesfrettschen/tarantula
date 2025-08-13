@@ -24,11 +24,7 @@ These names remain unchanged to preserve the original distribution layout. When 
 
 ## Offline Packages and Third-Party Sources
 
-The repository contains an `offline_packages/` directory used by `setup.sh` when no network is available. Pre-downloaded `.deb` packages placed here are installed via `dpkg -i`. Python wheels cached under `third_party/pip/` and Debian packages in `third_party/apt/` are also checked before contacting the network.
-
-## Systemd Integration
-
-A sample unit file at `etc/systemd/system/codex-setup.service` demonstrates how to invoke Codex automatically at boot to repair and run `setup.sh`. See [codex_bootstrap.md](codex_bootstrap.md) for details.
+The repository contains an `offline_packages/` directory for stashing pre-downloaded `.deb` packages. Install them manually with `dpkg -i` when the network is unavailable. Python wheels cached under `third_party/pip/` and Debian packages in `third_party/apt/` are also checked before contacting the network.
 
 ## Migration Helpers
 

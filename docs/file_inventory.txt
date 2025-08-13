@@ -1,6 +1,5 @@
 .clang-format
 .clang-tidy
-.codex/setup.sh
 .cshrc
 .github/AGENTS.md
 .gitignore
@@ -141,7 +140,6 @@ docs/IPC.md
 docs/agents_overview.md
 docs/building_kernel.md
 docs/cmake_upgrade.md
-docs/codex_bootstrap.md
 docs/cross_architecture_porting.md
 docs/debug_build_env.md
 docs/dependency_graph.dot
@@ -220,7 +218,6 @@ etc/security
 etc/services
 etc/shells
 etc/syslog.conf
-etc/systemd/system/codex-setup.service
 etc/termcap
 etc/ttys
 etc/weekly
@@ -240,7 +237,6 @@ root/.login
 root/.profile
 root/.rhosts
 root/AGENTS.md
-setup.sh
 src-headers/AGENTS.md
 src-headers/arch.h
 src-headers/compat/svr4/svr4_machdep.h

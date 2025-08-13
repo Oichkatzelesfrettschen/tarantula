@@ -1,7 +1,8 @@
 # Offline Packages
 
-Place pre-downloaded `.deb` files in this directory when running `setup.sh --offline`.
-Each package should follow the usual `name_version_arch.deb` naming scheme. The script installs these packages with `dpkg -i`.
+Place pre-downloaded `.deb` files in this directory when preparing for offline
+installs. Each package should follow the usual `name_version_arch.deb` naming
+scheme. Install them manually with `dpkg -i`.
 
 Populate using:
 

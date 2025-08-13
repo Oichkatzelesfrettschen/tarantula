@@ -21,8 +21,8 @@ specific directories. Below is a short summary of each file.
   components with compatibility makefiles.
 - **src-uland/servers/AGENTS.md** – build each server using its local
   Makefile.
-- **third_party/AGENTS.md** – caches archives used by `setup.sh` for
-  offline installs.
+- **third_party/AGENTS.md** – caches archives used during offline
+  environment provisioning.
 - **tools/AGENTS.md** – helper scripts; no tests required to modify
   them.
 - **usr/AGENTS.md** – classic userland tree built with historical

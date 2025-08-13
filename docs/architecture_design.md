@@ -97,7 +97,7 @@ New code follows upcoming C23 conventions:
 
 ## 6. Toolchain Strategy
 
-`setup.sh` attempts to install utilities that aid analysis and documentation:
+The environment provisioning step installs utilities that aid analysis and documentation:
 
 - **cloc** for language statistics.
 - **lizard** for cyclomatic complexity.
