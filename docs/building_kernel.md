@@ -4,7 +4,7 @@
 This guide shows how to compile the historic **4.4BSD-Lite2** sources on an **x86_64** (or **i386** with `-m32`) Linux host using **Clang**, **CMake**, and **Ninja**. It assumes you have root privileges to install toolchains and that your repo includes:
 
 - `docs/setup_guide.md`       – outlines required packages and environment variables
-- `tools/check_build_env.sh`  – enforces `$YACC="bison -y"`
+- `tools/check_build_env.sh`  – verifies presence of build tools like `clang` and `bison`
 
 All helper scripts respect:
 
@@ -20,21 +20,15 @@ export SRC_KERNEL=${SRC_KERNEL:-src-kernel} # kernel sources
 1. **Install the toolchain** using your system package manager:
 
    ```bash
-   sudo apt-get update
-   sudo apt-get install -y \
+   sudo apt update
+   sudo apt install -y \
      build-essential cmake ninja-build \
      clang lld lldb llvm \
-     bison byacc flex \
+     bison flex \
      bear ccache gdb ripgrep \
      clang-format clang-tidy pre-commit
    ```
-2. **Ensure** `$YACC` is correct for legacy Makefiles:
-
-   ```bash
-   source /etc/profile.d/yacc.sh       # sets YACC="bison -y"
-   tools/check_build_env.sh            # validates YACC value
-   ```
-3. **Verify** required tools:
+2. **Verify** required tools:
 
    ```bash
    command -v clang
@@ -47,11 +41,11 @@ export SRC_KERNEL=${SRC_KERNEL:-src-kernel} # kernel sources
 
 ## 2 · Baseline CPU & Linker Flags
 
-By default we target **x86-64-v1** with SSE2/MMX and LLVM’s `lld`.  To set this globally, pass:
+By default we target **x86-64** with SSE2/MMX and LLVM’s `lld`.  To set this globally, pass:
 
 ```bash
--DCMAKE_C_FLAGS="-O3 -fuse-ld=lld -march=x86-64-v1 -msse2 -mmmx -mfpmath=sse" \
--DCMAKE_CXX_FLAGS="-O3 -fuse-ld=lld -march=x86-64-v1 -msse2 -mmmx -mfpmath=sse"
+-DCMAKE_C_FLAGS="-O3 -fuse-ld=lld -march=x86-64 -msse2 -mmmx -mfpmath=sse" \
+-DCMAKE_CXX_FLAGS="-O3 -fuse-ld=lld -march=x86-64 -msse2 -mmmx -mfpmath=sse"
 ```
 
 If you need a different microarchitecture, override with:
