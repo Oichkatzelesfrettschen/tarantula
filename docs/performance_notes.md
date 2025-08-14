@@ -16,7 +16,7 @@ The AVX2 path offers a small win over the scalar implementation. Systems without
 The build system now defaults to SSE-backed math operations for consistent floating-point semantics on modern hardware. The top-level `CMakeLists.txt` exports the following baseline flags:
 
 ```sh
--O3 -march=x86-64-v1 -mfpmath=sse -msse2 -mmmx
+-O3 -march=x86-64 -mfpmath=sse -msse2 -mmmx
 ```
 
 These options tune the generated binaries for a minimal x86-64 baseline while ensuring the compiler emits SSE and MMX instructions (and avoids legacy x87) for predictable performance.
@@ -37,7 +37,7 @@ On an Intel i7-8650U laptop, our `bench_fs_rpc` microbenchmark shows approximate
 
 **Summary of Flags Across All Targets**
 
-* **Baseline (all targets)**: `-O3 -march=x86-64-v1 -mfpmath=sse -msse2 -mmmx`
+* **Baseline (all targets)**: `-O3 -march=x86-64 -mfpmath=sse -msse2 -mmmx`
 * **Additional for Clang-built `fs_server`**: `-msse -msse2 -mavx2`
 
 Systems lacking SSE2/AVX2 automatically fall back to portable scalar code paths without any manual intervention.

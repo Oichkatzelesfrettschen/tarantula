@@ -20,8 +20,8 @@ endif()
 # ────────────────────────────────────────────────────────────────────────────
 # Native optimization flags
 # ────────────────────────────────────────────────────────────────────────────
-option(ENABLE_NATIVE_OPT "Enable baseline x86-64-v1 + SSE2 + MMX optimizations" ON)
-set(BASELINE_CPU "x86-64-v1" CACHE STRING "Architecture passed to -march")
+option(ENABLE_NATIVE_OPT "Enable baseline x86-64 + SSE2 + MMX optimizations" ON)
+set(BASELINE_CPU "x86-64" CACHE STRING "Architecture passed to -march")
 
 if(ENABLE_NATIVE_OPT AND CMAKE_C_COMPILER_ID STREQUAL "Clang")
   message(STATUS "Enabling native optimizations: -march=${BASELINE_CPU} -msse2 -mmmx -mfpmath=sse -O3")
@@ -41,9 +41,9 @@ else()
   set(BASE_LDFLAGS -fuse-ld=lld)
 endif()
 
-# Apply flags globally to all C targets
-string(APPEND CMAKE_C_FLAGS          " ${BASE_CFLAGS}")
-string(APPEND CMAKE_EXE_LINKER_FLAGS " ${BASE_LDFLAGS}")
+# Apply flags globally to all C targets using list-aware helpers
+add_compile_options(${BASE_CFLAGS})
+add_link_options(${BASE_LDFLAGS})
 
 # ────────────────────────────────────────────────────────────────────────────
 # Bison detection

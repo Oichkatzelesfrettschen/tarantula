@@ -7,11 +7,11 @@ This guide documents how to provision a development host for the Tarantula tree.
 Update the package index and install the required packages:
 
 ```bash
-sudo apt-get update
-sudo apt-get install -y \
-  build-essential cmake ninja-build \
+sudo apt update
+sudo apt install -y \
+  build-essential cmake ninja-build meson \
   clang lld lldb llvm \
-  bison byacc flex \
+  bison flex \
   bear ccache gdb ripgrep \
   clang-format clang-tidy pre-commit
 ```
@@ -19,8 +19,8 @@ sudo apt-get install -y \
 | Tool                     | Purpose                                                         |
 |--------------------------|-----------------------------------------------------------------|
 | `clang`, `lld`, `lldb`, `llvm` | LLVM-based compiler, linker and debugger suite                 |
-| `bison`, `byacc`, `flex` | Yacc/Lex implementations required by legacy build scripts       |
-| `cmake`, `ninja-build`   | Configure and drive the modern CMake build                      |
+| `bison`, `flex` | Parser and lexer generators used by legacy build scripts       |
+| `cmake`, `ninja-build`, `meson`   | Configure and drive modern build systems                      |
 | `bear`                   | Generate `compile_commands.json` for `clang-tidy` and `clangd`  |
 | `ccache`                 | Cache object files to speed up repeated builds                  |
 | `gdb`, `lldb`            | Native and LLVM debuggers                                       |
@@ -28,10 +28,9 @@ sudo apt-get install -y \
 | `clang-format`, `clang-tidy` | Code formatting and static analysis                         |
 | `pre-commit`             | Manage git hooks and linting                                   |
 
-After provisioning, export the legacy `YACC` variable and verify the toolchain:
+After provisioning, verify the toolchain:
 
 ```bash
-export YACC="bison -y"
 tools/check_build_env.sh
 ```
 
@@ -46,15 +45,15 @@ JavaScript tools, and source builds when no distribution package exists.
 | Tool       | Installation Method | Example Command                                                                 |
 |------------|---------------------|---------------------------------------------------------------------------------|
 | lizard     | pip                  | `pip install lizard`                                                           |
-| cloc       | apt                  | `sudo apt-get install cloc`                                                    |
-| cscope     | apt                  | `sudo apt-get install cscope`                                                  |
+| cloc       | apt                  | `sudo apt install cloc`                                                        |
+| cscope     | apt                  | `sudo apt install cscope`                                                      |
 | diffoscope | pip                  | `pip install diffoscope`                                                       |
 | dtrace     | source build        | `git clone https://github.com/dtrace4linux/linux.git && cd linux && make && sudo make install` |
-| valgrind   | apt                  | `sudo apt-get install valgrind`                                                |
-| cppcheck   | apt                  | `sudo apt-get install cppcheck`                                                |
-| sloccount  | apt                  | `sudo apt-get install sloccount`                                               |
-| flawfinder | apt                  | `sudo apt-get install flawfinder`                                              |
-| gdb        | apt                  | `sudo apt-get install gdb`                                                     |
+| valgrind   | apt                  | `sudo apt install valgrind`                                                    |
+| cppcheck   | apt                  | `sudo apt install cppcheck`                                                    |
+| sloccount  | apt                  | `sudo apt install sloccount`                                                   |
+| flawfinder | apt                  | `sudo apt install flawfinder`                                                  |
+| gdb        | apt                  | `sudo apt install gdb`                                                         |
 | pylint     | pip                  | `pip install pylint`                                                           |
 | flake8     | pip                  | `pip install flake8`                                                           |
 | mypy       | pip                  | `pip install mypy`                                                             |
@@ -70,7 +69,7 @@ For configuration details see [tool_config.md](tool_config.md). Sample outputs f
 
 The `tools/` directory contains utilities that complement the build environment:
 
-- `check_build_env.sh` – validates variables such as `YACC="bison -y"`.
+- `check_build_env.sh` – confirms required build tools like `meson` and `bison`.
 - `build_collect_warnings.sh` – compiles sources and aggregates compiler warnings.
 - `generate_compiledb.sh` – emits a `compile_commands.json` database.
 - `run_clang_tidy.sh` – runs `clang-tidy` across the tree using the database.
