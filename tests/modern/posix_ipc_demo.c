@@ -1,3 +1,4 @@
+#define _GNU_SOURCE  /* expose AT_FDCWD on glibc */
 #include "../../src-headers/posix_ipc.h"
 #include <assert.h>
 #include <unistd.h>

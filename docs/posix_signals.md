@@ -11,4 +11,10 @@ int posix_killpg(int pgrp, int sig);
 ```
 
 The program `tests/modern/posix_signal_demo.c` demonstrates installing a
-custom handler and sending a signal to the current process group.
+custom handler and sending a signal to the current process group. Build and
+run the example via
+
+```
+make -C tests posix_signal_demo
+./tests/posix_signal_demo
+```

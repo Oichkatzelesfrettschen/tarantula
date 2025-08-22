@@ -4,6 +4,21 @@ This document describes the lightweight mailbox mechanism used by the
 microkernel stubs and user–space servers.  The API lives in
 `src-headers/ipc.h` and is implemented by `src-lib/libipc/ipc.c`.
 
+## Building and Installing
+
+Build the IPC and POSIX helper libraries and install their public headers
+with CMake:
+
+```bash
+cmake -S . -B build
+cmake --build build --target ipc posix
+cmake --install build --prefix /usr/local
+```
+
+The install step places `ipc.h`, `libipc.h`, `posix.h`, `posix_signal.h`,
+and `posix_ipc.h` under `/usr/local/include` for use by downstream
+projects.
+
 ## Mailbox Creation
 
 A mailbox is represented by `struct ipc_queue`.  The queue stores a fixed
@@ -122,4 +137,10 @@ int cap_shm_unlink(int dirfd, const char *name);
 ```
 
 The program `tests/modern/posix_ipc_demo.c` demonstrates basic usage of
-these helpers.
+these helpers. Build and run the example with the host's default
+compilers (override with `CC`/`CXX` as needed):
+
+```
+make -C tests posix_ipc_demo
+./tests/posix_ipc_demo
+```
