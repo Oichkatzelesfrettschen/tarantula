@@ -72,6 +72,7 @@ target_compile_options(ipc PRIVATE ${BASE_CFLAGS})
 # ────────────────────────────────────────────────────────────────────────────
 add_library(posix STATIC
   src-lib/libposix/posix.c
+  src-lib/libposix/posix_signal.c
 )
 target_include_directories(posix PUBLIC
   ${CMAKE_SOURCE_DIR}/src-headers
@@ -124,7 +125,15 @@ endif()
 # ────────────────────────────────────────────────────────────────────────────
 # Installation & Subdirectories
 # ────────────────────────────────────────────────────────────────────────────
-install(FILES src-headers/arch.h DESTINATION include)
+install(FILES
+  src-headers/arch.h
+  src-headers/ipc.h
+  src-headers/libipc.h
+  src-headers/posix.h
+  src-headers/posix_signal.h
+  src-headers/posix_ipc.h
+  DESTINATION include
+)
 
 # Build userland servers converted from historical Makefiles
 add_subdirectory(src-uland/servers/proc_manager)
