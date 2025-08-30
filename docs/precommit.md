@@ -11,7 +11,9 @@ any time:
 pre-commit install --install-hooks
 ```
 
-The hooks rely on the configuration files `.clang-format` and
+The installation fetches hook repositories from GitHub. When offline,
+mirror those repositories into `offline_packages/` so pre-commit can
+provision them locally. The hooks rely on the configuration files `.clang-format` and
 `.clang-tidy` at the repository root.  A helper script
 `tools/run_clang_tidy.sh` selects the appropriate language standard
 (C2x for C or C++17) when invoking `clang-tidy`.

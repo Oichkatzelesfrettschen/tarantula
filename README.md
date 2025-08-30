@@ -13,10 +13,16 @@ for microkernel details, and
 
 # Environment provisioning
 Install prerequisites using the commands in
-[docs/setup_guide.md](docs/setup_guide.md). The guide replaces the former
-`setup.sh` script and enumerates every tool required to build and analyze the
-tree.
-For per-tool configuration guidance see [docs/tool_config.md](docs/tool_config.md); sample outputs appear in [docs/tool_reports.md](docs/tool_reports.md).
+[docs/setup_guide.md](docs/setup_guide.md).
+After provisioning the environment—either manually or via the legacy
+`setup.sh`—install the repository hooks with
+`pre-commit install --install-hooks`. See
+[docs/precommit.md](docs/precommit.md) for details. This step downloads
+hook repositories from GitHub, so ensure network access or mirror them
+into `offline_packages/` when working offline.
+For per-tool configuration guidance see
+[docs/tool_config.md](docs/tool_config.md); sample outputs appear in
+[docs/tool_reports.md](docs/tool_reports.md).
 
 # 4.4BSD-Lite2, the last Unix from Berkeley
 
@@ -25,10 +31,6 @@ The story: https://en.wikipedia.org/wiki/History_of_the_Berkeley_Software_Distri
 Downloaded from: ftp://alge.anart.no/pub/BSD/4.4BSD-Lite/4.4BSD-Lite2.tar.gz
 
 For kernel build instructions see [docs/building_kernel.md](docs/building_kernel.md).
-Install the toolchain using the commands in
-[docs/setup_guide.md](docs/setup_guide.md). After provisioning, set up the
-repository's git hooks with `pre-commit install --install-hooks` as described in
-[docs/precommit.md](docs/precommit.md).
 The tree also ships a minimal **CMake** configuration.  Generate Ninja files
 with:
 
