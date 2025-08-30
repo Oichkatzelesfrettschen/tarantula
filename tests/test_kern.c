@@ -10,8 +10,8 @@
 #include "ipc.h"
 
 int main(void) {
-    /* Scheduler initialization would normally set up IPC queues.
-       For this lightweight smoke test it is skipped. */
+    ipc_mailbox_init();
+    kern_sched_init();
 
     int fd = kern_open("README.md", O_RDONLY);
     if (fd < 0) {
