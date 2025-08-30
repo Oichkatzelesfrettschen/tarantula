@@ -55,34 +55,29 @@ tools and exits non-zero when any are absent.
 
 ## Running Tests
 
-Ensure the toolchain from [docs/setup_guide.md](docs/setup_guide.md) is
-installed before running the tests.
+Install the prerequisites described in
+[docs/setup_guide.md](docs/setup_guide.md) — the successor to the
+historical `setup.sh` script — before building the test suite.
 
-### Makefile targets
-
-The historical `tests/Makefile` builds four self-contained binaries:
-
-```sh
-make -C tests          # builds test_kern, spinlock_cpp, mailbox_test, fifo_test
-make -C tests clean    # removes objects and binaries
-```
-
-Execute the resulting programs directly, for example:
+### Makefile
 
 ```sh
-./tests/test_kern
-./tests/mailbox_test
+cmake -S . -B build -G Ninja
+cmake --build build --target ipc posix kern_stubs
+make -C tests        # build all test binaries (test_kern, spinlock_cpp,
+                     # mailbox_test, fifo_test, posix_signal_demo,
+                     # posix_ipc_demo)
+make -C tests clean  # remove objects and binaries
 ```
 
-### CMake option
+Run the resulting binaries from the `tests/` directory.
 
-An experimental CMake configuration can also generate the test
-executables:
+### CMake
 
 ```sh
 cmake -S tests -B build/tests -G Ninja
 cmake --build build/tests
-./build/tests/test_kern   # should print "all ok"
+ctest --test-dir build/tests    # or run ./build/tests/test_kern
 ```
 
 Refer to [docs/building_kernel.md](docs/building_kernel.md) for a more

@@ -1,32 +1,28 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/wait.h>
-#include "exokernel.h"
-#include "fs_server.h"
-#include "libvm.h"
-#include "proc_manager.h"
 #include "ipc.h"
+#include <stdio.h>
 
 int main(void) {
-    /* Scheduler initialization would normally set up IPC queues.
-       For this lightweight smoke test it is skipped. */
+    /* Initialize the global kernel IPC queue */
+    ipc_queue_init(&kern_ipc_queue);
 
-    int fd = kern_open("README.md", O_RDONLY);
-    if (fd < 0) {
-        perror("kern_open");
+    /* Send a heartbeat through the queue */
+    struct ipc_message msg = {
+        .type = IPC_MSG_HEARTBEAT,
+        .a = 0xdeadbeef,
+    };
+    if (ipc_queue_send(&kern_ipc_queue, &msg) != EXO_IPC_OK) {
+        fprintf(stderr, "send failed\n");
         return 1;
     }
-    close(fd);
 
+    /* Receive the message back immediately */
+    struct ipc_message out;
+    if (ipc_queue_recv_timed(&kern_ipc_queue, &out, 1) != EXO_IPC_OK ||
+        out.type != IPC_MSG_HEARTBEAT || out.a != 0xdeadbeef) {
+        fprintf(stderr, "receive mismatch\n");
+        return 1;
+    }
 
-    /*
-     * VM and process management hooks are stubs only.  In this
-     * lightweight smoke test we merely invoke the file-open path
-     * to verify that basic IPC wiring works.
-     */
-
-    printf("all ok\n");
+    puts("all ok");
     return 0;
 }
