@@ -50,10 +50,10 @@ that works on all modern 64‑bit processors.  Disable it with
 `-DENABLE_NATIVE_OPT=OFF` or by setting your own `CMAKE_C_FLAGS`.
 For offline work, pre-download `.deb` packages into `third_party/apt` and Python
 wheels into `third_party/pip` using `apt-get download <pkg>` and `pip download
-<pkg>`. Copy those archives into `offline_packages/` and install them with
-`dpkg -i` when the network is unavailable. You can verify which commands are
-available at any time by running `tools/check_build_env.sh`; it lists missing
-tools and exits non-zero when any are absent.
+<pkg>`. Copy those archives into the repository's `offline_packages/` directory
+and install them with `dpkg -i` when the network is unavailable. You can verify
+which commands are available at any time by running `tools/check_build_env.sh`;
+it lists missing tools and exits non-zero when any are absent.
 
 ## Running Tests
 
