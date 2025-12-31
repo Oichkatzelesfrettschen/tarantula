@@ -24,9 +24,8 @@ To work offline, clone each hook repository listed in
 mkdir -p offline_packages
 cd offline_packages
 # Clone each hook repository from .pre-commit-config.yaml
-# For example, if your config lists:
-# - repo: https://github.com/pre-commit/mirrors-clang-format
-# - repo: https://github.com/pre-commit/mirrors-clang-tidy
+# Check your actual .pre-commit-config.yaml for the current repository URLs
+# The examples below match the default configuration:
 git clone https://github.com/pre-commit/mirrors-clang-format
 git clone https://github.com/pre-commit/mirrors-clang-tidy
 git clone https://github.com/shellcheck-py/shellcheck-py
@@ -42,6 +41,19 @@ repos:
     rev: v15.0.7  # Use the same rev value from your original config
     hooks:
       - id: clang-format
+  - repo: offline_packages/mirrors-clang-tidy
+    rev: v15.0.7
+    hooks:
+      - id: clang-tidy
+  - repo: offline_packages/shellcheck-py
+    rev: v0.9.0.1
+    hooks:
+      - id: shellcheck
+  - repo: offline_packages/codespell
+    rev: v2.2.5
+    hooks:
+      - id: codespell
+        args: [--ignore-words-list=hte,teh]
 ```
 
 Alternatively, use `pre-commit install --install-hooks`
