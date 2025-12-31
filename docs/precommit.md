@@ -44,7 +44,7 @@ repos:
       - id: clang-format
 ```
 
-Alternatively, use `pre-commit install-hooks --config .pre-commit-config.yaml`
+Alternatively, use `pre-commit install --install-hooks --config .pre-commit-config.yaml`
 with network access once, then package `~/.cache/pre-commit/` for offline
 deployment.
 
