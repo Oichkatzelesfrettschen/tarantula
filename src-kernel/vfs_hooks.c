@@ -21,7 +21,7 @@ int kern_open(const char *path, int flags) {
     struct ipc_message reply;
     struct ipc_mailbox *mb = ipc_mailbox_current();
     if (ipc_queue_recv_timed(&mb->queue, &reply, 1000) == EXO_IPC_OK) {
-        if (reply.type != IPC_MSG_OPEN)
+        if (reply.type == IPC_MSG_OPEN)
             return (int)reply.a;
     }
     return fs_open(path, flags);

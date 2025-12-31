@@ -21,7 +21,7 @@ bool kern_vm_fault(void *addr) {
     struct ipc_message reply;
     struct ipc_mailbox *mb = ipc_mailbox_current();
     if (ipc_queue_recv_timed(&mb->queue, &reply, 1000) == EXO_IPC_OK) {
-        if (reply.type != IPC_MSG_VM_FAULT)
+        if (reply.type == IPC_MSG_VM_FAULT)
             return reply.a != 0;
     }
     return uland_vm_fault(addr);

@@ -21,7 +21,7 @@ int kern_fork(void) {
     struct ipc_message reply;
     struct ipc_mailbox *mb = ipc_mailbox_current();
     if (ipc_queue_recv_timed(&mb->queue, &reply, 1000) == EXO_IPC_OK) {
-        if (reply.type != IPC_MSG_PROC_FORK)
+        if (reply.type == IPC_MSG_PROC_FORK)
             return (int)reply.a;
     }
     return pm_fork();
@@ -40,7 +40,9 @@ int kern_exec(const char *path, char *const argv[]) {
     (void)ipc_queue_send(&kern_ipc_queue, &msg);
     struct ipc_message reply;
     struct ipc_mailbox *mb2 = ipc_mailbox_current();
-    if (ipc_queue_recv_timed(&mb2->queue, &reply, 1000) == EXO_IPC_OK)
-        return (int)reply.a;
+    if (ipc_queue_recv_timed(&mb2->queue, &reply, 1000) == EXO_IPC_OK) {
+        if (reply.type == IPC_MSG_PROC_EXEC)
+            return (int)reply.a;
+    }
     return pm_exec(path, argv);
 }

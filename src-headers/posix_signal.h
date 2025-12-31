@@ -5,6 +5,9 @@
 #define _XOPEN_SOURCE 700
 #endif
 #include <signal.h>
+#if defined(__GNUC__)
+#include_next <signal.h>
+#endif
 
 int posix_sigaction(int signum, const struct sigaction *act,
                     struct sigaction *oldact);

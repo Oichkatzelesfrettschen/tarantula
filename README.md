@@ -38,14 +38,15 @@ cmake --build build
 ```
 `find_package(BISON)` checks that **bison** is available.  See
 [docs/cmake_upgrade.md](docs/cmake_upgrade.md) for a gradual migration guide
-from the historic `bmake` system to CMake.  The build system always uses
-**clang** and targets C23 with `-O3`, link-time optimization and optional
-LLVM Polly/BOLT passes.
-When configuring on x86‑64 hosts, the build automatically enables the
-`ENABLE_NATIVE_OPT` option, appending `-march=x86-64 -mmmx -msse -msse2`
-to the default compiler flags.  This provides conservative SIMD support
-that works on all modern 64‑bit processors.  Disable it with
-`-DENABLE_NATIVE_OPT=OFF` or by setting your own `CMAKE_C_FLAGS`.
+from the historic `bmake` system to CMake.  The top-level build enables the
+C23 language standard and defaults to `-O3`.  It prefers **clang** when no
+compiler is specified but honors any toolchain supplied via
+`-DCMAKE_C_COMPILER`.  All configurations request the LLVM linker via
+`-fuse-ld=lld`; when compiling with Clang and leaving `ENABLE_NATIVE_OPT`
+enabled, the baseline flags expand to
+`-march=<BASELINE_CPU> -msse2 -mmmx -mfpmath=sse -O3`.  Toggle the behavior
+with `-DENABLE_NATIVE_OPT=OFF`, adjust `BASELINE_CPU` (default: `x86-64`), or
+pass explicit `CMAKE_C_FLAGS` when different tuning is required.
 For offline work, pre-download `.deb` packages into `third_party/apt` and Python
 wheels into `third_party/pip` using `apt-get download <pkg>` and `pip download
 <pkg>`. Copy those archives into `offline_packages/` and install them with
@@ -55,38 +56,29 @@ tools and exits non-zero when any are absent.
 
 ## Running Tests
 
-Ensure the toolchain from [docs/setup_guide.md](docs/setup_guide.md) is
-installed before running the tests.
+Ensure the prerequisites from [docs/setup_guide.md](docs/setup_guide.md) are available before compiling the tests.
 
-### Makefile targets
-
-The historical `tests/Makefile` builds four self-contained binaries:
+Using the historical Makefile builds four standalone programs:
 
 ```sh
-make -C tests          # builds test_kern, spinlock_cpp, mailbox_test, fifo_test
-make -C tests clean    # removes objects and binaries
+make -C tests          # test_kern, spinlock_cpp, mailbox_test, fifo_test
 ```
 
-Execute the resulting programs directly, for example:
-
-```sh
-./tests/test_kern
-./tests/mailbox_test
-```
-
-### CMake option
-
-An experimental CMake configuration can also generate the test
-executables:
+An experimental CMake flow is also provided:
 
 ```sh
 cmake -S tests -B build/tests -G Ninja
 cmake --build build/tests
-./build/tests/test_kern   # should print "all ok"
 ```
 
-Refer to [docs/building_kernel.md](docs/building_kernel.md) for a more
-detailed walkthrough.
+Execute the resulting binaries directly, for example:
+
+```sh
+./tests/test_kern      # prints "all ok"
+```
+
+See [docs/building_kernel.md](docs/building_kernel.md) for a more detailed walkthrough.
+
 For FHS migration steps see [docs/fhs_migration.md](docs/fhs_migration.md).
 For microkernel tasks see [docs/microkernel_plan.md](docs/microkernel_plan.md)
 and the functional overview in
