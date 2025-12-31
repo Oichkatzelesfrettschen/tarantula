@@ -18,8 +18,9 @@ After provisioning the environment—either manually or via the legacy
 `setup.sh`—install the repository hooks with
 `pre-commit install --install-hooks`. See
 [docs/precommit.md](docs/precommit.md) for details. This step downloads
-hook repositories from GitHub, so ensure network access or mirror them
-into `offline_packages/` when working offline.
+hook repositories from GitHub, so ensure network access or see the
+[offline mirroring section](docs/precommit.md#offline-hook-mirroring)
+in `docs/precommit.md` for instructions on working without internet access.
 For per-tool configuration guidance see
 [docs/tool_config.md](docs/tool_config.md); sample outputs appear in
 [docs/tool_reports.md](docs/tool_reports.md).
