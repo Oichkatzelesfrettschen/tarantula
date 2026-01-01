@@ -20,6 +20,10 @@ case "${ARCH:-}" in
 esac
 
 SRC_ULAND_DIR="${SRC_ULAND:-src-uland}"
+if [ ! -f "$SRC_ULAND_DIR/Makefile" ]; then
+    echo "Expected Makefile in '$SRC_ULAND_DIR' not found. Generate build files or set SRC_ULAND." >&2
+    exit 1
+fi
 make -C "$SRC_ULAND_DIR" \
     CC="${CC:-cc}" \
     CSTD="${CSTD:--std=c2x}" \
