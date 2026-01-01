@@ -1,26 +1,21 @@
 # BSD/Tarantula: A Modern Microkernelization Attempt of 4.4BSD-Lite2: The Final Unix from Berkeley. 
 
-BSD/Tarantula modernizes the historic 4.4BSD-Lite2 codebase by carving out a
-minimal microkernel that retains only scheduling, memory and IPC hooks. Device
-drivers, filesystems and networking stacks migrate into user-space servers to
-exercise a modular architecture. An accompanying exokernel track goes further
-by exposing hardware resources through a thin protection layer so libraries can
-implement their own policies. See
+BSD/Tarantula distills 4.4BSD-Lite2 into a compact research kernel. The project
+first extracts a minimal microkernel providing scheduling, memory management and
+IPC primitives while delegating device drivers, filesystems and networking to
+user-space servers. A companion exokernel track strips policy further by
+exposing hardware resources through a protected interface so libraries define
+their own abstractions. Microkernel design notes live in
 [docs/microkernel_plan.md](docs/microkernel_plan.md) and
-[docs/microkernel_functional_model.md](docs/microkernel_functional_model.md)
-for microkernel details, and
-[docs/exokernel_plan.md](docs/exokernel_plan.md) for the exokernel roadmap.
+[docs/microkernel_functional_model.md](docs/microkernel_functional_model.md);
+the exokernel direction is sketched in
+[docs/exokernel_plan.md](docs/exokernel_plan.md).
 
 # Environment provisioning
 Install prerequisites using the commands in
-[docs/setup_guide.md](docs/setup_guide.md).
-After provisioning the environment—either manually or via the legacy
-`setup.sh`—install the repository hooks with
-`pre-commit install --install-hooks`. See
-[docs/precommit.md](docs/precommit.md) for details. This step downloads
-hook repositories from GitHub, so ensure network access or see the
-[offline mirroring section](docs/precommit.md#offline-hook-mirroring)
-in `docs/precommit.md` for instructions on working without internet access.
+[docs/setup_guide.md](docs/setup_guide.md). The guide replaces the former
+`setup.sh` script and enumerates every tool required to build and analyze the
+tree.
 For per-tool configuration guidance see
 [docs/tool_config.md](docs/tool_config.md); sample outputs appear in
 [docs/tool_reports.md](docs/tool_reports.md).
@@ -32,6 +27,13 @@ The story: https://en.wikipedia.org/wiki/History_of_the_Berkeley_Software_Distri
 Downloaded from: ftp://alge.anart.no/pub/BSD/4.4BSD-Lite/4.4BSD-Lite2.tar.gz
 
 For kernel build instructions see [docs/building_kernel.md](docs/building_kernel.md).
+Install the toolchain using the commands in
+[docs/setup_guide.md](docs/setup_guide.md). After provisioning, set up the
+repository's git hooks with `pre-commit install --install-hooks` as described in
+[docs/precommit.md](docs/precommit.md). This step downloads hook repositories
+from GitHub, so ensure network access or see the
+[offline mirroring section](docs/precommit.md#offline-hook-mirroring)
+for instructions on working without internet access.
 The tree also ships a minimal **CMake** configuration.  Generate Ninja files
 with:
 
@@ -51,41 +53,36 @@ that works on all modern 64‑bit processors.  Disable it with
 `-DENABLE_NATIVE_OPT=OFF` or by setting your own `CMAKE_C_FLAGS`.
 For offline work, pre-download `.deb` packages into `third_party/apt` and Python
 wheels into `third_party/pip` using `apt-get download <pkg>` and `pip download
-<pkg>`. Copy those archives into `offline_packages/` and install them with
-`dpkg -i` when the network is unavailable. You can verify which commands are
-available at any time by running `tools/check_build_env.sh`; it lists missing
-tools and exits non-zero when any are absent.
+<pkg>`. Copy those archives into the repository's `offline_packages/` directory
+and install them with `dpkg -i` when the network is unavailable. You can verify
+which commands are available at any time by running `tools/check_build_env.sh`;
+it lists missing tools and exits non-zero when any are absent.
 
 ## Running Tests
 
-Ensure the toolchain from [docs/setup_guide.md](docs/setup_guide.md) is
-installed before running the tests.
+Install the prerequisites described in
+[docs/setup_guide.md](docs/setup_guide.md) — the successor to the
+historical `setup.sh` script — before building the test suite.
 
-### Makefile targets
-
-The historical `tests/Makefile` builds four self-contained binaries:
-
-```sh
-make -C tests          # builds test_kern, spinlock_cpp, mailbox_test, fifo_test
-make -C tests clean    # removes objects and binaries
-```
-
-Execute the resulting programs directly, for example:
+### Makefile
 
 ```sh
-./tests/test_kern
-./tests/mailbox_test
+cmake -S . -B build -G Ninja
+cmake --build build --target ipc posix kern_stubs
+make -C tests        # build all test binaries (test_kern, spinlock_cpp,
+                     # mailbox_test, fifo_test, posix_signal_demo,
+                     # posix_ipc_demo)
+make -C tests clean  # remove objects and binaries
 ```
 
-### CMake option
+Run the resulting binaries from the `tests/` directory.
 
-An experimental CMake configuration can also generate the test
-executables:
+### CMake
 
 ```sh
 cmake -S tests -B build/tests -G Ninja
 cmake --build build/tests
-./build/tests/test_kern   # should print "all ok"
+ctest --test-dir build/tests    # or run ./build/tests/test_kern
 ```
 
 Refer to [docs/building_kernel.md](docs/building_kernel.md) for a more
