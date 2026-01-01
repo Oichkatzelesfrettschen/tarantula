@@ -9,8 +9,8 @@ This guide shows how to compile the historic **4.4BSD-Lite2** sources on an **x8
 All helper scripts respect:
 
 ```bash
-export SRC_ULAND=${SRC_ULAND:-src-uland}    # user-land sources
-export SRC_KERNEL=${SRC_KERNEL:-src-kernel} # kernel sources
+export SRC_ULAND=${SRC_ULAND:-usr/src}    # user-land sources
+export SRC_KERNEL=${SRC_KERNEL:-usr/src}  # kernel sources
 ````
 
 ---
@@ -22,7 +22,7 @@ export SRC_KERNEL=${SRC_KERNEL:-src-kernel} # kernel sources
    ```bash
    sudo apt update
    sudo apt install -y \
-     build-essential cmake ninja-build \
+     build-essential cmake ninja-build meson \
      clang lld lldb llvm \
      bison flex \
      bear ccache gdb ripgrep \
@@ -35,6 +35,7 @@ export SRC_KERNEL=${SRC_KERNEL:-src-kernel} # kernel sources
    command -v bison
    command -v cmake
    command -v ninja
+   command -v meson
    ```
 
 ---
