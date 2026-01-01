@@ -1,1 +1,2 @@
-sys/vnode_if.h
+#pragma once
+#include "sys/vnode_if.h"
