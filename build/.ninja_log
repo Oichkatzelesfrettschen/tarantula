@@ -1,0 +1,8 @@
+# ninja log v7
+3	4598	1767468597258380902	CMakeFiles/kern_stubs.dir/src-kernel/sched_hooks.c.o	bcf3ff7975af3f08
+2	4599	1767468597257380899	CMakeFiles/kern_stubs.dir/src-kernel/proc_hooks.c.o	66ab74306575e902
+2	4610	1767468597257380899	CMakeFiles/posix.dir/src-lib/libposix/posix_signal.c.o	81c309b3ecce5856
+4	4614	1767468597259380906	CMakeFiles/kern_stubs.dir/src-kernel/vm_hooks.c.o	c6201102ace138bd
+4598	4707	1767468601853402986	CMakeFiles/kern_stubs.dir/src-kernel/vfs_hooks.c.o	ab9eb8f840849f1e
+1	4732	1767468597256380895	CMakeFiles/ipc.dir/src-lib/libipc/ipc.c.o	eaadbe65c609881b
+2	4763	1767468597257380899	CMakeFiles/posix.dir/src-lib/libposix/posix.c.o	4fa93805ff60deca
