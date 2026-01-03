@@ -29,3 +29,4 @@ builds/                        # aggregated build outputs
 usr/src/**/obj/               # historical obj dirs under usr/src
 usr/src/**/*.o                # object files under usr/src
 usr/src/**/*.a                # archives under usr/src
+/build*/
