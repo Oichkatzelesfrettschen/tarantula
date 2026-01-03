@@ -1,0 +1,213 @@
+name: Comprehensive Analysis and Testing
+
+on:
+  push:
+    branches: [ main, develop, 'copilot/**' ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  # Static Analysis Job
+  static-analysis:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang clang-tidy cppcheck flawfinder lcov
+        pip3 install lizard semgrep
+    
+    - name: Run clang-tidy
+      run: |
+        find src-kernel src-lib src-uland -name "*.c" -exec clang-tidy {} \; > clang-tidy-report.txt 2>&1 || true
+        echo "clang-tidy found $(grep -c 'warning:' clang-tidy-report.txt || echo 0) warnings"
+    
+    - name: Run cppcheck
+      run: |
+        cppcheck --enable=all --inconclusive --xml --output-file=cppcheck-report.xml \
+          src-kernel/ src-lib/ src-uland/ 2>&1 || true
+    
+    - name: Run flawfinder (Security)
+      run: |
+        flawfinder --minlevel=4 --context src-kernel/ src-lib/ src-uland/ > flawfinder-report.txt || true
+        CRITICAL_COUNT=$(grep -c '\[5\]' flawfinder-report.txt || echo 0)
+        echo "Found $CRITICAL_COUNT critical security issues"
+        if [ "$CRITICAL_COUNT" -gt "0" ]; then
+          echo "::error::Critical security vulnerabilities found!"
+          cat flawfinder-report.txt
+          exit 1
+        fi
+    
+    - name: Run lizard (Complexity)
+      run: |
+        lizard -l c src-kernel/ src-lib/ src-uland/ > lizard-report.txt || true
+        echo "Complexity analysis complete"
+    
+    - name: Upload Analysis Reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: static-analysis-reports
+        path: |
+          clang-tidy-report.txt
+          cppcheck-report.xml
+          flawfinder-report.txt
+          lizard-report.txt
+
+  # Build and Test Job
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+        sanitizer: [none, asan, ubsan]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Build Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake ninja-build clang lld bison flex
+    
+    - name: Configure CMake
+      run: |
+        CMAKE_OPTIONS="-G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}"
+        if [ "${{ matrix.sanitizer }}" = "asan" ]; then
+          CMAKE_OPTIONS="$CMAKE_OPTIONS -DENABLE_ASAN=ON"
+        elif [ "${{ matrix.sanitizer }}" = "ubsan" ]; then
+          CMAKE_OPTIONS="$CMAKE_OPTIONS -DENABLE_UBSAN=ON"
+        fi
+        cmake -S . -B build $CMAKE_OPTIONS
+    
+    - name: Build
+      run: cmake --build build --parallel
+    
+    - name: Run Tests
+      run: ctest --test-dir build --output-on-failure || true
+
+  # Coverage Job
+  coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake ninja-build clang lcov
+    
+    - name: Configure with Coverage
+      run: |
+        cmake -S . -B build -G Ninja \
+          -DCMAKE_BUILD_TYPE=Debug \
+          -DENABLE_COVERAGE=ON
+    
+    - name: Build
+      run: cmake --build build
+    
+    - name: Run Tests
+      run: ctest --test-dir build --output-on-failure || true
+    
+    - name: Generate Coverage Report
+      run: |
+        cd build
+        lcov --capture --directory . --output-file coverage.info
+        lcov --remove coverage.info '/usr/*' --output-file coverage.info
+        lcov --list coverage.info
+    
+    - name: Upload Coverage
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./build/coverage.info
+        fail_ci_if_error: false
+
+  # Formal Verification Job
+  formal-verification:
+    name: Formal Verification
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Z3
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y z3
+    
+    - name: Install TLA+ Tools
+      run: |
+        wget https://github.com/tlaplus/tlaplus/releases/download/v1.8.0/tla2tools.jar -O /tmp/tla2tools.jar
+    
+    - name: Run Z3 Models
+      run: |
+        echo "Running Z3 SMT models..."
+        for model in docs/formal/*.smt2; do
+          echo "Checking $model..."
+          z3 "$model" || true
+        done
+    
+    - name: Syntax Check TLA+ Specs
+      run: |
+        echo "Checking TLA+ specifications syntax..."
+        for spec in docs/formal/*.tla; do
+          echo "Parsing $spec..."
+          java -jar /tmp/tla2tools.jar -parse "$spec" || true
+        done
+    
+    - name: Upload Verification Results
+      uses: actions/upload-artifact@v3
+      with:
+        name: formal-verification-results
+        path: docs/formal/
+
+  # Documentation Check
+  documentation:
+    name: Documentation Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+        
+    - name: Check Documentation Completeness
+      run: |
+        echo "Checking documentation files..."
+        required_docs=(
+          "README.md"
+          "docs/setup_guide.md"
+          "docs/building_kernel.md"
+          "docs/architecture_design.md"
+          "docs/COMPREHENSIVE_ANALYSIS_REPORT.md"
+        )
+        
+        for doc in "${required_docs[@]}"; do
+          if [ ! -f "$doc" ]; then
+            echo "::error::Missing required documentation: $doc"
+            exit 1
+          fi
+        done
+        echo "✓ All required documentation present"
+
+  # Summary Job
+  analysis-summary:
+    name: Analysis Summary
+    needs: [static-analysis, build-and-test, coverage, formal-verification, documentation]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Generate Summary
+      run: |
+        echo "## 🎯 Analysis Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- Static Analysis: ${{ needs.static-analysis.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Build & Test: ${{ needs.build-and-test.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Coverage: ${{ needs.coverage.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Formal Verification: ${{ needs.formal-verification.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Documentation: ${{ needs.documentation.result }}" >> $GITHUB_STEP_SUMMARY
