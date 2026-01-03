@@ -30,7 +30,10 @@ For kernel build instructions see [docs/building_kernel.md](docs/building_kernel
 Install the toolchain using the commands in
 [docs/setup_guide.md](docs/setup_guide.md). After provisioning, set up the
 repository's git hooks with `pre-commit install --install-hooks` as described in
-[docs/precommit.md](docs/precommit.md).
+[docs/precommit.md](docs/precommit.md). This step downloads hook repositories
+from GitHub, so ensure network access or see the
+[offline mirroring section](docs/precommit.md#offline-hook-mirroring)
+for instructions on working without internet access.
 The tree also ships a minimal **CMake** configuration.  Generate Ninja files
 with:
 
